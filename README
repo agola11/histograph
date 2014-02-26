@@ -1,1 +1,8 @@
 HISTOGRAPH!!! YEAHEAYAEHAYQE
+
+SETUP INSTRUCTIONS:
+  - clone repository
+  - install postgres
+  - install REQUIREMENTS with pip
+  - create database
+  - edit local configs (local_settings.py)

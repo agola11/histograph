@@ -52,20 +52,6 @@ ROOT_URLCONF = 'histograph.urls'
 WSGI_APPLICATION = 'histograph.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'histogram',
-        'USER': 'postgres',
-        'PASSWORD': 'pornwithfriends',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -84,3 +70,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
