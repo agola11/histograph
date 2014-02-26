@@ -4,3 +4,10 @@
 
 # log folder
 log/
+
+# compiled files
+*.pyc
+
+# local settings
+histograph/local_settings.py
+histograph/local_wsgi.py
