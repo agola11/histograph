@@ -11,5 +11,13 @@ def send_history(request):
   return HttpResponse(resp, content_type="application/json")
 
 def store_history(request):
-	pass
+	payload = json.loads(request.body)
+
+	# TODO: should timestamp be an int or double?
+	visit_time = datetime.datetime.fromtimestamp(int(payload['visit_time']))
+
+	hn = HistoryNode(url = payload['url'], last_title = payload['last_title'], visit_time = visit_time, 
+		transition_type = int(payload['transition_type']), browser_id = int(payload['browser_id']),
+		referrer = int(payload['referrer_id'])
+
 
