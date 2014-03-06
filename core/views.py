@@ -10,6 +10,3 @@ def store_history(request):
   serializers.serialize('json', HistoryNode.objects.all(), stream=resp)
   return HttpResponse(resp, content_type="application/json")
 
-def respond(request):
-    now = datetime.datetime.now()
-    return HttpResponse(html)
