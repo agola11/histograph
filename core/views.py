@@ -19,3 +19,5 @@ def store_history(request):
   referrer = HistoryNode.objects.get(extension_id=int(payload['extension_id']), browser_id=int(payload['referrer_id']))
 
   hn = HistoryNode(url=payload['url'], last_title=payload['last_title'], visit_time=visit_time, transition_type=int(payload['transition_type']), browser_id=int(payload['browser_id']), referrer=referrer)
+  hn.save()
+  return HttepResponse("OK")
