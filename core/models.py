@@ -25,7 +25,7 @@ class HistoryNode(models.Model):
     (RELOAD, 'reload'),
     (KEYWORD, 'keyword'),
     (KEYWORD_GENERATED, 'keyword_generated'),
-  )
+    )
 
   # fields
   url = models.URLField(max_length=2048)
