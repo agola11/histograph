@@ -16,8 +16,11 @@ def store_history(request):
   # TODO: should timestamp be an int or double?
   visit_time = datetime.fromtimestamp(int(payload['visit_time']))
 
-  referrer = HistoryNode.objects.get(extension_id=int(payload['extension_id']), browser_id=int(payload['referrer_id']))
+  try:
+    referrer = HistoryNode.objects.get(extension_id=int(payload['extension_id']), browser_id=int(payload['referrer_id']))
+  except HistoryNode.DoesNotExist:
+    referrer = None
 
-  hn = HistoryNode(url=payload['url'], last_title=payload['last_title'], visit_time=visit_time, transition_type=int(payload['transition_type']), browser_id=int(payload['browser_id']), referrer=referrer)
+  hn = HistoryNode(url=payload['url'], last_title=payload['last_title'], visit_time=visit_time, transition_type=int(payload['transition_type']), browser_id=int(payload['browser_id']), referrer=referrer, extension_id=int(payload['extension_id']))
   hn.save()
-  return HttepResponse("OK")
+  return HttpResponse("OK")
