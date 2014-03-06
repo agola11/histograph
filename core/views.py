@@ -13,4 +13,3 @@ def store_history(request):
 def respond(request):
     now = datetime.datetime.now()
     return HttpResponse(html)
-
