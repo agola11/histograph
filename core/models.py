@@ -33,4 +33,5 @@ class HistoryNode(models.Model):
   visit_time = models.DateTimeField()
   transition_type = models.IntegerField(choices=TRANSITION_CHOICES)
   browser_id = models.IntegerField()
+  extension_id = models.IntegerField()
   referrer = models.ForeignKey('HistoryNode', blank=True, null=True)
