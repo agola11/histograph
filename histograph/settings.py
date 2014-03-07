@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'homeApp'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -47,9 +48,32 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
+
 ROOT_URLCONF = 'histograph.urls'
 
 WSGI_APPLICATION = 'histograph.wsgi.application'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'histoLocal',
+        'USER': 'ahimelman',
+        'PASSWORD': "Let'sgobilbo1",
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+    '/homeApp/',
+)
 
 
 # Internationalization
