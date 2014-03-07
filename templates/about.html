@@ -7,17 +7,26 @@
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 	<script src="/static/angular/angular.js"></script>
 	<script src="/static/script.js"></script>
-	<script src="/static/jquery/dist/jquery.js"></script>
+	<script src="//code.jquery.com/jquery-1.10.2.js"></script>
 </head>
 <body>
 
 	<h1>We bring the Payne</h1>
+	<h2>Sam has unfortunately visited the following sites: </h2>
+
+	<h3></h3>
 
 </body>
 
 <script type="text/javascript">
-$.get( "http://dev0.histograph.us/core/send", function( data ) {
-  alert( "Data Loaded: " + data );
+var items = [];
+$.getJSON( "/static/sampleJSON", function( data ) {
+	$.each( data, function( key, val ) {
+		items.push(val.fields.visit_time);
+		console.log("<p>" + val.fields.visit_time + "</p>");
+		$("h3").append("<li>"  + val.fields.url + "</li>");
+
+	});
 });
 </script>
 </html>
