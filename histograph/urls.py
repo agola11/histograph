@@ -10,4 +10,6 @@ urlpatterns = patterns('',
 
     url(r'^testapp/', include('testapp.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^homeApp/', include('homeApp.urls')),
 )
+
