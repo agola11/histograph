@@ -20,12 +20,23 @@
 <script type="text/javascript">
 var items = [];
 $.getJSON( "http://{{ domain }}/core/send", function( data ) {
-	$.each( data, function( key, val ) {
+	/*$.each( data, function( key, val ) {
 		items.push(val.fields.visit_time);
 		console.log("<p>" + val.fields.visit_time + "</p>");
 		$("h3").append("<li>"  + val.fields.url + "</li>");
 
-	});
+	});*/
+
+	var tbl_body = "";
+    $.each(data, function() {
+        var tbl_row = "";
+        $.each(this, function(k , v) {
+            tbl_row += "<td>"+v+"</td>";
+        })
+        tbl_body += "<tr>"+tbl_row+"</tr>";                 
+    })
+    $("h3").html(tbl_body);
+	
 });
 </script>
 </html>
