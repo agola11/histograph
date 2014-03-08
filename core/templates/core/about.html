@@ -13,13 +13,13 @@
 
 	<h1>We bring the Payne</h1>
 	<h2>Sam has unfortunately visited the following sites: </h2>
-
+	<p>{{ domain }}</p>
 	<h3></h3>
 </body>
 
 <script type="text/javascript">
 var items = [];
-$.getJSON( "http://dev3.histograph.us/core/send", function( data ) {
+$.getJSON( "http://{{ domain }}/core/send", function( data ) {
 	$.each( data, function( key, val ) {
 		items.push(val.fields.visit_time);
 		console.log("<p>" + val.fields.visit_time + "</p>");
