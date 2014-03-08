@@ -60,17 +60,6 @@ ROOT_URLCONF = 'histograph.urls'
 
 WSGI_APPLICATION = 'histograph.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'histoLocal',
-        'USER': 'ahimelman',
-        'PASSWORD': "Let'sgobilbo1",
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
-
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
     '/homeApp/',

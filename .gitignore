@@ -10,5 +10,4 @@ log/
 
 # local settings
 histograph/local_settings.py
-histograph/local_wsgi.py
-histograph/settings.py
+histograph/wsgi.py
