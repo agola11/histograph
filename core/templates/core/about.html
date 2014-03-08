@@ -4,17 +4,18 @@
 <head>
 	<meta charset="utf-8">
 	<title>My HTML File</title>
-	<!--link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-	<script src="/static/angular/angular.js"></script>
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+	<!--script src="/static/angular/angular.js"></script>
 	<script src="/static/script.js"></script-->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.12/angular.min.js"></script>
 </head>
 <body>
 
 	<h1>We bring the Payne</h1>
 	<h2>Sam has unfortunately visited the following sites: </h2>
 	<p>{{ domain }}</p>
-	<h3></h3>
+	<table id="tb"></table>
 </body>
 
 <script type="text/javascript">
@@ -28,14 +29,14 @@ $.getJSON( "http://{{ domain }}/core/send", function( data ) {
 	});*/
 
 	var tbl_body = "";
-    $.each(data, function() {
+    $.each(data, function(key, val) {
         var tbl_row = "";
-        $.each(this, function(k , v) {
+        $.each(val.fields, function(k , v) {
             tbl_row += "<td>"+v+"</td>";
         })
-        tbl_body += "<tr>"+tbl_row+"</tr>";                 
+            tbl_body += "<tr>"+tbl_row+"</tr>";                 
     })
-    $("h3").html(tbl_body);
+    $("#tb").html(tbl_body);
 	
 });
 </script>
