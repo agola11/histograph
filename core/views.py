@@ -3,7 +3,8 @@ from django.http import HttpResponse
 from django.core import serializers
 from core.models import HistoryNode
 from datetime import datetime
-from django.views.generic import TemplateView
+from django.template import RequestContext, loader
+from django.contrib.sites.models import get_current_site
 import json
 
 def send_history(request):
@@ -26,5 +27,10 @@ def store_history(request):
   hn.save()
   return HttpResponse("OK")
 
-class AboutView(TemplateView):
-    template_name = "about.html"
+def about(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('core/about.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+  })
+  return HttpResponse(template.render(context))
