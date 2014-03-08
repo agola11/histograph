@@ -16,8 +16,14 @@
 </body>
 
 <script type="text/javascript">
-$.get( "http://dev0.histograph.us/core/send", function( data ) {
-  alert( "Data Loaded: " + data );
+var items = [];
+$.getJSON( "dev3.histograph.us/core/send", function( data ) {
+	$.each( data, function( key, val ) {
+		items.push(val.fields.visit_time);
+		console.log("<p>" + val.fields.visit_time + "</p>");
+		$("h3").append("<li>"  + val.fields.url + "</li>");
+
+	});
 });
 </script>
 </html>
