@@ -28,10 +28,10 @@ $.getJSON( "http://{{ domain }}/core/send", function( data ) {
 	});*/
 
 	var tbl_body = "";
-    $.each(data, function() {
+    $.each(data, function(key, val) {
         var tbl_row = "";
-        $.each(this, function(k , v) {
-            tbl_row += "<td>"+v+"</td>";
+        $.each(fields, function(k , v) {
+            tbl_row += "<td> "+val.fields.v+" </td>";
         })
         tbl_body += "<tr>"+tbl_row+"</tr>";                 
     })
