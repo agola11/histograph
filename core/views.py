@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.core import serializers
 from core.models import HistoryNode
 from datetime import datetime
-import json
 from django.views.generic import TemplateView
+import json
 
 def send_history(request):
   resp = HttpResponse()
