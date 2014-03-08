@@ -4,6 +4,7 @@ from django.core import serializers
 from core.models import HistoryNode
 from datetime import datetime
 import json
+from django.views.generic import TemplateView
 
 def send_history(request):
   resp = HttpResponse()
@@ -24,3 +25,6 @@ def store_history(request):
   hn = HistoryNode(url=payload['url'], last_title=payload['last_title'], visit_time=visit_time, transition_type=int(payload['transition_type']), browser_id=int(payload['browser_id']), referrer=referrer, extension_id=int(payload['extension_id']))
   hn.save()
   return HttpResponse("OK")
+
+class AboutView(TemplateView):
+    template_name = "about.html"
