@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode
+from core.models import HistoryNode, create_history_nodes_from_json
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -14,17 +14,8 @@ def send_history(request):
 
 def store_history(request):
   payload = json.loads(request.body)
-
-  # TODO: should timestamp be an int or double?
-  visit_time = datetime.fromtimestamp(int(payload['visit_time']))
-
-  try:
-    referrer = HistoryNode.objects.get(extension_id=int(payload['extension_id']), browser_id=int(payload['referrer_id']))
-  except HistoryNode.DoesNotExist:
-    referrer = None
-
-  hn = HistoryNode(url=payload['url'], last_title=payload['last_title'], visit_time=visit_time, transition_type=int(payload['transition_type']), browser_id=int(payload['browser_id']), referrer=referrer, extension_id=int(payload['extension_id']))
-  hn.save()
+  create_history_nodes_from_json(payload)
+  
   return HttpResponse("OK")
 
 def about(request):
