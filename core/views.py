@@ -6,6 +6,7 @@ from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
 from django.utils import simplejson
+import json
 import rec_algo
 
 # TODO: change to simplejson?
@@ -15,7 +16,7 @@ def send_history(request):
   return HttpResponse(resp, content_type="application/json")
 
 def store_history(request):
-  payload = simplejson.loads(request.body)
+  payload = json.loads(request.body)
   create_history_nodes_from_json(payload)
   
   return HttpResponse("OK")
