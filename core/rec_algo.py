@@ -1,7 +1,11 @@
 from core.models import HistoryNode
 from urlparse import urlparse
-from collections import OrderedDict
 import numpy
+try:
+    from collections import OrderedDict
+except ImportError:
+    # python 2.6 or earlier, use backport
+    from ordereddict import OrderedDict
 
 freq_dict = {}
 
