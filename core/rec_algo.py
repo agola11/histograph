@@ -55,7 +55,8 @@ def get_frequencies(max_depth):
 
 	rec_update_freq([hn_list], max_depth, 1)
 
-	return (OrderedDict(sorted(freq_dict.items(), key=lambda (key, value): key)))
+	return (freq_dict, hn_list)
+	#return (OrderedDict(sorted(freq_dict.items(), key=lambda (key, value): key)))
 
 # Recursive helper function
 def rec_update_freq(hn_lists, max_depth, level):
