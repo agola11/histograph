@@ -18,6 +18,8 @@ def split_url(hn):
 	if url.startswith('http://'):
 		url = url[7:]
 	url = url.split('/')
+	if url[-1] == '':
+		del(url[-1])
 	hn['url'] = url
 	return hn
 
