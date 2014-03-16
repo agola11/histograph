@@ -5,7 +5,7 @@ from core.models import HistoryNode, create_history_nodes_from_json
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
-from django.utils import simpleson
+from django.utils import simplejson
 import rec_algo
 
 # TODO: change to simplejson?
