@@ -7,7 +7,7 @@ except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
 
-freq_dict = {}
+freq_dict = OrderedDict({})
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
@@ -55,7 +55,9 @@ def get_frequencies(max_depth):
 
 	rec_update_freq([hn_list], max_depth, 1)
 
-	return (OrderedDict(sorted(freq_dict.items(), key=lambda t: t[0])))
+	# return (OrderedDict(sorted(freq_dict.items(), key=lambda t: t[0])))
+
+	return freq_dict
 
 # Recursive helper function
 def rec_update_freq(hn_lists, max_depth, level):
