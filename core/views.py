@@ -29,6 +29,5 @@ def about(request):
   return HttpResponse(template.render(context))
 
 def send_frequencies(request):
-  resp = HttpResponse()
   freq_dict = rec_algo.get_frequencies(10)
   return HttpResponse(simplejson.dumps(freq_dict), content_type='application/json')
