@@ -7,7 +7,7 @@ except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
 
-freq_dict = {}
+freq_dict = []
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
@@ -35,7 +35,7 @@ def consec_dedupe(hn_list, level):
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
-			freq_dict['/'.join(hn_list[i]['url'][:level])] = count
+			freq_dict.append(('/'.join(hn_list[i]['url'][:level])), count)
 			templist = []
 			count = 1
 		else:
@@ -55,8 +55,8 @@ def get_frequencies(max_depth):
 
 	rec_update_freq([hn_list], max_depth, 1)
 
-	return (freq_dict, hn_list)
-	#return (OrderedDict(sorted(freq_dict.items(), key=lambda (key, value): key)))
+	# return (freq_dict, hn_list)
+	return OrderedDict(freq_dict)
 
 # Recursive helper function
 def rec_update_freq(hn_lists, max_depth, level):
