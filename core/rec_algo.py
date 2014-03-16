@@ -1,6 +1,6 @@
 from core.models import HistoryNode
 from urlparse import urlparse
-import collections
+from collections import OrderedDict
 import numpy
 
 freq_dict = {}
