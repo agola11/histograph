@@ -57,9 +57,9 @@ def get_frequencies(max_depth):
 
 	rec_update_freq([hn_list], max_depth, 1)
 
-        global freq_dict
+	global freq_dict
 	freq_dict = sorted(freq_dict, key=lambda (x,y): x)
-        return freq_dict
+	return freq_dict
 	#return (OrderedDict(freq_dict))
 	#return OrderedDict(freq_dict)
 
