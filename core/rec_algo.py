@@ -36,7 +36,7 @@ def consec_dedupe(hn_list, level):
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
-    	global freq_dict
+			global freq_dict
 			freq_dict.append((('/'.join(hn_list[i]['url'][:level])), count))
 			templist = []
 			count = 1
