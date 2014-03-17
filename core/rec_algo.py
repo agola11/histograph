@@ -49,14 +49,14 @@ def consec_dedupe(hn_list, level):
 # DEFINITON: Depth starts at 1.
 def get_frequencies(max_depth):
 	# Clean and Preprocess
-	hn_list = list(HistoryNode.objects.values())
+	hn_list = list(HistoryNode.objects.values('url'))
 	hn_list = filter(filter_http, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
 
 	rec_update_freq([hn_list], max_depth, 1)
 
-	return debug_list
+	return (debug_list, OrderedDict(freq_dict))
 	#return OrderedDict(freq_dict)
 
 # Recursive helper function
