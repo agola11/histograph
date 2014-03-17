@@ -48,7 +48,9 @@ def consec_dedupe(hn_list, level):
 # TODO: use values (not objects.all()) to rid unused values
 # DEFINITON: Depth starts at 1.
 def get_frequencies(max_depth):
-	# Clean and Preprocess
+	global freq_dict
+	freq_dict = []
+
 	hn_list = list(HistoryNode.objects.values('url'))
 	hn_list = filter(filter_http, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
@@ -56,11 +58,7 @@ def get_frequencies(max_depth):
 
 	rec_update_freq([hn_list], max_depth, 1)
 
-	sorted_totals = list(sorted(freq_dict, key=lambda (x,y): x))
-	return sorted_totals
-
-	#return (OrderedDict(freq_dict))
-	#return OrderedDict(freq_dict)
+	return sorted(freq_dict, key=lambda (x,y): x)
 
 # Recursive helper function
 def rec_update_freq(hn_lists, max_depth, level):
