@@ -8,6 +8,7 @@ except ImportError:
     from ordereddict import OrderedDict
 
 freq_dict = []
+debug_list = []
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
@@ -55,8 +56,8 @@ def get_frequencies(max_depth):
 
 	rec_update_freq([hn_list], max_depth, 1)
 
-	# return (freq_dict, hn_list)
-	return OrderedDict(freq_dict)
+	return debug_list
+	#return OrderedDict(freq_dict)
 
 # Recursive helper function
 def rec_update_freq(hn_lists, max_depth, level):
@@ -65,6 +66,7 @@ def rec_update_freq(hn_lists, max_depth, level):
 
 	for hn_list in hn_lists:
 		lists = consec_dedupe(hn_list, level)
+		debug_list.append(lists)
 		rec_update_freq(lists, max_depth, level+1)
 
 
