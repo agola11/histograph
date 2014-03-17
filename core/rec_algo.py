@@ -36,6 +36,7 @@ def consec_dedupe(hn_list, level):
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
+                        global freq_dict
 			freq_dict.append((('/'.join(hn_list[i]['url'][:level])), count))
 			templist = []
 			count = 1
@@ -56,8 +57,10 @@ def get_frequencies(max_depth):
 
 	rec_update_freq([hn_list], max_depth, 1)
 
+        global freq_dict
 	freq_dict = sorted(freq_dict, key=lambda (x,y): x)
-	return (OrderedDict(freq_dict))
+        return freq_dict
+	#return (OrderedDict(freq_dict))
 	#return OrderedDict(freq_dict)
 
 # Recursive helper function
