@@ -65,6 +65,8 @@ def rec_update_freq(hn_lists, max_depth, level):
 
 	for hn_list in hn_lists:
 		lists = consec_dedupe(hn_list, level)
+		print lists
+		print '----------------------------------'
 		rec_update_freq(lists, max_depth, level+1)
 
 
