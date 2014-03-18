@@ -1,6 +1,6 @@
+from __future__ import division
 from core.models import HistoryNode
 from urlparse import urlparse
-from __future__ import division
 import numpy
 try:
     from collections import OrderedDict
@@ -60,7 +60,7 @@ def get_frequencies(max_depth):
 
 	rec_update_freq([hn_list], max_depth, 1)
 
-	return sorted(freq_dict, key=lambda (x,y,z): y)
+	return sorted(freq_dict, key=lambda (w,x,y,z): x)
 
 # Recursive helper function
 def rec_update_freq(hn_lists, max_depth, level):
