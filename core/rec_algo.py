@@ -36,7 +36,7 @@ def split_url(hn):
 
 # Remove consecutive urls in sorted hn_list
 # Return a list of list of categorized urls
-# TODO: incorporate accumulation here
+# TODO: incorporate accumulation here, return score in tuple
 def consec_dedupe(hn_list, level):
 	l = []
 	templist = []
@@ -56,6 +56,7 @@ def consec_dedupe(hn_list, level):
 	return l
 
 # TODO: use values (not objects.all()) to rid unused values
+# TODO: maybe get rid of max_depth?
 # DEFINITON: Depth starts at 1.
 def get_frequencies(max_depth):
 	global freq_dict
