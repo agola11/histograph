@@ -43,6 +43,7 @@ def consec_dedupe(hn_list, level):
 	count = 1
 	for i in range(len(hn_list)):
 		if len(hn_list[i]['url']) < level:
+			# if not in dict, put in dict
 			continue
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
