@@ -1,5 +1,6 @@
 from core.models import HistoryNode
 from urlparse import urlparse
+from __future__ import division
 import numpy
 try:
     from collections import OrderedDict
@@ -7,8 +8,10 @@ except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
 
+# TODO: implement caching
+# TODO: add linked websites (using referrers?)
+
 freq_dict = []
-debug_list = []
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
@@ -36,7 +39,7 @@ def consec_dedupe(hn_list, level):
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
-			freq_dict.append((level, ('/'.join(hn_list[i]['url'][:level])), count))
+			freq_dict.append((level, ('/'.join(hn_list[i]['url'][:level])), count, (count/len(hn_list))))
 			templist = []
 			count = 1
 		else:
@@ -44,7 +47,6 @@ def consec_dedupe(hn_list, level):
 			count+=1
 	return l
 
-# TODO: change extension_id to user_id once user auth is implemented
 # TODO: use values (not objects.all()) to rid unused values
 # DEFINITON: Depth starts at 1.
 def get_frequencies(max_depth):
@@ -67,9 +69,11 @@ def rec_update_freq(hn_lists, max_depth, level):
 
 	for hn_list in hn_lists:
 		lists = consec_dedupe(hn_list, level)
-		debug_list.append(lists)
+		# debug_list.append(lists)
 		rec_update_freq(lists, max_depth, level+1)
 
-
+# TODO: determine if we continue to recurseively search even though score is 0.  
+# what is threshold?
+# TODO: change extension_id to user_id once user auth is implemented
 def rank_users(user):
 	pass
