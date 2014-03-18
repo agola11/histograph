@@ -13,6 +13,13 @@ except ImportError:
 
 freq_dict = []
 
+# user's frequency dictionary
+user_dict = []
+
+# user_id mapped to a dictionary
+cumul_dict = {}
+
+
 def filter_http(hn):
 	l = urlparse(hn['url'])
 	return(l.scheme == 'http')
@@ -29,6 +36,7 @@ def split_url(hn):
 
 # Remove consecutive urls in sorted hn_list
 # Return a list of list of categorized urls
+# TODO: incorporate accumulation here
 def consec_dedupe(hn_list, level):
 	l = []
 	templist = []
@@ -53,7 +61,7 @@ def get_frequencies(max_depth):
 	global freq_dict
 	freq_dict = []
 
-	hn_list = list(HistoryNode.objects.values('url'))
+	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
 	hn_list = filter(filter_http, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
