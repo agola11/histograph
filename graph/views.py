@@ -1,14 +1,17 @@
 from django.shortcuts import render
-from core.models import HistoryNode
+from core.models import HistoryNode, create_history_nodes_from_json
 from django.core import serializers
 from django.http import HttpResponse
 from string import split
 from django.utils import simplejson
+from django.contrib.sites.models import get_current_site
+from django.template import RequestContext, loader
+from datetime import datetime
+import json
 
 def send_bubble(request):
-  resp = Htt
+  resp = HttpResponse()
 
-  pResponse()
   all_nodes = HistoryNode.objects.all()
   
   bubble_root = {}
@@ -55,8 +58,8 @@ def send_bubble(request):
 
 def circle(request):
   domain = get_current_site(request).domain
-  template = loader.get_template('core/circle.html')
+  template = loader.get_template('graph/circle.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
-  })
+        })
   return HttpResponse(template.render(context))
