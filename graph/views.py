@@ -15,7 +15,12 @@ def send_bubble(request):
   bubble_root['children'] = {}
   
   for node in all_nodes:
-    url = split(node.url, '://', 1)[1]
+    urls = split(node.url, '://', 1)
+    if len(urls) == 1:
+      url = urls[0]
+    else:
+      url = urls[1]
+    
     bubble_node = bubble_root
 
     bubble_root['node_count'] = bubble_root['node_count'] + 1
