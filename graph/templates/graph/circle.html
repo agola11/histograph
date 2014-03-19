@@ -6,5 +6,14 @@
 </head>
 <body>
   <p> Circle Graph Page </p>
+  <script type="text/javascript">
+  	var data; // a global
+
+	d3.json("http://{{ domain }}/graph/bubble", function(error, json) {
+ 	if (error) return console.warn(error);
+ 	data = json;
+ 	alert(data);
+	});
+  </script>
 </body>
 </html>
