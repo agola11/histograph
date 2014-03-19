@@ -3,4 +3,5 @@ from graph import views
 
 urlpatterns = patterns('',
     url(r'^bubble$', views.send_bubble, name='bubble'),
+    url(r'^circle$', views.circle, name='circle'),
 )

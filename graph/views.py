@@ -6,7 +6,9 @@ from string import split
 from django.utils import simplejson
 
 def send_bubble(request):
-  resp = HttpResponse()
+  resp = Htt
+
+  pResponse()
   all_nodes = HistoryNode.objects.all()
   
   bubble_root = {}
@@ -50,3 +52,11 @@ def send_bubble(request):
       url = url_split[1]
 
   return HttpResponse(simplejson.dumps(bubble_root), content_type='application/json')
+
+def circle(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('core/circle.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+  })
+  return HttpResponse(template.render(context))
