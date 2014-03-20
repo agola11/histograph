@@ -3,6 +3,7 @@
 <html>
 <head>
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 </head>
 <body>
   <p> Circle Graph Page </p>
@@ -10,13 +11,14 @@
   </div>
   
   <script type="text/javascript">
-
- 	d3.select(".chart")
-	  .selectAll("div")
-	     .data(data)
-	  .enter().append("div")
+    $.getJSON( "http://{{ domain }}/graph/bubble", function( data ) {
+ 	    d3.select(".chart")
+	      .selectAll("div")
+	       .data(data)
+	       .enter().append("div")
 	     .style("width", function(d) { return d.node_count * 10 + "px" })
 	     .text(function(d) { return d.node_count; });
+     });
   </script>
 </body>
 </html>
