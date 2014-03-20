@@ -11,14 +11,16 @@
   </div>
   
   <script type="text/javascript">
-    $.getJSON( "http://{{ domain }}/graph/bubble", function( data ) {
+    var data = [{"node_count": 2, "name": "top_level", "children": {"www.reddit.com": {"node_count": 1, "name": "www.reddit.com", "children": {"r": {"node_count": 1, "name": "r", "children": {"sports": {"node_count": 1, "name": "sports", "children": {"blah": {"node_count": 1, "name": "blah", "children": {"morestuff": {"node_count": 1, "name": "morestuff", "children": {}}}}}}}}}}, "stackoverflow.com": {"node_count": 1, "name": "stackoverflow.com", "children": {"questions": {"node_count": 1, "name": "questions", "children": {}}}}}}];
+    
+    //$.getJSON( "http://{{ domain }}/graph/bubble", function( data ) {
  	    d3.select(".chart")
 	      .selectAll("div")
 	       .data(data)
 	       .enter().append("div")
 	     .style("width", function(d) { return d.node_count * 10 + "px" })
 	     .text(function(d) { return d.node_count; });
-     });
+     //});
   </script>
 </body>
 </html>
