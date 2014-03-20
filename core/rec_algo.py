@@ -51,7 +51,7 @@ def reduce_update_user_dict(hn_list, level):
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
-			freq_dict.append((level, ('/'.join(hn_list[i]['url'][:level])), count, (count/(len(hn_list)-removed))))
+			user_dict.append(('/'.join(hn_list[i]['url'][:level])), (count/(len(hn_list)-removed)))
 			templist = []
 			count = 1
 		else:
@@ -85,8 +85,8 @@ def reduce_update_cumul_dict(hn_list, level):
 # TODO: maybe get rid of max_depth?
 # DEFINITON: Depth starts at 1.
 def get_frequencies():
-	global freq_dict
-	freq_dict = []
+	global user_dict
+	user_dict = []
 
 	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
 	hn_list = filter(filter_http, hn_list)
@@ -95,7 +95,7 @@ def get_frequencies():
 
 	rec_update_freq([hn_list], 1)
 
-	return sorted(freq_dict, key=lambda (w,x,y,z): x)
+	return sorted(user_dict, key=lambda (w,x): x)
 
 # Recursive helper function
 def rec_update_freq(hn_lists, level):
