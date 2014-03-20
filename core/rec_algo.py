@@ -107,8 +107,13 @@ def rec_update_freq(hn_lists, level):
 # TODO: determine if we continue to recurseively search even though score is 0.  
 # what is threshold?
 # TODO: change extension_id to user_id once user auth is implemented
-def rank_users(user):
+def rank_urls(user):
 	# Initialize global variables to empty here
 
 	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
+	extension_ids = set(map(lambda hn: hn['extension_id'], hn_list))
+
+	for extension_id in extension_ids:
+		# Process each.
+		pass
 
