@@ -102,7 +102,7 @@ def rec_update_freq(hn_lists, level):
 	for hn_list in hn_lists:
 		lists = reduce_update_user_dict(hn_list, level)
 		# debug_list.append(lists)
-		rec_update_freq(lists, max_depth, level+1)
+		rec_update_freq(lists, level+1)
 
 # TODO: determine if we continue to recurseively search even though score is 0.  
 # what is threshold?
