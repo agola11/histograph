@@ -41,14 +41,17 @@ def consec_dedupe(hn_list, level):
 	l = []
 	templist = []
 	count = 1
+	removed = 0
+
 	for i in range(len(hn_list)):
 		if len(hn_list[i]['url']) < level:
 			# if not in dict, put in dict
+			removed += 1
 			continue
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
-			freq_dict.append((level, ('/'.join(hn_list[i]['url'][:level])), count, (count/len(hn_list))))
+			freq_dict.append((level, ('/'.join(hn_list[i]['url'][:level])), count, (count/(len(hn_list)-removed))))
 			templist = []
 			count = 1
 		else:
