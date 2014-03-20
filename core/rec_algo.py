@@ -51,7 +51,7 @@ def reduce_update_user_dict(hn_list, level):
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
-			user_dict.append(('/'.join(hn_list[i]['url'][:level])), (count/(len(hn_list)-removed)))
+			user_dict.append((('/'.join(hn_list[i]['url'][:level])), (count/(len(hn_list)-removed))))
 			templist = []
 			count = 1
 		else:
@@ -95,7 +95,7 @@ def get_frequencies():
 
 	rec_update_freq([hn_list], 1)
 
-	return sorted(user_dict, key=lambda (w,x): x)
+	return sorted(user_dict, key=lambda (w,x): w)
 
 # Recursive helper function
 def rec_update_freq(hn_lists, level):
