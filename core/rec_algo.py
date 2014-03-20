@@ -51,7 +51,7 @@ def reduce_update_user_dict(hn_list, level):
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
-			user_dict.append((('/'.join(hn_list[i]['url'][:level])), (count/(len(hn_list)-removed))))
+			user_dict.append((('/'.join(hn_list[i]['url'][:level])), {'level':level, 'freq':(count/(len(hn_list)-removed))}))
 			templist = []
 			count = 1
 		else:
@@ -108,4 +108,7 @@ def rec_update_freq(hn_lists, level):
 # what is threshold?
 # TODO: change extension_id to user_id once user auth is implemented
 def rank_users(user):
-	pass
+	# Initialize global variables to empty here
+
+	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
+
