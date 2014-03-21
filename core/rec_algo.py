@@ -59,7 +59,7 @@ def reduce_user_dict(hn_list, level):
 			count+=1
 	return l
 
-def reduce_url_dict((hn_list, prev_score), level):
+def reduce_url_dict(hn_list_tuple, level):
 	l = []
 	templist = []
 	reserved = []
