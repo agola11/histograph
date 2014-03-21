@@ -66,6 +66,9 @@ def reduce_url_dict(hn_list_tuple, level):
 	count = 1
 	removed = 0
 
+	hn_list = hn_list_tuple[0]
+	prev_score = hn_list_tuple[1]
+
 	for i in range(len(hn_list)):
 		if len(hn_list[i]['url']) < level:
 			url = '/'.join(hn_list[i]['url'])
