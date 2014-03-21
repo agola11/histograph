@@ -1,6 +1,7 @@
 from __future__ import division
 from core.models import HistoryNode
 from urlparse import urlparse
+from django.http import Http404
 import numpy
 try:
     from collections import OrderedDict
@@ -10,6 +11,7 @@ except ImportError:
 
 # TODO: implement caching
 # TODO: add linked websites (using referrers?)
+# TODO: fiddle with constants
 
 freq_dict = []
 
@@ -93,15 +95,14 @@ def get_frequencies():
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
 
-	rec_update_freq([hn_list], 1)
+	rec_update_freq([hn_list], 1, reduce_update_user_dict)
 
 	return sorted(user_dict, key=lambda (w,x): w)
 
 # Recursive helper function
-def rec_update_freq(hn_lists, level):
+def rec_update_freq(hn_lists, level, reducer):
 	for hn_list in hn_lists:
-		lists = reduce_update_user_dict(hn_list, level)
-		# debug_list.append(lists)
+		lists = reducer(hn_list, level)
 		rec_update_freq(lists, level+1)
 
 # TODO: determine if we continue to recurseively search even though score is 0.  
@@ -109,11 +110,19 @@ def rec_update_freq(hn_lists, level):
 # TODO: change extension_id to user_id once user auth is implemented
 def rank_urls(user):
 	# Initialize global variables to empty here
+	global user_dict
+	user_dict = []
 
 	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
 	extension_ids = set(map(lambda hn: hn['extension_id'], hn_list))
 
+	if user not in extension_ids:
+		raise Http404
+
+	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
+
+
+
 	for extension_id in extension_ids:
-		# Process each.
 		pass
 
