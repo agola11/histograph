@@ -32,3 +32,8 @@ def about(request):
 def send_frequencies(request):
   freq_dict = rec_algo.get_frequencies()
   return HttpResponse(simplejson.dumps(freq_dict), content_type='application/json')
+
+def send_ranked_urls(request, extension_id):
+  url_dict = rec_algo.rank_urls(int(extension_id))
+  return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
+
