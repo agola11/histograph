@@ -103,7 +103,7 @@ def get_frequencies():
 def rec_update_freq(hn_lists, level, reducer):
 	for hn_list in hn_lists:
 		lists = reducer(hn_list, level)
-		rec_update_freq(lists, level+1)
+		rec_update_freq(lists, level+1, reducer)
 
 # TODO: determine if we continue to recurseively search even though score is 0.  
 # what is threshold?
