@@ -135,7 +135,6 @@ def rank_urls(user):
 	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
 	hn_list = filter(filter_http, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
-	hn_list = map(split_url, hn_list)
 
 	extension_ids = set(map(lambda hn: hn['extension_id'], hn_list))
 
@@ -143,12 +142,18 @@ def rank_urls(user):
 		raise Http404
 
 	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
+	user_urls = set(map(lambda hn: hn['url'], user_hn_list))
+
+	user_hn_list = map(split_url, user_hn_list)
 	update_user_dict([user_hn_list], 1)
+
+	hn_list = filter(lambda hn: hn['url'] not in user_urls, hn_list)
+	hn_list = map(split_url, hn_list)
 
 	for extension_id in extension_ids:
 		filtered_hns = filter(lambda hn: hn['extension_id']==extension_id, hn_list)
 		filtered_hns = map(lambda hn: (hn, 0), filtered_hns)
-		update_url_dict(filtered_hns, 1)
+		update_url_dict([filtered_hns], 1)
 
 	return list(reversed(sorted(url_dict.items(), key=lambda (x,y): x)))
 
