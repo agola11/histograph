@@ -106,7 +106,7 @@ def get_frequencies():
 
 	update_user_dict([hn_list], 1)
 
-	return list(reversed(sorted(user_dict.items, key=lambda (x,y): x)))
+	return list(reversed(sorted(user_dict.items(), key=lambda (x,y): x)))
 
 # Recursive helper function to update user_dict
 def update_user_dict(hn_lists, level):
@@ -150,7 +150,7 @@ def rank_urls(user):
 		filtered_hns = map(lambda hn: (hn, 0), filtered_hns)
 		update_url_dict(filtered_hns, 1)
 
-	return list(reversed(sorted(url_dict.items, key=lambda (x,y): x)))
+	return list(reversed(sorted(url_dict.items(), key=lambda (x,y): x)))
 
 
 
