@@ -145,11 +145,12 @@ def rank_urls(user):
 	user_urls = set(map(lambda hn: hn['url'], user_hn_list))
 
 	hn_list = filter(lambda hn: hn['url'] not in user_urls, hn_list)
-	
+
 	user_hn_list = map(split_url, user_hn_list)
 	update_user_dict([user_hn_list], 1)
 	hn_list = map(split_url, hn_list)
 
+	extension_ids.remove(user)
 	for extension_id in extension_ids:
 		filtered_hns = filter(lambda hn: hn['extension_id']==extension_id, hn_list)
 		filtered_hns = map(lambda hn: (hn, 0), filtered_hns)
