@@ -97,16 +97,16 @@ def reduce_url_dict((hn_list, prev_score), level):
 # TEMPORARY FUNCTION for debugging.  Use to make sure user_dict is accurate
 def get_frequencies():
 	global user_dict
-	user_dict = []
+	user_dict = {}
 
 	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
 	hn_list = filter(filter_http, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
 
-	update_user_dict([hn_list], 1, reduce_update_user_dict)
+	update_user_dict([hn_list], 1)
 
-	return sorted(user_dict, key=lambda (w,x): w)
+	return list(reversed(sorted(user_dict.items, key=lambda (x,y): x)))
 
 # Recursive helper function to update user_dict
 def update_user_dict(hn_lists, level):
