@@ -140,14 +140,14 @@ def rank_urls(user):
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 
 	extension_ids = set(map(lambda hn: hn['extension_id'], hn_list))
+	user_urls = set(map(lambda hn: hn['url'], filter(lambda hn: hn['extension_id']==user, hn_list)))
+
+	hn_list = map(split_url, hn_list)
 
 	if user not in extension_ids:
 		raise Http404
 
 	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
-	user_urls = set(map(lambda hn: hn['url'], user_hn_list))
-
-	user_hn_list = map(split_url, user_hn_list)
 	update_user_dict([user_hn_list], 1)
 
 	return hn_list 
