@@ -147,7 +147,7 @@ def rank_urls(user):
 	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
 	user_urls = set(map(lambda hn: hn['url'], user_hn_list))
 
-	return user_urls
+	return list(extension_ids)
 	'''
 
 	user_hn_list = map(split_url, user_hn_list)
