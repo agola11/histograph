@@ -150,6 +150,10 @@ def rank_urls(user):
 	user_hn_list = map(split_url, user_hn_list)
 	update_user_dict([user_hn_list], 1)
 
+	return hn_list 
+
+	'''
+
 	hn_list = map(split_url, hn_list)
 
 	extension_ids.remove(user)
@@ -162,5 +166,5 @@ def rank_urls(user):
 
 	return list(reversed(sorted(ranked_urls, key=lambda (x,y): x)))
 
-
+	'''
 
