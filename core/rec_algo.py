@@ -85,7 +85,7 @@ def reduce_url_dict(hn_list_tuple, level):
 			if url not in user_dict:
 				score = 0 + 0.2 * (level-1)
 			else:
-				user_freq = user_dict['url']
+				user_freq = user_dict[url]
 				score = min(freq, user_freq)/max(freq, user_freq) + 0.2 * (level-1)
 			if score > 0:
 				l.append((templist, score+prev_score+(WEIGHT*level)))
@@ -150,15 +150,13 @@ def rank_urls(user):
 	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
 	update_user_dict([user_hn_list], 1)
 
-	hn_list = map(split_url, hn_list)
-
 	extension_ids.remove(user)
 	for extension_id in extension_ids:
 		filtered_hns = filter(lambda hn: hn['extension_id']==extension_id, hn_list)
 		update_url_dict([(filtered_hns,0)], 1)
 
-	ranked_urls = url_dict.items()
-	ranked_urls = filter(lambda (x,y): x not in user_urls, rank_urls)
+	ranked_urls = list(url_dict.items())
+	ranked_urls = filter((lambda (x,y): ('http://'+x) not in user_urls), ranked_urls)
 
-	return list(reversed(sorted(ranked_urls, key=lambda (x,y): x)))
+	return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
 
