@@ -17,7 +17,7 @@
 <body>
   
   <script type="text/javascript">
-    var data = [{"value": 4, "name": "top_level", "children": [{"value": 2, "name": "www.reddit.com", "children": [{"value": 2, "name": "r", "children": [{"value": 1, "name": "sports"}, {"value": 1, "name": "funny"}]}]}, {"value": 2, "name": "stackoverflow.com", "children": [{"value": 1, "name": "questions"}, {"value": 1, "name": "tags"}]}]}];
+    var data = [{"value": 5, "name": "top_level", "children": [{"value": 2, "name": "www.reddit.com", "children": [{"value": 2, "name": "r", "children": [{"value": 1, "name": "sports"}, {"value": 1, "name": "funny"}]}]}, {"value": 2, "name": "stackoverflow.com", "children": [{"value": 2, "name": "questions"}, {"value": 1, "name": "tags"}]}]}];
 
     /*var data = [{
       "name": "Max", 
@@ -107,18 +107,18 @@
       .attr("stroke-width", "2")
       .attr("fill", function (d) { return d.depth <= depth ? "steelblue" : "#fff";})
       .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;})
-      .on("click", function(d) {return zoom(node == d) ? root : d});
+      .on("click", function(d) {return zoom((node == d) ? root : d);});
 
     node.append("text")
       .text(function (d) {return d.depth == depth ? d.name : ""; })
       .style("text-anchor", "middle");
 
-    function zoom(d, i) {
-      var k = r / d.r / 2;
-      x.domain([d.x - d.r, d.x + d.r]);
-      y.domain([d.y - d.r, d.y + d.r]);
+    function zoom(p, i) {
+      /*var k = r / p.r / 2;
+      x.domain([p.x - p.r, p.x + p.r]);
+      y.domain([p.y - p.r, p.y + p.r]);*/
 
-      var t = canvas.transition()
+      /*var t = canvas.transition()
         .duration(d3.event.altKey ? 7500 : 750);
 
       t.selectAll("circle")
@@ -130,12 +130,28 @@
         .attr("x", function(d) { return x(d.x); })
         .attr("y", function(d) { return y(d.y); })
         .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
-
+        */
         depth = depth + 1;
+        if (depth > p.depth)
+          depth = 1;
         console.log(depth);
 
-  node = d;
-  d3.event.stopPropagation();
+      node.selectAll("circle")
+      .attr("r", function(d) { return d.r; })
+      .attr("stroke", "#ADADAD") 
+      .attr("stroke-width", "2")
+      .attr("fill", function (d) { return d.depth <= depth ? "steelblue" : "#fff";})
+      .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;});
+      //.on("click", function(d) {return zoom(node == d) ? root : d});
+
+
+    node.selectAll("text")
+      .text(function (d) {return (d.depth == depth) ? d.name : ""; })
+      .style("text-anchor", "middle"); 
+        
+
+  //node = d;
+  //d3.event.stopPropagation();
 }
     //$.getJSON( "http://{{ domain }}/graph/bubble", function( data ) {
  	    /*d3.select(".chart")
