@@ -5,6 +5,6 @@ urlpatterns = patterns('',
     url(r'^store$', views.store_history, name='store_history'),
     url(r'^send$', views.send_history, name='send_history'),
     url(r'^about$', views.about, name='about'),
-    url(r'^freq$', views.send_frequencies, name='send_frequencies'),
+    url(r'^freq/(?P<extension_id>\d+)$', views.send_frequencies, name='send_frequencies'),
     url(r'^rank/(?P<extension_id>\d+)$', views.send_ranked_urls, name='send_ranked_urls')
 )

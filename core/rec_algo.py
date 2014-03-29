@@ -98,11 +98,12 @@ def reduce_url_dict(hn_list_tuple, level):
 
 # DEFINITON: Depth starts at 1.
 # TEMPORARY FUNCTION for debugging.  Use to make sure user_dict is accurate
-def get_frequencies():
+def get_frequencies(user):
 	global user_dict
 	user_dict = {}
 
 	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
+	hn_list = filter(lambda hn: hn['extension_id'] == user, hn_list)
 	hn_list = filter(filter_http, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
@@ -144,6 +145,7 @@ def rank_urls(user):
 
 	hn_list = map(split_url, hn_list)
 
+	# TODO: incorporate into view
 	if user not in extension_ids:
 		raise Http404
 

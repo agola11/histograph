@@ -29,8 +29,8 @@ def about(request):
   })
   return HttpResponse(template.render(context))
 
-def send_frequencies(request):
-  freq_dict = rec_algo.get_frequencies()
+def send_frequencies(request, extension_id):
+  freq_dict = rec_algo.get_frequencies(int(extension_id))
   return HttpResponse(simplejson.dumps(freq_dict), content_type='application/json')
 
 def send_ranked_urls(request, extension_id):
