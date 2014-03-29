@@ -30,7 +30,7 @@ class HistoryNode(models.Model):
   # fields
   url = models.URLField(max_length=2048)
   last_title = models.CharField(max_length=256)
-  visit_time = models.IntegerField()
+  visit_time = models.BigIntegerField()
   transition_type = models.IntegerField(choices=TRANSITION_CHOICES)
   browser_id = models.IntegerField()
   extension_id = models.IntegerField()
@@ -38,13 +38,13 @@ class HistoryNode(models.Model):
 
 def create_history_nodes_from_json(payload):
   for node in payload:
-    hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=int(node['visit_time']), transition_type=int(node['transition_type']), browser_id=int(node['browser_id']), extension_id=int(node['extension_id']))
+    hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'])
     hn.save()
 
   # connect referrers
   for node in payload:
     try:
-      referrer = HistoryNode.objects.get(extension_id=int(node['extension_id']), browser_id=int(node['referrer_id']))
-      HistoryNode.objects.filter(extension_id=int(node['extension_id']), browser_id=int(node['browser_id'])).update(referrer=referrer)
+      referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'])
+      HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id']).update(referrer=referrer)
     except HistoryNode.DoesNotExist:
       continue
