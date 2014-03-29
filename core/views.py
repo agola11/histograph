@@ -6,6 +6,7 @@ from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
 from django.utils import simplejson
+from django.db.models import Max
 import json
 import rec_algo
 
@@ -16,7 +17,7 @@ def send_history(request):
   return HttpResponse(resp, content_type="application/json")
 
 def send_most_recent_history_time(request, extension_id):
-  t = HistoryNode.objects.get(extension_id=extension_id).aggregate(Max('visit_time'))
+  t = HistoryNode.objects.filter(extension_id=extension_id).aggregate(Max('visit_time'))
   return HttpResponse(simplejson.dumps(t), content_type="application/json")
 
 def send_new_extension_id(request):
