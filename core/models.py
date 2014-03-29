@@ -36,6 +36,9 @@ class HistoryNode(models.Model):
   extension_id = models.IntegerField()
   referrer = models.ForeignKey('HistoryNode', blank=True, null=True)
 
+class ExtensionID(models.Model):
+  next_id = models.IntegerField()
+
 def create_history_nodes_from_json(payload):
   for node in payload:
     hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'])
