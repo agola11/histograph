@@ -17,7 +17,11 @@ def send_history(request):
   return HttpResponse(resp, content_type="application/json")
 
 def send_most_recent_history_time(request, extension_id):
-  t = HistoryNode.objects.filter(extension_id=extension_id).aggregate(Max('visit_time'))
+  hn = HistoryNode.objects.filter(extension_id=extension_id)
+  if len(hn) == 0:
+    t = {'visit_time__max': 0}
+  else:
+    t = hn.aggregate(Max('visit_time'))
   return HttpResponse(simplejson.dumps(t), content_type="application/json")
 
 def send_new_extension_id(request):
