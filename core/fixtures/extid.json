@@ -1,0 +1,7 @@
+[{
+  "model": "core.ExtensionID",
+  "pk": 1,
+  "fields": {
+    "next_id": 0
+  }
+}]
