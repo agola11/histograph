@@ -132,7 +132,7 @@ d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
           d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
         });
  }
-  };
+  });
 
 function isParentOf(p, c) {
   if (p === c) return true;
