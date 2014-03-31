@@ -17,35 +17,7 @@
 <body>
   
   <script type="text/javascript">
-    var data = [{"value": 5, "name": "top_level", "children": [{"value": 2, "name": "www.reddit.com", "children": [{"value": 2, "name": "r", "children": [{"value": 1, "name": "sports"}, {"value": 1, "name": "funny"}]}]}, {"value": 2, "name": "stackoverflow.com", "children": [{"value": 2, "name": "questions"}, {"value": 1, "name": "tags"}]}]}];
-
-    /*var data = [{
-      "name": "Max", 
-      "value": 100, 
-      "children": [
-        {
-          "name": "Sylvia", 
-          "value": 75, 
-          "children": [
-            {"name": "Craig", "value": 25},
-            {"name": "Robin", "value": 25}, 
-            {"name": "Anna", "value": 25}
-          ]
-        }, 
-        {
-          "name": "David", 
-          "value": 75, 
-          "children": [
-            {"name": "Jeff", "value": 25},
-            {"name": "Buffy", "value": 25}
-          ]
-        },
-        {
-          "name": "Mr X", 
-          "value": 75
-        } 
-      ]
-    }]; */
+    var data = [{"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]}];
     
     /*var node_counts = [];
     var domain_names = new Array();
@@ -54,12 +26,11 @@
         domain_names.push(val['name']);
         node_counts[val['name']] = val['node_count'];
       });  
-    });*/
-  
-    /*$.each(data, function(key, val) { recursiveParse(key, val) });
+    });  
+    $.each(data, function(key, val) { recursiveParse(key, val) });
     function recursiveParse(key, val) {
         console.log(val.name);
-        var value = val['children'];
+        var node_count = val['children'];
         if (value instanceof Object) {
           $.each(value, function(key, val) {
               recursiveParse(key, val)
@@ -81,12 +52,13 @@
       .attr("width", width)
       .attr("height", height)
       .append("g")
-        .attr("transform", "translate(100, 300)")
+        .attr("transform", "translate(50, 400)")
         .sort(null);
 
     var pack = d3.layout.pack()
       .size([width, height - 50])
-      .padding(10);
+      .padding(10)
+      .value(function(d){return d.node_count});
 
     node = root = data;
 
@@ -142,8 +114,6 @@
       .attr("stroke-width", "2")
       .attr("fill", function (d) { return d.depth <= depth ? "steelblue" : "#fff";})
       .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;});
-      //.on("click", function(d) {return zoom(node == d) ? root : d});
-
 
     node.selectAll("text")
       .text(function (d) {return (d.depth == depth) ? d.name : ""; })
@@ -153,15 +123,6 @@
   //node = d;
   //d3.event.stopPropagation();
 }
-    //$.getJSON( "http://{{ domain }}/graph/bubble", function( data ) {
- 	    /*d3.select(".chart")
-	      .selectAll("div")
-	       .data(domain_names)
-	       .enter().append("div")
-	     .style("width", function(d) { 
-        return node_counts[d] * 100 + "px"; })
-	     .text(function(d) { return d; }); */
-     //});
   </script>
 </body>
 </html>
