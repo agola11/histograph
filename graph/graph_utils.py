@@ -55,12 +55,9 @@ def send_bubble(hn_list):
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
 
-	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
-
 	bubble_root['node_count'] = 0
 	bubble_root['name'] = 'top_level'
-	bubble_root['urls'] = map(lambda hn: hn['url'], user_hn_list)
-
+	bubble_root['urls'] = map(lambda hn: hn['url'], hn_list)
 
 	update_bubble_tree([bubble_root], 1)
 	return bubble_root
