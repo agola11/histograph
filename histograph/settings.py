@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+try:
+    from local_settings import *
+except ImportError:
+    pass
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
@@ -104,11 +109,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Dat Facebook Doe
+FACEBOOK_APP_ID = 621832427895740
+FACEBOOK_APP_SECRET = 'd74accde2c85ef2af87da411ef1c64c5'
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
 
 FACEBOOK_APP_ID = '243320595870291'
 FACEBOOK_APP_SECRET = '50a0c2365fd8561c866bf133a15f798a'
