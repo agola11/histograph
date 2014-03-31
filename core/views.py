@@ -73,11 +73,11 @@ def login(request):
   context = RequestContext(request)
   return HttpResponse(template.render(context))
 
-def send_frequencies(request, extension_id):
-  freq_dict = rec_algo.get_frequencies(int(extension_id))
+def send_frequencies(request, user_id):
+  freq_dict = rec_algo.get_frequencies(int(user_id))
   return HttpResponse(simplejson.dumps(freq_dict), content_type='application/json')
 
-def send_ranked_urls(request, extension_id):
-  url_dict = rec_algo.rank_urls(int(extension_id))
+def send_ranked_urls(request, user_id):
+  url_dict = rec_algo.rank_urls(int(user_id))
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 

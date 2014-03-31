@@ -1,0 +1,12 @@
+.alignleft {
+	float: left;
+}
+.alignright {
+	float: right;
+}
+
+.sidr-class-fake-line {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}

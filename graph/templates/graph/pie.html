@@ -32,7 +32,7 @@ p#intro {
 <div id="vis"></div>
 <script>
 
- var data = {"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]};
+/* var data = {"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]};*/
 
 /* Code taken from: http://www.jasondavies.com/coffee-wheel/ */ 
 
@@ -70,7 +70,7 @@ var arc = d3.svg.arc()
     .innerRadius(function(d) { return Math.max(0, y(d.y)); })
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
 
-//d3.json("/d/4063550/flare.json", function(error, root) {
+d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
   var nodes = partition.nodes(data);
 
   var path = vis.selectAll("path").data(nodes);
@@ -78,7 +78,7 @@ var arc = d3.svg.arc()
     .attr("id", function(d, i) {return "path-" + i; })
     .attr("d", arc)
     .style("fill-rule", "evenodd")
-    .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
+    .style("fill", colour)
     .on("click", click);
  
   var text = vis.selectAll("text").data(nodes);
@@ -131,6 +131,7 @@ var arc = d3.svg.arc()
         .each("end", function(e) {
           d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
         });
+ }
   };
 
 function isParentOf(p, c) {
