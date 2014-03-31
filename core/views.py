@@ -12,6 +12,8 @@ import rec_algo
 
 # TODO: change to simplejson?
 def send_history(request):
+  if request.user.is_authenticated():
+    return HttpResponse("Not Authorized")
   resp = HttpResponse()
   serializers.serialize('json', HistoryNode.objects.all(), stream=resp)
   return HttpResponse(resp, content_type="application/json")
@@ -40,7 +42,9 @@ def store_history(request):
   payload = json.loads(request.body)
   create_history_nodes_from_json(payload)
   
-  return HttpResponse("OK")
+  resp = HttpResponse()
+  resp.status_code = 200
+  return resp
 
 def about(request):
   domain = get_current_site(request).domain
@@ -48,6 +52,13 @@ def about(request):
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
   })
+  return HttpResponse(template.render(context))
+
+def login(request):
+  if request.user.is_authenticated():
+    return HttpResponse("AUTHENTICATED")
+  template = loader.get_template('core/login.html')
+  context = RequestContext(request)
   return HttpResponse(template.render(context))
 
 def send_frequencies(request, extension_id):

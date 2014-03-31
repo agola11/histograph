@@ -36,6 +36,7 @@ class HistoryNode(models.Model):
   browser_id = models.IntegerField()
   extension_id = models.IntegerField()
   referrer = models.ForeignKey('HistoryNode', blank=True, null=True)
+  user = models.ForeignKey(FacebookCustomUser)
 
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
