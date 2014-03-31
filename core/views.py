@@ -37,9 +37,14 @@ def send_new_extension_id(request):
   extid.save()
   return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
-#def send_user_id(request):
-#  if request.user.is_authenticated():
-    
+def send_user_id(request):
+  if request.user.is_authenticated():
+    data = {'user_id': request.user.id}
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def store_history(request):
   payload = json.loads(request.body)
