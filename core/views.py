@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, ExtensionID, create_history_nodes_from_json
+from core.models import HistoryNode, ExtensionID, BlockedSite, create_history_nodes_from_json
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -23,6 +23,11 @@ def send_most_recent_history_time(request, extension_id):
   else:
     t = hn.aggregate(Max('visit_time'))
   return HttpResponse(simplejson.dumps(t), content_type="application/json")
+
+def send_blocked_sites(request, user_id):
+  sites = BlockedSite.objects.filter(user__id=user_id)
+  urls = map(lambda x: x.url, sites)
+  return HttpResponse(simplejson.dumps(urls), content_type="application/json")
 
 def send_new_extension_id(request):
   extid = ExtensionID.objects.get(pk=1)

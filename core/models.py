@@ -1,4 +1,5 @@
 from django.db import models
+from django_facebook.models import FacebookCustomUser
 
 class HistoryNode(models.Model):
   # choices for the transition type field
@@ -38,6 +39,10 @@ class HistoryNode(models.Model):
 
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
+
+class BlockedSite(models.Model):
+  url = models.URLField(max_length=2048)
+  user = models.ForeignKey(FacebookCustomUser)
 
 def create_history_nodes_from_json(payload):
   for node in payload:

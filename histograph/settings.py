@@ -78,10 +78,10 @@ ROOT_URLCONF = 'histograph.urls'
 
 WSGI_APPLICATION = 'histograph.wsgi.application'
 
+STATIC_ROOT = os.path.join(BASE_DIR, "static_prod")
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
-    '/homeApp/',
-    '/static/'
 )
 
 STATICFILES_FINDERS = (
