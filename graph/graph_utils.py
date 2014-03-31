@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from string import split
 from django.utils import simplejson
 from django.http import Http404
+from urlparse import urlparse
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
@@ -23,12 +24,12 @@ def split_url(hn):
 def reduce_bubble_tree(child, level):
 	templist = []
 	children = []
-	urls = child['url']
+	urls = child['urls']
 	count = 1
 	removed = 0
 
 	for i in range(len(urls)):
-		if len(urls[i]['url']) < level:
+		if len(urls[i]) < level:
 			removed += 1
 			continue
 		if i+1 >= len(urls) or urls[i][level-1] != urls[i+1][level-1]:
@@ -37,13 +38,13 @@ def reduce_bubble_tree(child, level):
 			templist = []
 			count = 1
 		else:
-			templist.append(hn_list[i])
+			templist.append(urls[i])
 			count+=1
 	return children
 
 def update_bubble_tree(children, level):
 	for child in children:
-		children = reduce_user_dict(child, level)
+		children = reduce_bubble_tree(child, level)
 		if children:
 			child['children'] = children
 		update_bubble_tree(children, level+1)
