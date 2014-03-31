@@ -9,7 +9,7 @@ path {
 }
 
 text {
-  font: 11px sans-serif;
+  font: 16px sans-serif;
   cursor: pointer;
 }
 
@@ -78,7 +78,7 @@ d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
     .attr("id", function(d, i) {return "path-" + i; })
     .attr("d", arc)
     .style("fill-rule", "evenodd")
-    .style("fill", colour)
+    .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
     .on("click", click);
  
   var text = vis.selectAll("text").data(nodes);
@@ -132,7 +132,7 @@ d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
           d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
         });
  }
-  };
+  });
 
 function isParentOf(p, c) {
   if (p === c) return true;
