@@ -1,0 +1,22 @@
+<!doctype html>
+{% load staticfiles %}
+<html lang="en" ng-app>
+<head>
+	<meta charset="utf-8">
+	<title>Dat Histograph Doe</title>
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="{{ STATIC_URL }}css/facebook.css" type="text/css" rel="stylesheet" media="all" />
+	{% include 'django_facebook/_facebook_js.html' %}
+</head>
+<body>
+
+<form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
+    <input type="hidden" value="{{ request.path }}" name="next" />
+    <input type="hidden" value="{{ request.path }}" name="register_next" />
+    <input type="hidden" value="{{ request.path }}" name="error_next" />
+    {% csrf_token %}
+    <input onclick="F.connect(this.parentNode); return false;" type="image" src="{{ STATIC_URL }}django_facebook/images/facebook_login.png" />
+</form>
+
+</body>
+</html>
