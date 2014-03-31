@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, create_history_nodes_from_json
+from core.models import HistoryNode, ExtensionID, create_history_nodes_from_json
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
 from django.utils import simplejson
+from django.db.models import Max
 import json
 import rec_algo
 
@@ -14,6 +15,21 @@ def send_history(request):
   resp = HttpResponse()
   serializers.serialize('json', HistoryNode.objects.all(), stream=resp)
   return HttpResponse(resp, content_type="application/json")
+
+def send_most_recent_history_time(request, extension_id):
+  hn = HistoryNode.objects.filter(extension_id=extension_id)
+  if len(hn) == 0:
+    t = {'visit_time__max': 0}
+  else:
+    t = hn.aggregate(Max('visit_time'))
+  return HttpResponse(simplejson.dumps(t), content_type="application/json")
+
+def send_new_extension_id(request):
+  extid = ExtensionID.objects.get(pk=1)
+  data = {'extension_id': extid.next_id}
+  extid.next_id = extid.next_id + 1
+  extid.save()
+  return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 def store_history(request):
   payload = json.loads(request.body)
