@@ -12,8 +12,6 @@ import rec_algo
 
 # TODO: change to simplejson?
 def send_history(request):
-  if request.user.is_authenticated():
-    return HttpResponse("Not Authorized")
   resp = HttpResponse()
   serializers.serialize('json', HistoryNode.objects.all(), stream=resp)
   return HttpResponse(resp, content_type="application/json")
