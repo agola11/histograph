@@ -1,0 +1,128 @@
+<!doctype html>
+<html>
+<head>
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <style>
+    .chart div {
+    font: 10px sans-serif;
+    background-color: steelblue;
+    text-align: right;
+    padding: 3px;
+    margin: 1px;
+    color: white;
+    }
+  </style>
+</head>
+<body>
+  
+  <script type="text/javascript">
+    var data = [{"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]}];
+    
+    /*var node_counts = [];
+    var domain_names = new Array();
+    $.each(data, function(key, val) {
+      $.each(val['children'], function(key, val) {
+        domain_names.push(val['name']);
+        node_counts[val['name']] = val['node_count'];
+      });  
+    });  
+    $.each(data, function(key, val) { recursiveParse(key, val) });
+    function recursiveParse(key, val) {
+        console.log(val.name);
+        var node_count = val['children'];
+        if (value instanceof Object) {
+          $.each(value, function(key, val) {
+              recursiveParse(key, val)
+          });
+        }
+    }*/
+    
+    var width = 1280, 
+        height = 800, 
+        r = 720, 
+        x = d3.scale.linear().range([0, r]),
+        y = d3.scale.linear().range([0, r]);
+
+    var depth = 1;
+
+    var node, root;
+
+    var canvas = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .append("g")
+        .attr("transform", "translate(50, 400)")
+        .sort(null);
+
+    var pack = d3.layout.pack()
+      .size([width, height - 50])
+      .padding(10)
+      .value(function(d){return d.node_count});
+
+    node = root = data;
+
+    var nodes = pack.nodes(data[0]);
+
+    console.log(nodes);
+
+    var node = canvas.selectAll(".node")
+      .data(nodes)
+      .enter()
+      .append("g")
+        .attr("class", "node")
+        .attr("transform", function(d) {return "translate("+ d.x + "." + d.y +")"; });
+
+    node.append("circle")
+      .attr("r", function(d) { return d.r; })
+      .attr("stroke", "#ADADAD") 
+      .attr("stroke-width", "2")
+      .attr("fill", function (d) { return d.depth <= depth ? "steelblue" : "#fff";})
+      .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;})
+      .on("click", function(d) {return zoom((node == d) ? root : d);});
+
+    node.append("text")
+      .text(function (d) {return d.depth == depth ? d.name : ""; })
+      .style("text-anchor", "middle");
+
+    function zoom(p, i) {
+      /*var k = r / p.r / 2;
+      x.domain([p.x - p.r, p.x + p.r]);
+      y.domain([p.y - p.r, p.y + p.r]);*/
+
+      /*var t = canvas.transition()
+        .duration(d3.event.altKey ? 7500 : 750);
+
+      t.selectAll("circle")
+        .attr("cx", function(d) { return x(d.x); })
+        .attr("cy", function(d) { return y(d.y); })
+        .attr("r", function(d) { return k * d.r; });
+
+      t.selectAll("text")
+        .attr("x", function(d) { return x(d.x); })
+        .attr("y", function(d) { return y(d.y); })
+        .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
+        */
+        depth = depth + 1;
+        if (depth > p.depth)
+          depth = 1;
+        console.log(depth);
+
+      node.selectAll("circle")
+      .attr("r", function(d) { return d.r; })
+      .attr("stroke", "#ADADAD") 
+      .attr("stroke-width", "2")
+      .attr("fill", function (d) { return d.depth <= depth ? "steelblue" : "#fff";})
+      .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;});
+
+    node.selectAll("text")
+      .text(function (d) {return (d.depth == depth) ? d.name : ""; })
+      .style("text-anchor", "middle"); 
+        
+
+  //node = d;
+  //d3.event.stopPropagation();
+}
+  </script>
+</body>
+</html>

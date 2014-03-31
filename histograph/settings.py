@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_facebook',
     'core',
+    'graph',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -60,6 +61,7 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
+<<<<<<< HEAD
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
@@ -69,6 +71,17 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'django_facebook.context_processors.facebook',
+=======
+     "django.contrib.auth.context_processors.auth",
+     "django.core.context_processors.debug",
+     "django.core.context_processors.i18n",
+     "django.core.context_processors.media",
+     "django.core.context_processors.static",
+     "django.core.context_processors.tz",
+     "django.core.context_processors.request",
+     "django.contrib.messages.context_processors.messages",
+     "django_facebook.context_processors.facebook",
+>>>>>>> ad635866559d09521dd898d3a87915732012f5c5
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -76,26 +89,41 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> ad635866559d09521dd898d3a87915732012f5c5
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 ROOT_URLCONF = 'histograph.urls'
 
 WSGI_APPLICATION = 'histograph.wsgi.application'
 
+<<<<<<< HEAD
 
+=======
+STATIC_ROOT = os.path.join(BASE_DIR, "static_prod")
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+>>>>>>> ad635866559d09521dd898d3a87915732012f5c5
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
+<<<<<<< HEAD
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
     '/var/www/histograph-dev1/static/'
 )
 
+=======
+AUTH_USER_MODEL = 'django_facebook.FacebookCustomUser'
+>>>>>>> ad635866559d09521dd898d3a87915732012f5c5
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -120,3 +148,13 @@ FACEBOOK_APP_SECRET = 'd74accde2c85ef2af87da411ef1c64c5'
 
 STATIC_URL = '/static/'
 
+<<<<<<< HEAD
+=======
+FACEBOOK_APP_ID = '243320595870291'
+FACEBOOK_APP_SECRET = '50a0c2365fd8561c866bf133a15f798a'
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
+>>>>>>> ad635866559d09521dd898d3a87915732012f5c5
