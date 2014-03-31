@@ -14,13 +14,6 @@ except ImportError:
 # TODO: fiddle with constants
 WEIGHT = 0.5
 
-# user's frequency dictionary
-user_dict = {}
-
-# url mapped to rank
-url_dict = {}
-
-
 def filter_http(hn):
 	l = urlparse(hn['url'])
 	return(l.scheme == 'http')
@@ -38,7 +31,7 @@ def split_url(hn):
 # Remove consecutive urls in sorted hn_list
 # Return a list of list of categorized urls
 # TODO: incorporate accumulation here, return score in tuple
-def reduce_user_dict(hn_list, level):
+def reduce_user_dict(hn_list, level, user_dict):
 	l = []
 	templist = []
 	count = 1
@@ -59,7 +52,7 @@ def reduce_user_dict(hn_list, level):
 			count+=1
 	return l
 
-def reduce_url_dict(hn_list_tuple, level):
+def reduce_url_dict(hn_list_tuple, level, url_dict):
 	l = []
 	templist = []
 	reserved = []
@@ -99,7 +92,6 @@ def reduce_url_dict(hn_list_tuple, level):
 # DEFINITON: Depth starts at 1.
 # TEMPORARY FUNCTION for debugging.  Use to make sure user_dict is accurate
 def get_frequencies(user):
-	global user_dict
 	user_dict = {}
 
 	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
@@ -108,21 +100,21 @@ def get_frequencies(user):
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
 
-	update_user_dict([hn_list], 1)
+	update_user_dict([hn_list], 1, user_dict)
 
 	return list(reversed(sorted(user_dict.items(), key=lambda (x,y): x)))
 
 # Recursive helper function to update user_dict
-def update_user_dict(hn_lists, level):
+def update_user_dict(hn_lists, level, user_dict):
 	for hn_list in hn_lists:
 		lists = reduce_user_dict(hn_list, level)
-		update_user_dict(lists, level+1)
+		update_user_dict(lists, level+1, user_dict)
 
 # Recursive helper function to update url_dict
-def update_url_dict(hn_list_tuples, level):
+def update_url_dict(hn_list_tuples, level, url_dict):
 	for hn_list_tuple in hn_list_tuples:
 		lists = reduce_url_dict(hn_list_tuple, level)
-		update_url_dict(lists, level+1)
+		update_url_dict(lists, level+1, url_dict)
 
 # TODO: determine if we continue to recursively search even though score is 0.  
 # what is threshold?
@@ -130,10 +122,7 @@ def update_url_dict(hn_list_tuples, level):
 # TODO: maybe only need to sort once? Set a min number of urls?
 def rank_urls(user):
 	# Initialize global variables to empty here
-	global user_dict
 	user_dict = {}
-
-	global url_dict
 	url_dict = {}
 
 	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
@@ -150,12 +139,12 @@ def rank_urls(user):
 		raise Http404
 
 	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
-	update_user_dict([user_hn_list], 1)
+	update_user_dict([user_hn_list], 1, user_dict)
 
 	extension_ids.remove(user)
 	for extension_id in extension_ids:
 		filtered_hns = filter(lambda hn: hn['extension_id']==extension_id, hn_list)
-		update_url_dict([(filtered_hns,0)], 1)
+		update_url_dict([(filtered_hns,0)], 1, url_dict)
 
 	ranked_urls = list(url_dict.items())
 	ranked_urls = filter((lambda (x,y): ('http://'+x) not in user_urls), ranked_urls)
