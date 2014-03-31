@@ -5,6 +5,7 @@ from core.models import HistoryNode, ExtensionID, BlockedSite, create_history_no
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
+from django.contrib.sessions.models import Session
 from django.utils import simplejson
 from django.db.models import Max
 import json
@@ -35,6 +36,11 @@ def send_new_extension_id(request):
   extid.next_id = extid.next_id + 1
   extid.save()
   return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+def send_user_id(request):
+  payload = json.loads(request.body)
+  session_id = int(payload['session_id'])
+  session = Session.objects.get(pk=session_id)
 
 def store_history(request):
   payload = json.loads(request.body)
