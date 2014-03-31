@@ -49,18 +49,11 @@ def update_bubble_tree(children, level):
 			child['children'] = children
 		update_bubble_tree(children, level+1)
 
-def send_bubble(user):
+def send_bubble(hn_list):
 	bubble_root = {}
-	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
 	hn_list = filter(filter_http, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
-	extension_ids = set(map(lambda hn: hn['extension_id'], hn_list))
-
-	user_urls = set(map(lambda hn: hn['url'], filter(lambda hn: hn['extension_id']==user, hn_list)))
 	hn_list = map(split_url, hn_list)
-
-	if user not in extension_ids:
-		raise Http404
 
 	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
 
@@ -71,5 +64,3 @@ def send_bubble(user):
 
 	update_bubble_tree([bubble_root], 1)
 	return bubble_root
-
-	return 
