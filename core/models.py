@@ -47,7 +47,7 @@ class BlockedSite(models.Model):
 
 def create_history_nodes_from_json(payload):
   for node in payload:
-    hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'])
+    hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=FacebookCustomUser.objects.get(pk=node['user_id']))
     hn.save()
 
   # connect referrers
