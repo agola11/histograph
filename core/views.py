@@ -34,3 +34,11 @@ def about(request):
         'domain': get_current_site(request).domain,
   })
   return HttpResponse(template.render(context))
+
+def testLoad(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('core/testLoad.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+  })
+  return HttpResponse(template.render(context))
