@@ -37,10 +37,9 @@ def send_new_extension_id(request):
   extid.save()
   return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
-def send_user_id(request):
-  payload = json.loads(request.body)
-  session_id = int(payload['session_id'])
-  session = Session.objects.get(pk=session_id)
+#def send_user_id(request):
+#  if request.user.is_authenticated():
+    
 
 def store_history(request):
   payload = json.loads(request.body)
