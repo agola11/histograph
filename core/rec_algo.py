@@ -52,7 +52,7 @@ def reduce_user_dict(hn_list, level, user_dict):
 			count+=1
 	return l
 
-def reduce_url_dict(hn_list_tuple, level, url_dict):
+def reduce_url_dict(hn_list_tuple, level, url_dict, user_dict):
 	l = []
 	templist = []
 	reserved = []
@@ -107,14 +107,14 @@ def get_frequencies(user):
 # Recursive helper function to update user_dict
 def update_user_dict(hn_lists, level, user_dict):
 	for hn_list in hn_lists:
-		lists = reduce_user_dict(hn_list, level)
+		lists = reduce_user_dict(hn_list, level, user_dict)
 		update_user_dict(lists, level+1, user_dict)
 
 # Recursive helper function to update url_dict
-def update_url_dict(hn_list_tuples, level, url_dict):
+def update_url_dict(hn_list_tuples, level, url_dict, user_dict):
 	for hn_list_tuple in hn_list_tuples:
-		lists = reduce_url_dict(hn_list_tuple, level)
-		update_url_dict(lists, level+1, url_dict)
+		lists = reduce_url_dict(hn_list_tuple, level, url_dict, user_dict)
+		update_url_dict(lists, level+1, url_dict, user_dict)
 
 # TODO: determine if we continue to recursively search even though score is 0.  
 # what is threshold?
@@ -144,7 +144,7 @@ def rank_urls(user):
 	extension_ids.remove(user)
 	for extension_id in extension_ids:
 		filtered_hns = filter(lambda hn: hn['extension_id']==extension_id, hn_list)
-		update_url_dict([(filtered_hns,0)], 1, url_dict)
+		update_url_dict([(filtered_hns,0)], 1, url_dict, user_dict)
 
 	ranked_urls = list(url_dict.items())
 	ranked_urls = filter((lambda (x,y): ('http://'+x) not in user_urls), ranked_urls)
