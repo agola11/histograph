@@ -52,7 +52,6 @@ def about(request):
   })
   return HttpResponse(template.render(context))
 
-<<<<<<< HEAD
 def testLoad(request):
   domain = get_current_site(request).domain
   template = loader.get_template('core/testLoad.html')
@@ -60,7 +59,7 @@ def testLoad(request):
         'domain': get_current_site(request).domain,
   })
   return HttpResponse(template.render(context))
-=======
+
 def login(request):
   if request.user.is_authenticated():
     return HttpResponse("AUTHENTICATED")
@@ -76,4 +75,3 @@ def send_ranked_urls(request, extension_id):
   url_dict = rec_algo.rank_urls(int(extension_id))
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 
->>>>>>> ad635866559d09521dd898d3a87915732012f5c5
