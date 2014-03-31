@@ -109,10 +109,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-# Dat Facebook Doe
-FACEBOOK_APP_ID = 621832427895740
-FACEBOOK_APP_SECRET = 'd74accde2c85ef2af87da411ef1c64c5'
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
