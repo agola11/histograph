@@ -78,7 +78,7 @@ d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
     .attr("id", function(d, i) {return "path-" + i; })
     .attr("d", arc)
     .style("fill-rule", "evenodd")
-    .style("fill", color)
+    .style("fill", function(d) { return color((d.children ? d : d.parent).name); })
     .on("click", click);
  
   var text = vis.selectAll("text").data(nodes);
