@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from string import split
 from django.utils import simplejson
 from django.http import Http404
+from datetime import datetime
 from urlparse import urlparse
 
 def filter_http(hn):
@@ -27,7 +28,7 @@ def format_date(hn):
 	ms = hn['visit_time']
 	date = datetime.fromtimestamp(ms/1000.0).strftime('%Y-%m-%d')
 	hn['visit_time'] = date
-	return date
+	return hn
 
 def reduce_bubble_tree(child, level):
 	templist = []
@@ -79,4 +80,4 @@ def send_line_plot(hn_list):
 	hn_list = sorted(hn_list, key=lambda hn: hn['visit_time'])
 	hn_list = map(split_url, hn_list)
 	domains = set(map(lambda hn: hn['url'][0], hn_list))
-	return (hn_list, domains)
+	return (hn_list, list(domains))
