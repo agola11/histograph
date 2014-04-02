@@ -9,17 +9,25 @@ from urlparse import urlparse
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
-	return(l.scheme == 'http')
+	return(l.scheme == 'http' or l.scheme == 'https')
 
 def split_url(hn):
 	url = hn['url']
 	if url.startswith('http://'):
 		url = url[7:]
+	elif url.startswith('https://'):
+		url = url[8:]
 	url = url.split('/')
 	if url[-1] == '':
 		del(url[-1])
 	hn['url'] = url
 	return hn
+
+def format_date(hn):
+	ms = hn['visit_time']
+	date = datetime.fromtimestamp(ms/1000.0).strftime('%Y-%m-%d')
+	hn['visit_time'] = date
+	return date
 
 def reduce_bubble_tree(child, level):
 	templist = []
@@ -64,3 +72,11 @@ def send_bubble(hn_list):
 
 	update_bubble_tree([bubble_root], 1)
 	return bubble_root
+
+def send_line_plot(hn_list):
+	hn_list = filter(filter_http, hn_list)
+	hn_list = map(format_date, hn_list)
+	hn_list = sorted(hn_list, key=lambda hn: hn['visit_time'])
+	hn_list = map(split_url, hn_list)
+	domains = set(map(lambda hn: hn['url'][0], hn_list))
+	return (hn_list, domains)
