@@ -71,29 +71,59 @@
       .enter()
       .append("g")
         .attr("class", "node")
-        .attr("transform", function(d) {return "translate("+ d.x + "." + d.y +")"; });
+        .attr("transform", function(d) {return "translate("+ d.x + "." + d.y +")"; })
+        .on("click", click);
 
     node.append("circle")
       .attr("r", function(d) { return d.r; })
       .attr("stroke", "#ADADAD") 
       .attr("stroke-width", "2")
       .attr("fill", function (d) { return d.depth <= depth ? "steelblue" : "#fff";})
-      .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;})
-      .on("click", function(d) {return zoom((node == d) ? root : d);});
+      .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;});
 
     node.append("text")
       .text(function (d) {return d.depth == depth ? d.name : ""; })
       .style("text-anchor", "middle");
 
-    function zoom(p, i) {
-      /*var k = r / p.r / 2;
-      x.domain([p.x - p.r, p.x + p.r]);
-      y.domain([p.y - p.r, p.y + p.r]);*/
+    function click(d) {
+    	if (d3.event.ctrlKey) {
+    		console.log(d.children);
+    		d3.select(this).remove();
+    
+    /*var nodes = pack.nodes(data[0]);
 
-      /*var t = canvas.transition()
+    var node = canvas.selectAll(".node")
+      .data(nodes.filter(function(d) {return d.name != 'reddit.com'; }))
+      .enter()
+      .append("g")
+        .attr("class", "node")
+        .attr("transform", function(d) {return "translate("+ d.x + "." + d.y +")"; })
+        .on("click", click);
+
+    node.append("circle")
+      .attr("r", function(d) { return d.r; })
+      .attr("stroke", "#ADADAD") 
+      .attr("stroke-width", "2")
+      .attr("fill", function (d) { return d.depth <= depth ? "steelblue" : "#fff";})
+      .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;});
+
+    node.append("text")
+      .text(function (d) {return d.depth == depth ? d.name : ""; })
+      .style("text-anchor", "middle");*/
+    	}
+    	else
+    		zoom(d);
+    }
+
+    function zoom(p, i) {
+      var k = r / p.r / 2;
+      x.domain([p.x - p.r, p.x + p.r]);
+      y.domain([p.y - p.r, p.y + p.r]);
+
+      var t = canvas.transition()
         .duration(d3.event.altKey ? 7500 : 750);
 
-      t.selectAll("circle")
+      /*t.selectAll("circle")
         .attr("cx", function(d) { return x(d.x); })
         .attr("cy", function(d) { return y(d.y); })
         .attr("r", function(d) { return k * d.r; });
@@ -103,9 +133,9 @@
         .attr("y", function(d) { return y(d.y); })
         .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
         */
-        depth = depth + 1;
-        if (depth > p.depth)
-          depth = 1;
+        //depth = depth + 1;
+        if (p['children'] != null)
+          depth = p.depth + 1;
         console.log(depth);
 
       node.selectAll("circle")
@@ -121,7 +151,7 @@
         
 
   //node = d;
-  //d3.event.stopPropagation();
+  d3.event.stopPropagation();
 }
   </script>
 </body>
