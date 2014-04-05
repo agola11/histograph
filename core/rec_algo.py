@@ -25,7 +25,7 @@ def clean_url(hn):
 	if url.startswith('http://'):
 		url = url[7:]
 	hn['url'] = url
-	return url
+	return hn
 
 def split_url(hn):
 	url = hn['url']
