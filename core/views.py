@@ -46,12 +46,17 @@ def send_user_id(request):
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 def store_history(request):
-  payload = json.loads(request.body)
-  create_history_nodes_from_json(payload)
+  if request.user.is_authenticated():
+    payload = json.loads(request.body)
+    create_history_nodes_from_json(payload)
   
-  resp = HttpResponse()
-  resp.status_code = 200
-  return resp
+    resp = HttpResponse()
+    resp.status_code = 200
+    return resp
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def about(request):
   domain = get_current_site(request).domain
