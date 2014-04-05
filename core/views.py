@@ -12,9 +12,9 @@ import json
 import rec_algo
 
 # TODO: change to simplejson?
-def send_history(request):
+def send_history(request, user_id):
   resp = HttpResponse()
-  serializers.serialize('json', HistoryNode.objects.all(), stream=resp)
+  serializers.serialize('json', HistoryNode.objects.filter(user__id=int(user_id)), stream=resp)
   return HttpResponse(resp, content_type="application/json")
 
 def send_most_recent_history_time(request, extension_id):
