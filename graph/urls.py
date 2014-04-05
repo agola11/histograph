@@ -6,5 +6,5 @@ urlpatterns = patterns('',
     url(r'^bubble$', views.send_bubble, name='bubble'), 
     url(r'^pie$', views.pie, name='pie'),
     url(r'^line$', views.send_line_plot, name='line'),
-    url(r'^sunburst$', views.sunburst, name='sunburst'), 
+    url(r'^sunburst/(?P<user_id>\d+)$', views.sunburst, name='sunburst'), 
 )
