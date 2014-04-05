@@ -161,13 +161,13 @@ function createVisualization(json) {
   d3.select("#container").on("mouseleave", mouseleave);
 
   // Get total size of the tree = value of root node from partition.
-  totalSize = path.node().__data__.value;
+  totalSize = path.node().__data__.node_count;
  };
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
 function mouseover(d) {
 
-  var percentage = (100 * d.value / totalSize).toPrecision(3);
+  var percentage = (100 * d.node_count / totalSize).toPrecision(3);
   var percentageString = percentage + "%";
   if (percentage < 0.1) {
     percentageString = "< 0.1%";
