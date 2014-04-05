@@ -3,7 +3,7 @@ from core import views
 
 urlpatterns = patterns('',
     url(r'^store$', views.store_history, name='store_history'),
-    url(r'^send$', views.send_history, name='send_history'),
+    url(r'^send/(?P<user_id>\d+)$', views.send_history, name='send_history'),
     url(r'^about$', views.about, name='about'),
     url(r'^testLoad$', views.testLoad, name='testLoad'),
     url(r'^login$', views.login, name='login'),
