@@ -61,6 +61,12 @@ def update_bubble_tree(children, level):
 			child['children'] = children
 		update_bubble_tree(children, level+1)
 
+def remove_urls(bubble_root):
+	del(bubble_root['urls'])
+	if 'children' in bubble_root:
+		for child in bubble_root['children']:
+			remove_urls(child)
+
 def send_bubble(hn_list):
 	bubble_root = {}
 	hn_list = filter(filter_http, hn_list)
@@ -72,6 +78,7 @@ def send_bubble(hn_list):
 	bubble_root['urls'] = map(lambda hn: hn['url'], hn_list)
 
 	update_bubble_tree([bubble_root], 1)
+	remove_urls(bubble_root)
 	return bubble_root
 
 def send_line_plot(hn_list):
