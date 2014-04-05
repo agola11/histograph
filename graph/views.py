@@ -28,7 +28,7 @@ def pie(request):
         })
   return HttpResponse(template.render(context))
 
-def send_sunburst(request, user_id): 
+def user_sunburst(request, user_id): 
   domain = get_current_site(request).domain
   template = loader.get_template('graph/sunburst-user.html')
   context = RequestContext(request, {
