@@ -281,8 +281,13 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Set position for entering and updating nodes.
   g.attr("transform", function(d, i) {
-    width = d.name.length * 10;
-    return "translate(" + i * (width + b.s) + ", 0)";
+    iwidth = d.name.length * 10 + b.s;
+    if (i == 0) 
+      totalWidth = iwidth;
+    else 
+      totalWidth = totalWidth + iwidth; 
+    return "translate(" + totalWidth + ", 0)";
+
   });
 
   // Remove exiting nodes.
@@ -290,7 +295,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Now move and update the percentage at the end.
   d3.select("#trail").select("#endlabel")
-      .attr("x", function (d) { return (nodeArray.length + 0.5) * (b.w + b.s); })
+      .attr("x", function (d) { return (nodeArray.length + 0.5) * (d.name.length*10 + b.s); })
       .attr("y", b.h / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
