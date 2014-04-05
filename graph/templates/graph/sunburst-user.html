@@ -125,7 +125,7 @@ var arc = d3.svg.arc()
 json = data;
 createVisualization(json); */
 
-d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
+d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(error, data) {
       createVisualization(data);
 });
 // Main function to draw and set up the visualization, once we have the data.

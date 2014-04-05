@@ -28,12 +28,20 @@ def pie(request):
         })
   return HttpResponse(template.render(context))
 
-def sunburst(request, user_id): 
+def send_sunburst(request, user_id): 
+  domain = get_current_site(request).domain
+  template = loader.get_template('graph/sunburst-user.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        'user_id': user_id,
+        })
+  return HttpResponse(template.render(context))
+
+def sunburst(request): 
   domain = get_current_site(request).domain
   template = loader.get_template('graph/sunburst.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
-        'user_id': user_id,
         })
   return HttpResponse(template.render(context))
 
