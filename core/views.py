@@ -39,12 +39,11 @@ def send_new_extension_id(request):
 
 def send_user_id(request):
   if request.user.is_authenticated():
-    data = {'user_id': request.user.id}
+    data = {'user_id': request.user.id, 'is_auth': 1}
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
   else:
-    resp = HttpResponse()
-    resp.status_code = 401
-    return resp
+    data = {'user_id': 0, 'is_auth': 0}
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 def store_history(request):
   payload = json.loads(request.body)
