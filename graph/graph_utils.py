@@ -57,7 +57,7 @@ def reduce_bubble_tree(child, level):
 	return children
 
 def update_bubble_tree(children, level):
-	if level > 2:
+	if level > 4:
 		return
 
 	for child in children:
