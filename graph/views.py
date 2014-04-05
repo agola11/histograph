@@ -45,3 +45,11 @@ def send_bubble(request):
 	hn_list = list(HistoryNode.objects.values('url','extension_id'))
 	bubble_tree = graph_utils.send_bubble(hn_list)
 	return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
+
+def send_user_line_plot(request, user_id):
+	hn_list = list(HistoryNode.objects.filter(extension_id=int(user_id)).values('url','visit_time'))
+
+def send_line_plot(request):
+	hn_list = list(HistoryNode.objects.values('url','visit_time'))
+	line_data = graph_utils.send_line_plot(hn_list)
+	return HttpResponse(simplejson.dumps(line_data), content_type='application/json')

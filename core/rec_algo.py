@@ -79,7 +79,7 @@ def reduce_url_dict(hn_list_tuple, level, url_dict, user_dict):
 				score = 0 + 0.2 * (level-1)
 			else:
 				user_freq = user_dict[url]
-				score = min(freq, user_freq)/max(freq, user_freq) + 0.2 * (level-1)
+				score = (min(freq, user_freq)/max(freq, user_freq)) + 0.2 * (level-1)
 			if score > 0:
 				l.append((templist, score+prev_score+(WEIGHT*level)))
 			templist = []
