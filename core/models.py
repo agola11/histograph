@@ -49,7 +49,8 @@ class BlockedSite(models.Model):
   user = models.ForeignKey(FacebookCustomUser)
 
 def create_history_nodes_from_json(payload):
-  logger = logging.getLogger(__name__)
+  logger = logging.getLogger("core")
+  logger.info("test1")
   start_time = time.time()
 
   with transaction.atomic():
@@ -67,4 +68,4 @@ def create_history_nodes_from_json(payload):
         continue
 
   end_time = time.time()
-  logger.info('Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
+  logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
