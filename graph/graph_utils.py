@@ -48,7 +48,7 @@ def reduce_bubble_tree(child, level):
 			continue
 		if i+1 >= len(urls) or urls[i][level-1] != urls[i+1][level-1]:
 			templist.append(urls[i])
-			children.append({'node_count':count,'name':urls[i][level-1],'urls':templist})
+			children.append({'node_count':count,'name':urls[i][level-1],'urls':templist, 'full_url':('/'.join(hn_list[i]['url'][:level]))})
 			templist = []
 			count = 1
 		else:

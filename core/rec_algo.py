@@ -18,10 +18,17 @@ def filter_http(hn):
 	l = urlparse(hn['url'])
 	return(l.scheme == 'http')
 
-def split_url(hn):
+def clean_url(hn):
 	url = hn['url']
+	if url[-1] == '/':
+		url = url[:-1]
 	if url.startswith('http://'):
 		url = url[7:]
+	hn['url'] = url
+	return url
+
+def split_url(hn):
+	url = hn['url']
 	url = url.split('/')
 	if url[-1] == '':
 		del(url[-1])
@@ -127,6 +134,7 @@ def rank_urls(user):
 
 	hn_list = list(HistoryNode.objects.values('url', 'user__id'))
 	hn_list = filter(filter_http, hn_list)
+	hn_list = map(clean_url, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 
 	user_ids = set(map(lambda hn: hn['user__id'], hn_list))

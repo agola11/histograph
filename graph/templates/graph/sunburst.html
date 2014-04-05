@@ -113,18 +113,6 @@ var arc = d3.svg.arc()
     .innerRadius(function(d) { return Math.sqrt(d.y); })
     .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
-// Use d3.text and d3.csv.parseRows so that we do not need to have a header
-// row, and can receive the csv as an array of arrays. 
-/* d3.text("/static/visit-sequences.csv", function(text) {
-  var csv = d3.csv.parseRows(text);
-  var json = buildHierarchy(csv);
-  createVisualization(json);
-}); */
-
-/*var data = {"node_count": 5, "name": "root", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 3, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]}; 
-json = data;
-createVisualization(json); */
-
 d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
       createVisualization(data);
 });
@@ -132,9 +120,6 @@ d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
 function createVisualization(json) {
   // Basic setup of page elements.
   initializeBreadcrumbTrail();
-  drawLegend();
-  d3.select("#togglelegend").on("click", toggleLegend);
-
   // Bounding circle underneath the sunburst, to make it easier to detect
   // when the mouse leaves the parent g.
   vis.append("svg:circle")
@@ -284,8 +269,13 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Set position for entering and updating nodes.
   g.attr("transform", function(d, i) {
-    width = d.name.length * 10;
-    return "translate(" + i * (width + b.s) + ", 0)";
+    iwidth = d.name.length * 10 + b.s;
+    if (i == 0) 
+      totalWidth = iwidth;
+    else 
+      totalWidth = totalWidth + iwidth; 
+    return "translate(" + totalWidth + ", 0)";
+
   });
 
   // Remove exiting nodes.
@@ -293,7 +283,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Now move and update the percentage at the end.
   d3.select("#trail").select("#endlabel")
-      .attr("x", function (d) { return (nodeArray.length + 0.5) * (d.name.length*10 + b.s); })
+      .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
       .attr("y", b.h / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
