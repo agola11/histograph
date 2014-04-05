@@ -12,12 +12,17 @@ def filter_http(hn):
 	l = urlparse(hn['url'])
 	return(l.scheme == 'http' or l.scheme == 'https')
 
-def split_url(hn):
+def chop_protocol(hn):
 	url = hn['url']
 	if url.startswith('http://'):
 		url = url[7:]
 	elif url.startswith('https://'):
 		url = url[8:]
+	hn['url'] = url
+	return hn
+
+def split_url(hn):
+	url = hn['url']
 	url = url.split('/')
 	if url[-1] == '':
 		del(url[-1])
@@ -70,6 +75,7 @@ def remove_urls(bubble_root):
 def send_bubble(hn_list):
 	bubble_root = {}
 	hn_list = filter(filter_http, hn_list)
+	hn_list = map(chop_protocol, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
 
