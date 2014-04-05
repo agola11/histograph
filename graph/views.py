@@ -38,17 +38,17 @@ def sunburst(request, user_id):
   return HttpResponse(template.render(context))
 
 def send_user_bubble(request, user_id):
-	hn_list = list(HistoryNode.objects.filter(extension_id=int(user_id)).values('url','extension_id'))
+	hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url'))
 	bubble_tree = graph_utils.send_bubble(hn_list)
 	return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
 
 def send_bubble(request):
-	hn_list = list(HistoryNode.objects.values('url','extension_id'))
+	hn_list = list(HistoryNode.objects.values('url'))
 	bubble_tree = graph_utils.send_bubble(hn_list)
 	return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
 
 def send_user_line_plot(request, user_id):
-	hn_list = list(HistoryNode.objects.filter(extension_id=int(user_id)).values('url','visit_time'))
+	hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','visit_time'))
 
 def send_line_plot(request):
 	hn_list = list(HistoryNode.objects.values('url','visit_time'))
