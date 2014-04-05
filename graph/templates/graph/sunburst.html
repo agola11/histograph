@@ -147,6 +147,7 @@ function createVisualization(json) {
       return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
       });
 
+ console.log(nodes);
   var path = vis.data([json]).selectAll("path")
       .data(nodes)
       .enter().append("svg:path")
@@ -161,7 +162,8 @@ function createVisualization(json) {
   d3.select("#container").on("mouseleave", mouseleave);
 
   // Get total size of the tree = value of root node from partition.
-  totalSize = path.node().__data__.node_count;
+  totalSize = path.node().__data__.value;
+console.log(totalSize);
  };
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
