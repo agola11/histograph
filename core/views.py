@@ -27,8 +27,8 @@ def send_most_recent_history_time(request, extension_id):
     t = hn.aggregate(Max('visit_time'))
   return HttpResponse(simplejson.dumps(t), content_type="application/json")
 
-def send_blocked_sites(request, user_id):
-  sites = BlockedSite.objects.filter(user__id=user_id)
+def send_blocked_sites(request):
+  sites = BlockedSite.objects.filter(user=request.user)
   urls = map(lambda x: x.url, sites)
   return HttpResponse(simplejson.dumps(urls), content_type="application/json")
 
@@ -57,7 +57,7 @@ def send_user_id(request):
 def store_history(request):
   if request.user.is_authenticated():
     payload = json.loads(request.body)
-    create_history_nodes_from_json(payload)
+    create_history_nodes_from_json(payload, request.user)
   
     resp = HttpResponse()
     resp.status_code = 200
