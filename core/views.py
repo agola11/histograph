@@ -31,6 +31,13 @@ def send_blocked_sites(request, user_id):
   urls = map(lambda x: x.url, sites)
   return HttpResponse(simplejson.dumps(urls), content_type="application/json")
 
+def store_blocked_sites(request):
+  payload = json.loads(request.body)
+  BlockedSite bs
+  bs.url = payload['url']
+  bs.user = request.user
+  bs.save()
+
 def send_new_extension_id(request):
   extid = ExtensionID.objects.get(pk=1)
   data = {'extension_id': extid.next_id}
