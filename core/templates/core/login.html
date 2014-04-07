@@ -5,18 +5,31 @@
 	<meta charset="utf-8">
 	<title>Dat Histograph Doe</title>
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-	<link href="{{ STATIC_URL }}css/facebook.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="{{ STATIC_URL }}django_facebook/css/facebook.css" type="text/css" rel="stylesheet" media="all" />
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="/static/sidr/src/myCSS.css">
 	{% include 'django_facebook/_facebook_js.html' %}
 </head>
 <body>
 
-<form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
-    <input type="hidden" value="{{ request.path }}" name="next" />
-    <input type="hidden" value="{{ request.path }}" name="register_next" />
-    <input type="hidden" value="{{ request.path }}" name="error_next" />
-    {% csrf_token %}
-    <input onclick="F.connect(this.parentNode); return false;" type="image" src="{{ STATIC_URL }}django_facebook/images/facebook_login.png" />
-</form>
+	<div id="all">
+		<div class="row" align="center">
+			<h1>Welcome to Histograph!</h1>
+		</div>
+		<div class="row" align="center">
+			<img src="{{ STATIC_URL }}histograph.jpg" width="40%" height="40%">
+		</div>
+		<br><br>
+		<div class="row"><div align="center">
+		<form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
+			<input type="hidden" value="{{ request.path }}" name="next" />
+			<input type="hidden" value="{{ request.path }}" name="register_next" />
+			<input type="hidden" value="{{ request.path }}" name="error_next" />
+			{% csrf_token %}
+			<input onclick="F.connect(this.parentNode); return false;" type="image" src="{{ STATIC_URL }}django_facebook/images/facebook_login.png" />
+		</form>
+	</div></div>
+	</div>
 
 </body>
 </html>

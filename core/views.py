@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
 from core.models import HistoryNode, ExtensionID, BlockedSite, create_history_nodes_from_json
@@ -7,6 +7,7 @@ from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
 from django.utils import simplejson
 from django.db.models import Max
+from django.contrib.auth import logout as django_logout
 import json
 import rec_algo
 
@@ -45,10 +46,16 @@ def store_history(request):
   return resp
 
 def about(request):
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('core/about.html')
+  userT = request.user
+  things = dir(userT)
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'authenticated': request.user.is_authenticated(),
+        'user' : userT
   })
   return HttpResponse(template.render(context))
 
@@ -62,9 +69,21 @@ def testLoad(request):
 
 def login(request):
   if request.user.is_authenticated():
-    return HttpResponse("AUTHENTICATED")
+    return redirect(about)
   template = loader.get_template('core/login.html')
   context = RequestContext(request)
+  return HttpResponse(template.render(context))
+
+def logout(request):
+    django_logout(request)
+    return redirect(login)
+
+def team(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('core/team.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+  })
   return HttpResponse(template.render(context))
 
 def send_frequencies(request, extension_id):
