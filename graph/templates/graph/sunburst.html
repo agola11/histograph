@@ -265,7 +265,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .style("fill", function(d) { return colors((d.children ? d : d.parent).name); });
 
   entering.append("svg:text")
-      .attr("x", (b.w + b.t) / 2); })
+      .attr("x", (b.w + b.t) / 2)
       .attr("y", b.h / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
