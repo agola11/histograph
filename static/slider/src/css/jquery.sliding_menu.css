@@ -71,7 +71,7 @@
 	top: 0px;
 	right: 0px;
 	z-index: 999;
-	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAAU0lEQVRYhe3UMQrAIBBE0Y/HE+/fGSToOZJKYmHKTZP/YMFudhEGJD0KcABX8FQg7xY4Pwif02ZoWhZY39G2WQUYxF/fefkCyR6wByR7wB6Q/ukGPHLwi9CjDYcAAAAASUVORK5CYII=);
+	background-image: url('/static/Histograph-H.png');
 	background-position: left;
 	background-repeat: no-repeat;
 	background-color: #f3f3f3;
