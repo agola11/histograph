@@ -116,6 +116,7 @@ var arc = d3.svg.arc()
 d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
       createVisualization(data);
 });
+
 // Main function to draw and set up the visualization, once we have the data.
 function createVisualization(json) {
   // Basic setup of page elements.
@@ -132,7 +133,6 @@ function createVisualization(json) {
       return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
       });
 
- console.log(nodes);
   var path = vis.data([json]).selectAll("path")
       .data(nodes)
       .enter().append("svg:path")
@@ -143,12 +143,16 @@ function createVisualization(json) {
       .style("opacity", 1)
       .on("mouseover", mouseover);
 
+  path.each(stash)
+    .transition()
+    .duration(750)
+    .attrTween("d", arcTween);
+
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave);
 
   // Get total size of the tree = value of root node from partition.
   totalSize = path.node().__data__.value;
-console.log(totalSize);
  };
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
@@ -235,9 +239,9 @@ function breadcrumbPoints(d, i) {
   var points = [];
   width = d.name.length * 10;
   points.push("0,0");
-  points.push(width + ",0");
-  points.push(width + b.t + "," + (b.h / 2));
-  points.push(width + "," + b.h);
+  points.push(b.w + ",0");
+  points.push(b.w + b.t + "," + (b.h / 2));
+  points.push(b.w + "," + b.h);
   points.push("0," + b.h);
   if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
     points.push(b.t + "," + (b.h / 2));
@@ -261,7 +265,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .style("fill", function(d) { return colors((d.children ? d : d.parent).name); });
 
   entering.append("svg:text")
-      .attr("x", function (d) { return ((d.name.length*10 + b.t) / 2); })
+      .attr("x", (b.w + b.t) / 2); })
       .attr("y", b.h / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
@@ -269,13 +273,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Set position for entering and updating nodes.
   g.attr("transform", function(d, i) {
-    iwidth = d.name.length * 10 + b.s;
-    if (i == 0) 
-      totalWidth = iwidth;
-    else 
-      totalWidth = totalWidth + iwidth; 
-    return "translate(" + totalWidth + ", 0)";
-
+    return "translate(" + i * (b.w + b.s) + ", 0)";
   });
 
   // Remove exiting nodes.
@@ -292,6 +290,21 @@ function updateBreadcrumbs(nodeArray, percentageString) {
   // Make the breadcrumb trail visible, if it's hidden.
   d3.select("#trail")
       .style("visibility", "");
+
+function arcTween(a){
+                    var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
+                    return function(t) {
+                        var b = i(t);
+                        a.x0 = b.x;
+                        a.dx0 = b.dx;
+                        return arc(b);
+                    };
+                };
+
+function stash(d) {
+                    d.x0 = 0; // d.x;
+                    d.dx0 = 0; //d.dx;
+                }; 
 
 }
     </script>
