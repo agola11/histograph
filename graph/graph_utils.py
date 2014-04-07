@@ -94,6 +94,7 @@ def send_bubble(hn_list):
 
 def send_line_plot(hn_list):
 	hn_list = filter(filter_http, hn_list)
+	hn_list = map(chop_protocol, hn_list)
 	hn_list = map(format_date, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['visit_time'])
 	hn_list = map(split_url, hn_list)
