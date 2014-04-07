@@ -18,10 +18,17 @@ def filter_http(hn):
 	l = urlparse(hn['url'])
 	return(l.scheme == 'http')
 
-def split_url(hn):
+def clean_url(hn):
 	url = hn['url']
+	if url[-1] == '/':
+		url = url[:-1]
 	if url.startswith('http://'):
 		url = url[7:]
+	hn['url'] = url
+	return hn
+
+def split_url(hn):
+	url = hn['url']
 	url = url.split('/')
 	if url[-1] == '':
 		del(url[-1])
@@ -79,7 +86,7 @@ def reduce_url_dict(hn_list_tuple, level, url_dict, user_dict):
 				score = 0 + 0.2 * (level-1)
 			else:
 				user_freq = user_dict[url]
-				score = min(freq, user_freq)/max(freq, user_freq) + 0.2 * (level-1)
+				score = (min(freq, user_freq)/max(freq, user_freq)) + 0.2 * (level-1)
 			if score > 0:
 				l.append((templist, score+prev_score+(WEIGHT*level)))
 			templist = []
@@ -94,8 +101,8 @@ def reduce_url_dict(hn_list_tuple, level, url_dict, user_dict):
 def get_frequencies(user):
 	user_dict = {}
 
-	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
-	hn_list = filter(lambda hn: hn['extension_id'] == user, hn_list)
+	hn_list = list(HistoryNode.objects.values('url', 'user__id'))
+	hn_list = filter(lambda hn: hn['user__id'] == user, hn_list)
 	hn_list = filter(filter_http, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 	hn_list = map(split_url, hn_list)
@@ -121,33 +128,34 @@ def update_url_dict(hn_list_tuples, level, url_dict, user_dict):
 # TODO: change extension_id to user_id once user auth is implemented
 # TODO: maybe only need to sort once? Set a min number of urls?
 def rank_urls(user):
-	# Initialize global variables to empty here
+	# Initialize data structures to empty here
 	user_dict = {}
 	url_dict = {}
 
-	hn_list = list(HistoryNode.objects.values('url', 'extension_id'))
+	hn_list = list(HistoryNode.objects.values('url', 'user__id'))
 	hn_list = filter(filter_http, hn_list)
+	hn_list = map(clean_url, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 
-	extension_ids = set(map(lambda hn: hn['extension_id'], hn_list))
-	user_urls = set(map(lambda hn: hn['url'], filter(lambda hn: hn['extension_id']==user, hn_list)))
+	user_ids = set(map(lambda hn: hn['user__id'], hn_list))
+	user_urls = set(map(lambda hn: hn['url'], filter(lambda hn: hn['user__id']==user, hn_list)))
 
 	hn_list = map(split_url, hn_list)
 
 	# TODO: incorporate into view
-	if user not in extension_ids:
+	if user not in user_ids:
 		raise Http404
 
-	user_hn_list = filter(lambda hn: hn['extension_id']==user, hn_list)
+	user_hn_list = filter(lambda hn: hn['user__id']==user, hn_list)
 	update_user_dict([user_hn_list], 1, user_dict)
 
-	extension_ids.remove(user)
-	for extension_id in extension_ids:
-		filtered_hns = filter(lambda hn: hn['extension_id']==extension_id, hn_list)
+	user_ids.remove(user)
+	for user_id in user_ids:
+		filtered_hns = filter(lambda hn: hn['user__id']==user_id, hn_list)
 		update_url_dict([(filtered_hns,0)], 1, url_dict, user_dict)
 
 	ranked_urls = list(url_dict.items())
-	ranked_urls = filter((lambda (x,y): ('http://'+x) not in user_urls), ranked_urls)
+	ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
 
 	return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
 

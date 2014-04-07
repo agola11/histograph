@@ -5,6 +5,7 @@ from core.models import HistoryNode, ExtensionID, BlockedSite, create_history_no
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
+from django.contrib.sessions.models import Session
 from django.utils import simplejson
 from django.db.models import Max
 from django.contrib.auth import logout as django_logout
@@ -12,9 +13,9 @@ import json
 import rec_algo
 
 # TODO: change to simplejson?
-def send_history(request):
+def send_history(request, user_id):
   resp = HttpResponse()
-  serializers.serialize('json', HistoryNode.objects.all(), stream=resp)
+  serializers.serialize('json', HistoryNode.objects.filter(user__id=int(user_id)), stream=resp)
   return HttpResponse(resp, content_type="application/json")
 
 def send_most_recent_history_time(request, extension_id):
@@ -36,6 +37,15 @@ def send_new_extension_id(request):
   extid.next_id = extid.next_id + 1
   extid.save()
   return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+def send_user_id(request):
+  if request.user.is_authenticated():
+    data = {'user_id': request.user.id}
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def store_history(request):
   payload = json.loads(request.body)
@@ -86,11 +96,11 @@ def team(request):
   })
   return HttpResponse(template.render(context))
 
-def send_frequencies(request, extension_id):
-  freq_dict = rec_algo.get_frequencies(int(extension_id))
+def send_frequencies(request, user_id):
+  freq_dict = rec_algo.get_frequencies(int(user_id))
   return HttpResponse(simplejson.dumps(freq_dict), content_type='application/json')
 
-def send_ranked_urls(request, extension_id):
-  url_dict = rec_algo.rank_urls(int(extension_id))
+def send_ranked_urls(request, user_id):
+  url_dict = rec_algo.rank_urls(int(user_id))
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 
