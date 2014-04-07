@@ -33,7 +33,7 @@ def send_blocked_sites(request, user_id):
 
 def store_blocked_sites(request):
   payload = json.loads(request.body)
-  BlockedSite bs
+  bs = BlockedSite()
   bs.url = payload['url']
   bs.user = request.user
   bs.save()
