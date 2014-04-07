@@ -141,12 +141,8 @@ function createVisualization(json) {
       .attr("fill-rule", "evenodd")
       .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
       .style("opacity", 1)
-      .on("mouseover", mouseover);
-
-  path.each(stash)
-    .transition()
-    .duration(750)
-    .attrTween("d", arcTween);
+      .on("mouseover", mouseover)
+      .on("click", click);
 
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave);
@@ -154,6 +150,33 @@ function createVisualization(json) {
   // Get total size of the tree = value of root node from partition.
   totalSize = path.node().__data__.value;
  };
+
+function click(d) {
+  d3.select("#container").selectAll("path").remove();
+
+  var nodes = partition.nodes(d)
+    .filter(function(d) {
+      return (d.dx > 0.005);
+    }) ;
+
+  var path = vis.data([d]).selectAll("path")
+    .data(nodes)
+    .enter().append("svg:path")
+    .attr("display", function(d) {return d.depth ? null : "none"; })
+    .attr("d"m arc)
+    .attr("fill-rule", "evenodd")
+    .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
+    .style("opacity", 1)
+    .on("mouseover", mouseover)
+    .on("click", click)
+    .each(stash)
+    .transition()
+    .duration(750)
+    .attrTween("d", arcTween);
+
+  totalSize = path.node().__data__.value;
+
+}
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
 function mouseover(d) {
@@ -306,7 +329,7 @@ function stash(d) {
                     d.x0 = 0; // d.x;
                     d.dx0 = 0; //d.dx;
                 }; 
-                
+
     </script>
     <script type="text/javascript">
       // Hack to make this example display correctly in an iframe on bl.ocks.org
