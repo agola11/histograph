@@ -143,7 +143,7 @@ function click(d)
 {
   d3.select("#container").selectAll("path").remove();
   
-  var nodes = partition.nodes(d)
+  var nodes = partition.nodes(d.parent)
       .filter(function(d) {
       return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
       }) ;
@@ -305,19 +305,15 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
 }
 
- function arcTween(d) {
-  var my = maxY(d),
-      xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
-      yd = d3.interpolate(y.domain(), [d.y, my]),
-      yr = d3.interpolate(y.range(), [d.y ? 20 : 0, radius]);
-  return function(d) {
-    return function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
-  };
-}
-
-function maxY(d) {
-  return d.children ? Math.max.apply(Math, d.children.map(maxY)) : d.y + d.dy;
-}
+ function arcTween(a){
+                    var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
+                    return function(t) {
+                        var b = i(t);
+                        a.x0 = b.x;
+                        a.dx0 = b.dx;
+                        return arc(b);
+                    };
+                };
         
 function stash(d) {
                     d.x0 = 0; // d.x;
