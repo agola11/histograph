@@ -7,6 +7,11 @@ from django.utils import simplejson
 from django.http import Http404
 from datetime import datetime
 from urlparse import urlparse
+try:
+	from collections import OrderedDict
+except ImportError:
+	# python 2.6 or earlier, use backport
+	from ordereddict import OrderedDict
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
@@ -89,6 +94,7 @@ def send_bubble(hn_list):
 
 def send_line_plot(hn_list):
 	hn_list = filter(filter_http, hn_list)
+	hn_list = map(chop_protocol, hn_list)
 	hn_list = map(format_date, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['visit_time'])
 	hn_list = map(split_url, hn_list)
