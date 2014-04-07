@@ -1,5 +1,8 @@
 from django.db import models
 from django_facebook.models import FacebookCustomUser
+from django.db import transaction
+import logging
+import time
 
 class HistoryNode(models.Model):
   # choices for the transition type field
@@ -46,14 +49,23 @@ class BlockedSite(models.Model):
   user = models.ForeignKey(FacebookCustomUser)
 
 def create_history_nodes_from_json(payload):
-  for node in payload:
-    hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=FacebookCustomUser.objects.get(pk=node['user_id']))
-    hn.save()
+  logger = logging.getLogger("core")
+  logger.info("test1")
+  start_time = time.time()
+
+  with transaction.atomic():
+    for node in payload:
+      hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=FacebookCustomUser.objects.get(pk=node['user_id']))
+      hn.save()
 
   # connect referrers
-  for node in payload:
-    try:
-      referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'])
-      HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id']).update(referrer=referrer)
-    except HistoryNode.DoesNotExist:
-      continue
+  with transaction.atomic():
+    for node in payload:
+      try:
+        referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'])
+        HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id']).update(referrer=referrer)
+      except HistoryNode.DoesNotExist:
+        continue
+
+  end_time = time.time()
+  logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')

@@ -32,6 +32,13 @@ def send_blocked_sites(request, user_id):
   urls = map(lambda x: x.url, sites)
   return HttpResponse(simplejson.dumps(urls), content_type="application/json")
 
+def store_blocked_sites(request):
+  payload = json.loads(request.body)
+  bs = BlockedSite()
+  bs.url = payload['url']
+  bs.user = request.user
+  bs.save()
+
 def send_new_extension_id(request):
   extid = ExtensionID.objects.get(pk=1)
   data = {'extension_id': extid.next_id}
@@ -41,20 +48,24 @@ def send_new_extension_id(request):
 
 def send_user_id(request):
   if request.user.is_authenticated():
-    data = {'user_id': request.user.id}
+    data = {'user_id': request.user.id, 'is_auth': 1}
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
+  else:
+    data = {'user_id': 0, 'is_auth': 0}
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+def store_history(request):
+  if request.user.is_authenticated():
+    payload = json.loads(request.body)
+    create_history_nodes_from_json(payload)
+  
+    resp = HttpResponse()
+    resp.status_code = 200
+    return resp
   else:
     resp = HttpResponse()
     resp.status_code = 401
     return resp
-
-def store_history(request):
-  payload = json.loads(request.body)
-  create_history_nodes_from_json(payload)
-  
-  resp = HttpResponse()
-  resp.status_code = 200
-  return resp
 
 def about(request):
   if (request.user.is_authenticated() == False):
