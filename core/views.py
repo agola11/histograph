@@ -104,6 +104,15 @@ def what(request):
   })
   return HttpResponse(template.render(context))
 
+def manage(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('core/manage.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        'user_id' : request.user.id,
+  })
+  return HttpResponse(template.render(context))
+
 def send_frequencies(request, user_id):
   freq_dict = rec_algo.get_frequencies(int(user_id))
   return HttpResponse(simplejson.dumps(freq_dict), content_type='application/json')

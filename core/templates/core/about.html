@@ -83,7 +83,7 @@
 </header> -->
 <div id="all">
  <div align="center">
-  <img src="{{ STATIC_URL }}Histograph-full.gif" width="40%" height="40%">
+  <img src="{{ STATIC_URL }}Histograph-full.gif" width="30%" height="30%">
   <br><br><br>
   <p>{{user}}</p>
 
@@ -142,11 +142,11 @@
 <div id="menu" style="display:none;">
   <ul >
     <li><a onclick="buttonClick1()">Sunburst</a></li>
-    <li><a href="">Graph 2</a></li>
+    <li><a onclick="buttonClick2()">Pie</a></li>
     <li><a href="">Graph 3</a></li>
     <li><a href="">Graph 4</a></li>
     <li><a href="">Graph 5</a></li>
-    <li><a href="">Manage History</a></li>
+    <li><a onclick="manageHistory()">Manage History</a></li>
   </ul>
 </div>
 
@@ -201,19 +201,16 @@ $(document).ready(function() {
 <script type="text/javascript">
 // load graphs on click
 function buttonClick1() {
-  console.log("graph1 loading");
   $("#testLoad").load("../graph/sunburst#main");
   // setTimeout(buttonClickA, 100);
 }
 
 function buttonClickA() {
-  console.log("a loading");
   $("#testLoad").load("../graph/sunburst#main");
 }
 
 function buttonClick2() {
-  console.log("graph1 loading");
-  $("#testLoad").load("testLoad");
+  $("#testLoad").load("../graph/pie");
 }
 
 function buttonClick3() {
@@ -231,9 +228,8 @@ function buttonClick5() {
   $("#testLoad").load("testLoad");
 }
 
-function buttonClick6() {
-  console.log("graph1 loading");
-  $("#testLoad").load("testLoad");
+function manageHistory() {
+  $("#testLoad").load("manage");
 }
 
 </script>
