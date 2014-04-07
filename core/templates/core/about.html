@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="/static/sidr/src/myCSS.css">
   <link rel="stylesheet" href="/static/sidr/src/jquery.sidr.dark.css">
   <link rel="stylesheet" href="/static/slider/src/css/jquery.sliding_menu.css">
-  <link href='http://fonts.googleapis.com/css?family=Open+Sans:700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
   <style type="text/css">
 /*  body { background: url('{{STATIC_URL}}purple-giraffe-hi.png'); }
 */  </style>
@@ -172,6 +172,8 @@
 <script>
 $(document).ready(function() {
 
+  console.log({{friends}});
+
   // Open left side menu
   $('#left-menu').sidr({
     name: 'sidr-left',
@@ -201,12 +203,12 @@ $(document).ready(function() {
 <script type="text/javascript">
 // load graphs on click
 function buttonClick1() {
-  $("#testLoad").load("../graph/sunburst#main");
+  $("#testLoad").load("../graph/sunburst");
   // setTimeout(buttonClickA, 100);
 }
 
 function buttonClickA() {
-  $("#testLoad").load("../graph/sunburst#main");
+  $("#testLoad").load("../graph/sunburst");
 }
 
 function buttonClick2() {
@@ -242,6 +244,8 @@ $(document).ready(function(){
     transitionSpeed: 0.5, 
     easing: 'ease', 
   });
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+  $('#sliding_menu_js_btn').append("<a id='whatwedo' href='what'>Install</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
   $('#sliding_menu_js_btn').append("<a id='whatwedo' href='what'>What we do</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");

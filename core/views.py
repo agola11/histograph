@@ -9,6 +9,7 @@ from django.contrib.sessions.models import Session
 from django.utils import simplejson
 from django.db.models import Max
 from django.contrib.auth import logout as django_logout
+import django_facebook
 import json
 import rec_algo
 
@@ -76,7 +77,8 @@ def about(request):
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'authenticated': request.user.is_authenticated(),
-        'user' : userT
+        'user' : userT,
+        # 'friends': django_facebook.api.facebook_profile_data(),
   })
   return HttpResponse(template.render(context))
 
