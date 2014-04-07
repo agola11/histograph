@@ -55,6 +55,13 @@ def create_history_nodes_from_json(payload):
 
   with transaction.atomic():
     for node in payload:
+      # if node is already in the database, replace it with the newer one
+      try:
+        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=['extension_id'])
+        existing_hn.delete()
+      except HistoryNode.DoesNotExist:
+        continue
+
       hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=FacebookCustomUser.objects.get(pk=node['user_id']))
       hn.save()
 
