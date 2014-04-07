@@ -143,7 +143,7 @@ function createVisualization(json) {
       .attr("display", function(d) { return d.depth ? null : "none"; })
       .attr("d", arc)
       .attr("fill-rule", "evenodd")
-      .style("fill", function(d) { return colors[d.name]; })
+      .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
       .style("opacity", 1)
       .on("mouseover", mouseover)
       .on("click", click);
@@ -170,7 +170,7 @@ function click(d)
       .attr("display", function(d) { return d.depth ? null : "none"; })
       .attr("d", arc)
       .attr("fill-rule", "evenodd")
-      .style("fill", function(d) { return colors[d.name]; })
+      .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
       .style("opacity", 1)
       .on("mouseover", mouseover)
       .on("click", click)
@@ -290,7 +290,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   entering.append("svg:polygon")
       .attr("points", breadcrumbPoints)
-      .style("fill", function(d) { return colors[d.name]; });
+      .style("fill", function(d) { return colors((d.children ? d : d.parent).name); });
 
   entering.append("svg:text")
       .attr("x", (b.w + b.t) / 2)
