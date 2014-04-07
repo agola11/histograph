@@ -39,7 +39,7 @@ def user_sunburst(request, user_id):
 
 def sunburst(request): 
   domain = get_current_site(request).domain
-  template = loader.get_template('graph/sunburst-user.html')
+  template = loader.get_template('graph/sunburst.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'user_id': request.user.id,
@@ -58,6 +58,8 @@ def send_bubble(request):
 
 def send_user_line_plot(request, user_id):
 	hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','visit_time'))
+	line_data = graph_utils.send_line_plot(hn_list)
+	return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
 
 def send_line_plot(request):
 	hn_list = list(HistoryNode.objects.values('url','visit_time'))
