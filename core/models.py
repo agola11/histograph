@@ -1,8 +1,13 @@
-from django.db import models
-from django_facebook.models import FacebookCustomUser
-from django.db import transaction
+from django.db import models, transaction
+from django_facebook.models import FacebookModel
+from django.contrib.auth.models import AbstractUser, UserManager
 import logging
 import time
+
+class HistographUser(AbstractUser, FacebookModel):
+  objects = UserManager()
+  state = models.CharField(max_length=255, blank=True, null=True)
+  ext_downloaded = models.BooleanField(default=False)
 
 class HistoryNode(models.Model):
   # choices for the transition type field
@@ -39,16 +44,17 @@ class HistoryNode(models.Model):
   browser_id = models.IntegerField()
   extension_id = models.IntegerField()
   referrer = models.ForeignKey('HistoryNode', blank=True, null=True)
-  user = models.ForeignKey(FacebookCustomUser)
+  user = models.ForeignKey(HistographUser)
 
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
 
 class BlockedSite(models.Model):
   url = models.URLField(max_length=2048)
-  user = models.ForeignKey(FacebookCustomUser)
+  user = models.ForeignKey(HistographUser)
+  block_links = models.BooleanField()
 
-def create_history_nodes_from_json(payload):
+def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
   logger.info("test1")
   start_time = time.time()
@@ -57,20 +63,22 @@ def create_history_nodes_from_json(payload):
     for node in payload:
       # if node is already in the database, replace it with the newer one
       try:
-        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=['extension_id'])
+        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=['extension_id'], user=user)
         existing_hn.delete()
       except HistoryNode.DoesNotExist:
         continue
 
-      hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=FacebookCustomUser.objects.get(pk=node['user_id']))
+  with transaction.atomic():
+    for node in payload:
+      hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
       hn.save()
 
   # connect referrers
   with transaction.atomic():
     for node in payload:
       try:
-        referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'])
-        HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id']).update(referrer=referrer)
+        referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'], user=user)
+        HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
       except HistoryNode.DoesNotExist:
         continue
 
