@@ -115,9 +115,6 @@
 
 <!-- <script src="/static/sidr/dist/jquery.sidr.js"></script>
 -->
-<div id="testLoad" align="center">
-
-</div>
 </div>
 
 <div id="example-source" class="hidden">
@@ -138,6 +135,17 @@
 <div id="other-source" class="hidden">
   <p>This is a right menu!!!!!!!!!!!!!!!</p>
 </div>
+
+<div id="menu" style="display:none;">
+<ul >
+<li><a href="">jQuery</a></li>
+<li><a href="">jQuery</a></li>
+<li><a href="">jQuery</a></li>
+<li><a href="">jQuery</a></li>
+<li><a href="">jQuery</a></li>
+</ul>
+</div>
+
 </body>
 
 <script type="text/javascript">
@@ -218,6 +226,19 @@ function buttonClick6() {
   $("#testLoad").load("testLoad");
 }
 
+</script>
+
+<!-- initialize slider plugin -->
+<script>
+$(document).ready(function(){
+$('#menu ul').sliding_menu_js({
+// header_title:'jQueryScript.Net!',
+// header_logo: "logo.png", 
+toggle_button: true, 
+transitionSpeed: 0.5, 
+easing: 'ease', 
+});
+});
 </script>
 
 <script src="/static/slider/src/js/jquery.sliding_menu.js"></script>
