@@ -141,11 +141,12 @@
 
 <div id="menu" style="display:none;">
   <ul >
-    <li><a onclick="buttonClick1()">Graph 1</a></li>
+    <li><a onclick="buttonClick1()">Sunburst</a></li>
     <li><a href="">Graph 2</a></li>
     <li><a href="">Graph 3</a></li>
     <li><a href="">Graph 4</a></li>
     <li><a href="">Graph 5</a></li>
+    <li><a href="">Manage History</a></li>
   </ul>
 </div>
 
@@ -246,7 +247,9 @@ $(document).ready(function(){
     easing: 'ease', 
   });
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
-  $('#sliding_menu_js_btn').append("<a href='team'>About us</a>");
+  $('#sliding_menu_js_btn').append("<a id='whatwedo' href='what'>What we do</a>");
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+  $('#sliding_menu_js_btn').append("<a id='aboutus' href='team'>About us</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
   $('#sliding_menu_js_btn').append("<a href='logout'>Logout</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
