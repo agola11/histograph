@@ -7,6 +7,11 @@ from django.utils import simplejson
 from django.http import Http404
 from datetime import datetime
 from urlparse import urlparse
+try:
+	from collections import OrderedDict
+except ImportError:
+	# python 2.6 or earlier, use backport
+	from ordereddict import OrderedDict
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
