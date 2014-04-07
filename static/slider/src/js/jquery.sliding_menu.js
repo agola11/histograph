@@ -53,7 +53,7 @@
                 $('#sliding_menu_js .header').prepend("<h3>" + config.header_title + "</h3>");
                 $('#sliding_menu_js_btn').append("<h3>" + config.header_title + "</h3>");
             }
-
+            
             // Logo
             if (config.header_logo) {
                 $('#sliding_menu_js .header').prepend("<img src='" + config.header_logo + "' />");

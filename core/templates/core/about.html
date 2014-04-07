@@ -7,6 +7,7 @@
 	<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="/static/sidr/src/jquery.sidr.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
   <link rel="stylesheet" href="/static/sidr/src/myCSS.css">
   <link rel="stylesheet" href="/static/sidr/src/jquery.sidr.dark.css">
   <link rel="stylesheet" href="/static/slider/src/css/jquery.sliding_menu.css">
@@ -20,21 +21,21 @@
 
   <div id="fb-root"></div>
   <script>
-    window.fbAsyncInit = function() {
-      FB.init({
-        appId      : '243320595870291',
-        status     : true,
-        xfbml      : true
-      });
-    };
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '243320595870291',
+      status     : true,
+      xfbml      : true
+    });
+  };
 
-    (function(d, s, id){
-       var js, fjs = d.getElementsByTagName(s)[0];
-       if (d.getElementById(id)) {return;}
-       js = d.createElement(s); js.id = id;
-       js.src = "//connect.facebook.net/en_US/all.js";
-       fjs.parentNode.insertBefore(js, fjs);
-     }(document, 'script', 'facebook-jssdk'));
+  (function(d, s, id){
+   var js, fjs = d.getElementsByTagName(s)[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement(s); js.id = id;
+   js.src = "//connect.facebook.net/en_US/all.js";
+   fjs.parentNode.insertBefore(js, fjs);
+ }(document, 'script', 'facebook-jssdk'));
   </script>
 
 <!-- <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
@@ -80,11 +81,11 @@
     </nav>
   </div>
 </header> -->
-  <div id="all">
-   <div align="center">
-    <img src="{{ STATIC_URL }}Histograph-full.gif" width="40%" height="40%">
-    <br><br><br>
-    <p>{{user}}</p>
+<div id="all">
+ <div align="center">
+  <img src="{{ STATIC_URL }}Histograph-full.gif" width="40%" height="40%">
+  <br><br><br>
+  <p>{{user}}</p>
 
 <!--      <h1>We bring the Payne</h1>
      <h2>Sam has unfortunately visited the following sites: </h2>
@@ -101,7 +102,7 @@
 
 <!--     <p>Authenticated: {{ authenticated }}</p>
 -->
-<div id="testLoad">
+<div id="testLoad" align="center">
 </div>
 </div>
 <!-- <div class="alignleft">
@@ -139,13 +140,13 @@
 </div>
 
 <div id="menu" style="display:none;">
-<ul >
-<li><a onclick="buttonClick1()">Graph 1</a></li>
-<li><a href="">jQuery</a></li>
-<li><a href="">jQuery</a></li>
-<li><a href="">jQuery</a></li>
-<li><a href="">jQuery</a></li>
-</ul>
+  <ul >
+    <li><a onclick="buttonClick1()">Graph 1</a></li>
+    <li><a href="">Graph 2</a></li>
+    <li><a href="">Graph 3</a></li>
+    <li><a href="">Graph 4</a></li>
+    <li><a href="">Graph 5</a></li>
+  </ul>
 </div>
 
 </body>
@@ -200,7 +201,13 @@ $(document).ready(function() {
 // load graphs on click
 function buttonClick1() {
   console.log("graph1 loading");
-  $("#testLoad").load("testLoad");
+  $("#testLoad").load("../graph/sunburst#main");
+  // setTimeout(buttonClickA, 100);
+}
+
+function buttonClickA() {
+  console.log("a loading");
+  $("#testLoad").load("../graph/sunburst#main");
 }
 
 function buttonClick2() {
@@ -233,13 +240,19 @@ function buttonClick6() {
 <!-- initialize slider plugin -->
 <script>
 $(document).ready(function(){
-$('#menu ul').sliding_menu_js({
-// header_title:'jQueryScript.Net!',
-// header_logo: "logo.png", 
-toggle_button: true, 
-transitionSpeed: 0.5, 
-easing: 'ease', 
-});
+  $('#menu ul').sliding_menu_js({
+    toggle_button: true, 
+    transitionSpeed: 0.5, 
+    easing: 'ease', 
+  });
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+  $('#sliding_menu_js_btn').append("<a href='team'>About us</a>");
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+  $('#sliding_menu_js_btn').append("<a href='logout'>Logout</a>");
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+
+
+
 });
 </script>
 
