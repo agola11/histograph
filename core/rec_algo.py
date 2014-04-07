@@ -155,7 +155,7 @@ def rank_urls(user):
 		update_url_dict([(filtered_hns,0)], 1, url_dict, user_dict)
 
 	ranked_urls = list(url_dict.items())
-	ranked_urls = filter((lambda (x,y): ('http://'+x) not in user_urls), ranked_urls)
+	ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
 
 	return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
 

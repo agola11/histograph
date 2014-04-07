@@ -4,86 +4,169 @@
 <head>
 	<meta charset="utf-8">
 	<title>Dat Histograph Doe</title>
-	<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="/static/sidr/src/jquery.sidr.js"></script>
+  <script src="http://d3js.org/d3.v3.min.js"></script>
   <link rel="stylesheet" href="/static/sidr/src/myCSS.css">
   <link rel="stylesheet" href="/static/sidr/src/jquery.sidr.dark.css">
+  <link rel="stylesheet" href="/static/slider/src/css/jquery.sliding_menu.css">
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+/*  body { background: url('{{STATIC_URL}}purple-giraffe-hi.png'); }
+*/  </style>
 
 </head>
 <body>
-  <div id="all">
-	<div align="center">
-   <h1>We bring the Payne</h1>
-   <h2>Sam has unfortunately visited the following sites: </h2>
-   <p>{{ domain }}</p>
-   <table class="table" id="tb">
-    <th>Visit Time</th>
-    <th>Url</th>
-    <th>Referrer</th>
-    <th>Browser Id</th>
-    <th>Last Title</th>
-    <th>Extension Id</th>
-    <th>Transition Type</th>
-  </table>
 
-<div id="example-source" class="hidden">
-	<header id="demoheader">
-   <h1>History Analytics</h1>
- </header>
- <ul>
-   <li><span class="fake-line" onclick="buttonClick1()">Graph 1</span></li>
-   <li>Graph 2</li>
-   <li>Graph 3</li>
-   <li>Graph 4</li>
-   <li>Graph 5</li>
-   <li>Graph 6</li>
- </ul>
-</div>
+  <div id="fb-root"></div>
+  <script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '243320595870291',
+      status     : true,
+      xfbml      : true
+    });
+  };
 
-<div id="other-source" class="hidden">
-  <p>This is a right menu!!!!!!!!!!!!!!!</p>
+  (function(d, s, id){
+   var js, fjs = d.getElementsByTagName(s)[0];
+   if (d.getElementById(id)) {return;}
+   js = d.createElement(s); js.id = id;
+   js.src = "//connect.facebook.net/en_US/all.js";
+   fjs.parentNode.insertBefore(js, fjs);
+ }(document, 'script', 'facebook-jssdk'));
+  </script>
+
+<!-- <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="" class="navbar-brand">Histograph</a>
+    </div>
+    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav">
+        <li>
+          <a onclick="buttonClick1()">Graph 1</a>
+        </li>
+        <li>
+          <a onclick="buttonClick2()">Graph 2</a>
+        </li>
+        <li>
+          <a onclick="buttonClick3()">Graph 3</a>
+        </li>
+        <li>
+          <a onclick="buttonClick4()">Graph 4</a>
+        </li>
+        <li>
+          <a onclick="buttonClick5()">Graph 5</a>
+        </li>
+        <li>
+          <a onclick="buttonClick6()">Graph 6</a>
+        </li>
+        <li>
+          <a href="../getting-started">Recommended sites</a>
+        </li>
+        <li>
+          <a href="team">About us</a>
+        </li>
+        <li>
+          <a href="logout">Logout</a>
+        </li>
+    </nav>
+  </div>
+</header> -->
+<div id="all">
+ <div align="center">
+  <img src="{{ STATIC_URL }}Histograph-full.gif" width="30%" height="30%">
+  <br><br><br>
+  <p>{{user}}</p>
+
+<!--      <h1>We bring the Payne</h1>
+     <h2>Sam has unfortunately visited the following sites: </h2>
+     <p>{{ domain }}</p>
+     <table class="table" id="tb">
+      <th>Visit Time</th>
+      <th>Url</th>
+      <th>Referrer</th>
+      <th>Browser Id</th>
+      <th>Last Title</th>
+      <th>Extension Id</th>
+      <th>Transition Type</th>
+    </table> -->
+
+<!--     <p>Authenticated: {{ authenticated }}</p>
+-->
+<div id="testLoad" align="center">
 </div>
 </div>
-<div class="alignleft">
+<!-- <div class="alignleft">
  <button type="button" class="btn btn-default" id="left-menu" href="#left-menu">
-    <span class="glyphicon glyphicon-chevron-left"></span></button>
+  <span class="glyphicon glyphicon-chevron-left"></span></button>
 </button>
 </div>
 <div class="alignright">
  <button type="button" class="btn btn-default" id="right-menu" href="#right-menu">
   <span class="glyphicon glyphicon-chevron-right"></span></button>
 </div>
-<div style="clear: both;"></div>
+<div style="clear: both;"></div> -->
 
 <!-- <script src="/static/sidr/dist/jquery.sidr.js"></script>
 -->
-<div id="testLoad" align="center">
-
 </div>
+
+<div id="example-source" class="hidden">
+ <header id="demoheader">
+   <h1>History Analytics</h1>
+ </header>
+ <ul>
+   <li><span class="fake-line" onclick="buttonClick1()">Graph 1</span></li>
+   <li><span class="fake-line" onclick="buttonClick2()">Graph 2</span></li>
+   <li><span class="fake-line" onclick="buttonClick3()">Graph 3</span></li>
+   <li><span class="fake-line" onclick="buttonClick4()">Graph 4</span></li>
+   <li><span class="fake-line" onclick="buttonClick5()">Graph 5</span></li>
+   <li><span class="fake-line" onclick="buttonClick6()">Graph 6</span></li>
+
+ </ul>
+</div>
+
+<div id="other-source" class="hidden">
+  <p>This is a right menu!!!!!!!!!!!!!!!</p>
+</div>
+
+<div id="menu" style="display:none;">
+  <ul >
+    <li><a onclick="buttonClick1()">Sunburst</a></li>
+    <li><a onclick="buttonClick2()">Pie</a></li>
+    <li><a href="">Graph 3</a></li>
+    <li><a href="">Graph 4</a></li>
+    <li><a href="">Graph 5</a></li>
+    <li><a onclick="manageHistory()">Manage History</a></li>
+  </ul>
+</div>
+
 </body>
 
 <script type="text/javascript">
-var items = [];
-$.getJSON( "http://{{ domain }}/core/send", function( data ) {
-	/*$.each( data, function( key, val ) {
-		items.push(val.fields.visit_time);
-		console.log("<p>" + val.fields.visit_time + "</p>");
-		$("h3").append("<li>"  + val.fields.url + "</li>");
+// var items = [];
+// $.getJSON( "http://{{ domain }}/core/send", function( data ) {
 
-	});*/
+// var tbl_body = "";
+// $.each(data, function(key, val) {
+//   var tbl_row = "";
+//   $.each(val.fields, function(k , v) {
+//     tbl_row += "<td>"+v+"</td>";
+//   })
+//   tbl_body += "<tr>"+tbl_row+"</tr>";                 
+// })
+// $("#tb").append(tbl_body);
 
-var tbl_body = "";
-$.each(data, function(key, val) {
-  var tbl_row = "";
-  $.each(val.fields, function(k , v) {
-    tbl_row += "<td>"+v+"</td>";
-  })
-  tbl_body += "<tr>"+tbl_row+"</tr>";                 
-})
-$("#tb").append(tbl_body);
-
-});
+// });
 </script>
 
 <script>
@@ -99,7 +182,7 @@ $(document).ready(function() {
   });
 
   // close both menus when hover over area that's not in the side
-  $("div").hover(
+  $("#all").hover(
     function() {
       $.sidr('close', 'sidr-left');
       $.sidr('close', 'sidr-right');
@@ -118,12 +201,59 @@ $(document).ready(function() {
 <script type="text/javascript">
 // load graphs on click
 function buttonClick1() {
+  $("#testLoad").load("../graph/sunburst#main");
+  // setTimeout(buttonClickA, 100);
+}
+
+function buttonClickA() {
+  $("#testLoad").load("../graph/sunburst#main");
+}
+
+function buttonClick2() {
+  $("#testLoad").load("../graph/pie");
+}
+
+function buttonClick3() {
   console.log("graph1 loading");
   $("#testLoad").load("testLoad");
 }
+
+function buttonClick4() {
+  console.log("graph1 loading");
+  $("#testLoad").load("testLoad");
+}
+
+function buttonClick5() {
+  console.log("graph1 loading");
+  $("#testLoad").load("testLoad");
+}
+
+function manageHistory() {
+  $("#testLoad").load("manage");
+}
+
 </script>
 
-<script type="text/javascript">
+<!-- initialize slider plugin -->
+<script>
+$(document).ready(function(){
+  $('#menu ul').sliding_menu_js({
+    toggle_button: true, 
+    transitionSpeed: 0.5, 
+    easing: 'ease', 
+  });
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+  $('#sliding_menu_js_btn').append("<a id='whatwedo' href='what'>What we do</a>");
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+  $('#sliding_menu_js_btn').append("<a id='aboutus' href='team'>About us</a>");
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+  $('#sliding_menu_js_btn').append("<a href='logout'>Logout</a>");
+  $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
 
+
+
+});
 </script>
+
+<script src="/static/slider/src/js/jquery.sliding_menu.js"></script>
 </html>

@@ -1,0 +1,34 @@
+<!doctype html>
+{% load staticfiles %}
+<html lang="en" ng-app>
+<body>
+
+	<div id="all">
+		 <table class="table" id="tb">
+		  <th>Visit Time</th>
+		  <th>Url</th>
+		  <th>Referrer</th>
+		  <th>Browser Id</th>
+		  <th>Last Title</th>
+		  <th>Extension Id</th>
+		  <th>Transition Type</th>
+		</table>
+	</div>
+	<script type="text/javascript">
+var items = [];
+$.getJSON( "http://{{ domain }}/core/send/{{ user_id }}", function( data ) {
+
+var tbl_body = "";
+$.each(data, function(key, val) {
+  var tbl_row = "";
+  $.each(val.fields, function(k , v) {
+    tbl_row += "<td>"+v+"</td>";
+  })
+  tbl_body += "<tr>"+tbl_row+"</tr>";                 
+})
+$("#tb").append(tbl_body);
+});
+</script>
+
+</body>
+</html>
