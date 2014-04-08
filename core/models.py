@@ -63,7 +63,7 @@ def create_history_nodes_from_json(payload, user):
     for node in payload:
       # if node is already in the database, replace it with the newer one
       try:
-        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=['extension_id'], user=user)
+        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
         existing_hn.delete()
       except HistoryNode.DoesNotExist:
         continue

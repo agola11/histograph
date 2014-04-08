@@ -28,9 +28,14 @@ def send_most_recent_history_time(request, extension_id):
   return HttpResponse(simplejson.dumps(t), content_type="application/json")
 
 def send_blocked_sites(request):
-  sites = BlockedSite.objects.filter(user=request.user)
-  urls = map(lambda x: x.url, sites)
-  return HttpResponse(simplejson.dumps(urls), content_type="application/json")
+  if request.user.is_authenticated():
+    sites = BlockedSite.objects.filter(user=request.user)
+    urls = map(lambda x: x.url, sites)
+    return HttpResponse(simplejson.dumps(urls), content_type="application/json")
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def store_blocked_sites(request):
   payload = json.loads(request.body)
