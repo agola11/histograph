@@ -86,6 +86,7 @@
   <img src="{{ STATIC_URL }}Histograph-full.gif" width="30%" height="30%">
   <br><br><br>
   <p>{{user}}</p>
+  <p>{{downloaded}}</p>
 
 <!--      <h1>We bring the Payne</h1>
      <h2>Sam has unfortunately visited the following sites: </h2>
@@ -234,6 +235,7 @@ function manageHistory() {
   $("#testLoad").load("manage");
 }
 
+
 </script>
 
 <!-- initialize slider plugin -->
@@ -245,7 +247,7 @@ $(document).ready(function(){
     easing: 'ease', 
   });
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
-  $('#sliding_menu_js_btn').append("<a id='whatwedo' href='what'>Install</a>");
+  $('#sliding_menu_js_btn').append("<a id='installClick' href='install' onclick='onInstall()'>Install</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
   $('#sliding_menu_js_btn').append("<a id='whatwedo' href='what'>What we do</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
