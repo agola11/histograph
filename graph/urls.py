@@ -7,5 +7,6 @@ urlpatterns = patterns('',
     url(r'^pie$', views.pie, name='pie'),
     url(r'^line$', views.send_line_plot, name='line'),
     url(r'^sunburst/(?P<user_id>\d+)$', views.user_sunburst, name='user_sunburst'),
-    url(r'^sunburst$', views.sunburst, name='sunburst'), 
+    url(r'^sunburst$', views.sunburst, name='sunburst'),
+    url(r'^circle$', views.circle, name='circle'), 
 )
