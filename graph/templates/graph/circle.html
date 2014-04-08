@@ -86,8 +86,10 @@
     node.append("text")
       .text(function (d) {return d.depth == depth ? d.name : ""; })
       .style("text-anchor", "middle");
+    
+    });
 
-    function click(d) {
+	function click(d) {
     	if (d3.event.ctrlKey) {
     		console.log(d.children);
     		d3.select(this).remove();
@@ -105,17 +107,6 @@
       var t = canvas.transition()
         .duration(d3.event.altKey ? 7500 : 750);
 
-      /*t.selectAll("circle")
-        .attr("cx", function(d) { return x(d.x); })
-        .attr("cy", function(d) { return y(d.y); })
-        .attr("r", function(d) { return k * d.r; });
-
-      t.selectAll("text")
-        .attr("x", function(d) { return x(d.x); })
-        .attr("y", function(d) { return y(d.y); })
-        .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
-        */
-        //depth = depth + 1;
         if (p['children'] != null)
           depth = p.depth + 1;
         console.log(depth);
@@ -131,11 +122,9 @@
       .text(function (d) {return (d.depth == depth) ? d.name : ""; })
       .style("text-anchor", "middle"); 
         
-
     //node = d;
   	d3.event.stopPropagation();
 	}
-    });
     
   </script>
 </body>
