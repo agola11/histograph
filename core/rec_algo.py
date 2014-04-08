@@ -12,7 +12,6 @@ except ImportError:
 # TODO: implement caching
 # TODO: add linked websites (using referrers?)
 # TODO: fiddle with constants
-WEIGHT = 0.5
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
@@ -60,6 +59,7 @@ def reduce_user_dict(hn_list, level, user_dict):
 	return l
 
 def reduce_url_dict(hn_list_tuple, level, url_dict, user_dict):
+	WEIGHT = 0.5
 	l = []
 	templist = []
 	reserved = []

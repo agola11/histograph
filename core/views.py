@@ -75,6 +75,8 @@ def store_history(request):
 def about(request):
   if (request.user.is_authenticated() == False):
     return redirect(login)
+  if (request.user.ext_downloaded == False):
+    return redirect(install)
   # if (request.user.ext_downloaded == False):
   #   return redirect(install)
   domain = get_current_site(request).domain
@@ -137,9 +139,6 @@ def install(request):
 
 def setextension(request):
   domain = get_current_site(request).domain
-  # h = HistographUser.objects.get(pk=1)
-  # h.ext_downloaded=True
-  # h.save()
   request.user.ext_downloaded = True
   request.user.save()
   if (request.user.is_authenticated() == True):

@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="/static/sidr/src/jquery.sidr.dark.css">
   <link rel="stylesheet" href="/static/slider/src/css/jquery.sliding_menu.css">
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:600' rel='stylesheet' type='text/css'>
+  <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
   <style type="text/css">
 /*  body { background: url('{{STATIC_URL}}purple-giraffe-hi.png'); }
 */  </style>
@@ -86,7 +88,9 @@
   <img src="{{ STATIC_URL }}Histograph-full.gif" width="30%" height="30%">
   <br><br><br>
   <p>{{user}}</p>
-  <p>{{downloaded}}</p>
+  <a id="leftButton" class="btn btn-primary btn-lg">View graphs</a>
+  <a id="rightButton" class="btn btn-primary btn-lg">Graph settings</a>
+
 
 <!--      <h1>We bring the Payne</h1>
      <h2>Sam has unfortunately visited the following sites: </h2>
@@ -106,45 +110,26 @@
 <div id="testLoad" align="center">
 </div>
 </div>
-<!-- <div class="alignleft">
- <button type="button" class="btn btn-default" id="left-menu" href="#left-menu">
-  <span class="glyphicon glyphicon-chevron-left"></span></button>
-</button>
-</div>
-<div class="alignright">
- <button type="button" class="btn btn-default" id="right-menu" href="#right-menu">
-  <span class="glyphicon glyphicon-chevron-right"></span></button>
-</div>
-<div style="clear: both;"></div> -->
-
-<!-- <script src="/static/sidr/dist/jquery.sidr.js"></script>
--->
 </div>
 
-<div id="example-source" class="hidden">
- <header id="demoheader">
-   <h1>History Analytics</h1>
- </header>
- <ul>
-   <li><span class="fake-line" onclick="buttonClick1()">Graph 1</span></li>
-   <li><span class="fake-line" onclick="buttonClick2()">Graph 2</span></li>
-   <li><span class="fake-line" onclick="buttonClick3()">Graph 3</span></li>
-   <li><span class="fake-line" onclick="buttonClick4()">Graph 4</span></li>
-   <li><span class="fake-line" onclick="buttonClick5()">Graph 5</span></li>
-   <li><span class="fake-line" onclick="buttonClick6()">Graph 6</span></li>
 
- </ul>
-</div>
-
-<div id="other-source" class="hidden">
-  <p>This is a right menu!!!!!!!!!!!!!!!</p>
-</div>
 
 <div id="menu" style="display:none;">
   <ul >
     <li><a onclick="buttonClick1()">Sunburst</a></li>
     <li><a onclick="buttonClick2()">Pie</a></li>
     <li><a href="">Graph 3</a></li>
+    <li><a href="">Graph 4</a></li>
+    <li><a href="">Graph 5</a></li>
+    <li><a onclick="manageHistory()">Manage History</a></li>
+  </ul>
+</div>
+
+<div id="menu_right" style="display:none;">
+  <ul >
+    <li><a onclick="buttonClick1()">Sunburst</a></li>
+    <li><a onclick="buttonClick2()">Pie</a></li>
+    <li><a href="">Testing Right</a></li>
     <li><a href="">Graph 4</a></li>
     <li><a href="">Graph 5</a></li>
     <li><a onclick="manageHistory()">Manage History</a></li>
@@ -246,6 +231,20 @@ $(document).ready(function(){
     transitionSpeed: 0.5, 
     easing: 'ease', 
   });
+
+  $('#menu_right ul').sliding_menu_js_right({
+    toggle_button: true, 
+    transitionSpeed: 0.5, 
+    easing: 'ease', 
+  });
+
+
+
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
   $('#sliding_menu_js_btn').append("<a id='installClick' href='install' onclick='onInstall()'>Install</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
@@ -255,11 +254,10 @@ $(document).ready(function(){
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
   $('#sliding_menu_js_btn').append("<a href='logout'>Logout</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
-
-
-
+  
 });
 </script>
 
 <script src="/static/slider/src/js/jquery.sliding_menu.js"></script>
+<script src="/static/slider/src/js/jquery.sliding_menu_right.js"></script>
 </html>

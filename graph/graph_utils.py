@@ -99,8 +99,19 @@ def send_line_plot(hn_list):
 	hn_list = sorted(hn_list, key=lambda hn: hn['visit_time'])
 	hn_list = map(split_url, hn_list)
 	domains = map(lambda hn: hn['url'][0], hn_list)
+	set_domains = list(OrderedDict.fromkeys(domains, 0))
 	dates = map(lambda hn: hn['visit_time'], hn_list)
 	line_dict = OrderedDict.fromkeys(dates, OrderedDict.fromkeys(domains, 0))
+	
 	for hn in hn_list:
 		line_dict[hn['visit_time']][hn['url'][0]] += 1
-	return str(line_dict)
+	
+	payload = ''
+	payload += 'date' + ',' + ','.join(set_domains) + '\n'
+
+	for date in line_dict:
+		counts = map(lambda hn: str(hn), line_dict[date].values())
+		payload += date + ',' + ','.join(counts) + '\n'
+
+	return payload
+
