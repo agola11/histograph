@@ -16,7 +16,14 @@
   <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
   <style type="text/css">
 /*  body { background: url('{{STATIC_URL}}purple-giraffe-hi.png'); }
-*/  </style>
+*/  
+.alignleft {
+  float: left;
+}
+.alignright {
+  float: right;
+}
+</style>
 
 </head>
 <body>
@@ -88,8 +95,10 @@
   <img src="{{ STATIC_URL }}Histograph-full.gif" width="30%" height="30%">
   <br><br><br>
   <p>{{user}}</p>
-  <a id="leftButton" class="btn btn-primary btn-lg">View graphs</a>
-  <a id="rightButton" class="btn btn-primary btn-lg">Graph settings</a>
+  <div id="buttons">
+  <a id="leftButton" class="btn btn-primary btn-lg alignleft">View graphs</a>
+  <a id="rightButton" class="btn btn-primary btn-lg alignright">Graph settings</a>
+</div>
 
 
 <!--      <h1>We bring the Payne</h1>
