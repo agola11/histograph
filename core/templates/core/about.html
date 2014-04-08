@@ -88,6 +88,9 @@
   <img src="{{ STATIC_URL }}Histograph-full.gif" width="30%" height="30%">
   <br><br><br>
   <p>{{user}}</p>
+  <a id="leftButton" class="btn btn-primary btn-lg">View graphs</a>
+  <a id="rightButton" class="btn btn-primary btn-lg">Graph settings</a>
+
 
 <!--      <h1>We bring the Payne</h1>
      <h2>Sam has unfortunately visited the following sites: </h2>
@@ -116,6 +119,17 @@
     <li><a onclick="buttonClick1()">Sunburst</a></li>
     <li><a onclick="buttonClick2()">Pie</a></li>
     <li><a href="">Graph 3</a></li>
+    <li><a href="">Graph 4</a></li>
+    <li><a href="">Graph 5</a></li>
+    <li><a onclick="manageHistory()">Manage History</a></li>
+  </ul>
+</div>
+
+<div id="menu_right" style="display:none;">
+  <ul >
+    <li><a onclick="buttonClick1()">Sunburst</a></li>
+    <li><a onclick="buttonClick2()">Pie</a></li>
+    <li><a href="">Testing Right</a></li>
     <li><a href="">Graph 4</a></li>
     <li><a href="">Graph 5</a></li>
     <li><a onclick="manageHistory()">Manage History</a></li>
@@ -217,6 +231,20 @@ $(document).ready(function(){
     transitionSpeed: 0.5, 
     easing: 'ease', 
   });
+
+  $('#menu_right ul').sliding_menu_js_right({
+    toggle_button: true, 
+    transitionSpeed: 0.5, 
+    easing: 'ease', 
+  });
+
+
+
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
   $('#sliding_menu_js_btn').append("<a id='installClick' href='install' onclick='onInstall()'>Install</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
@@ -227,11 +255,9 @@ $(document).ready(function(){
   $('#sliding_menu_js_btn').append("<a href='logout'>Logout</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
   
-
-
-
 });
 </script>
 
 <script src="/static/slider/src/js/jquery.sliding_menu.js"></script>
+<script src="/static/slider/src/js/jquery.sliding_menu_right.js"></script>
 </html>
