@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, ExtensionID, BlockedSite, create_history_nodes_from_json
+from core.models import HistoryNode, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -70,14 +70,18 @@ def store_history(request):
 def about(request):
   if (request.user.is_authenticated() == False):
     return redirect(login)
+  # if (request.user.ext_downloaded == False):
+  #   return redirect(install)
   domain = get_current_site(request).domain
   template = loader.get_template('core/about.html')
   userT = request.user
   things = dir(userT)
+  downloaded = dir(request.user)
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'authenticated': request.user.is_authenticated(),
         'user' : userT,
+        'downloaded' : request.user.ext_downloaded,
         # 'friends': django_facebook.api.facebook_profile_data(),
   })
   return HttpResponse(template.render(context))
@@ -116,6 +120,27 @@ def what(request):
         'domain': get_current_site(request).domain,
   })
   return HttpResponse(template.render(context))
+
+def install(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('core/install.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        'user': request.user
+  })
+  return HttpResponse(template.render(context))
+
+def setextension(request):
+  domain = get_current_site(request).domain
+  # h = HistographUser.objects.get(pk=1)
+  # h.ext_downloaded=True
+  # h.save()
+  request.user.ext_downloaded = True
+  request.user.save()
+  if (request.user.is_authenticated() == True):
+    return redirect(about)
+  else: return redirect(login)
+
 
 def manage(request):
   domain = get_current_site(request).domain
