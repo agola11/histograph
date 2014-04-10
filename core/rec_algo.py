@@ -73,9 +73,11 @@ def reduce_url_dict(hn_list_tuple, level, url_dict, user_dict):
 		if len(hn_list[i]['url']) < level:
 			url = '/'.join(hn_list[i]['url'])
 			if url not in url_dict:
-				url_dict[url] = prev_score
+				url_dict[url] = {'score':prev_score, 'last_title': hn_list[i][last_title]}
 			else:
-				url_dict[url] += prev_score
+				score = url_dict[url]['score']
+				score += prev_score
+				url_dict[url]['score'] = score
 			removed += 1
 			continue
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
@@ -132,7 +134,7 @@ def rank_urls(user):
 	user_dict = {}
 	url_dict = {}
 
-	hn_list = list(HistoryNode.objects.values('url', 'user__id'))
+	hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
 	hn_list = filter(filter_http, hn_list)
 	hn_list = map(clean_url, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
@@ -157,5 +159,5 @@ def rank_urls(user):
 	ranked_urls = list(url_dict.items())
 	ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
 
-	return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
+	return list(reversed(sorted(ranked_urls, key=lambda (x,y): y['score'])))
 
