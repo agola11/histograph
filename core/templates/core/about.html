@@ -7,6 +7,7 @@
 	<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="/static/sidr/src/jquery.sidr.js"></script>
+  <script src="/static/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script> 
   <script src="http://d3js.org/d3.v3.min.js"></script>
   <link rel="stylesheet" href="/static/sidr/src/myCSS.css">
   <link rel="stylesheet" href="/static/sidr/src/jquery.sidr.dark.css">
@@ -23,6 +24,19 @@
 .alignright {
   float: right;
 }
+
+.btn-primary {
+color: #fff;
+background-color: #563d7c;
+border-color: #563d7c;
+}
+
+.btn-tool {
+color: #fff;
+background-color: rgba(86, 61, 124, 0.49);
+border-color: #563d7c;
+}
+
 </style>
 
 </head>
@@ -95,9 +109,14 @@
   <img src="{{ STATIC_URL }}Histograph-full.gif" width="30%" height="30%">
   <br><br><br>
   <p>{{user}}</p>
+<!--     <div id="buttons">
+    <a id="leftTip" class="btn btn-tool btn-sm alignleft">Click below to view graphs of <br> your browsing history</a>
+    <a id="rightTip" class="btn btn-tool btn-sm alignright">Click below to change <br> your graph settings</a>
+  </div> -->
+  <br><br><br>
   <div id="buttons">
-  <a id="leftButton" class="btn btn-primary btn-lg alignleft">View graphs</a>
-  <a id="rightButton" class="btn btn-primary btn-lg alignright">Graph settings</a>
+  <a id="leftButton" class="btn btn-primary btn-lg alignleft glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-placement="right" title="Tooltip on right"></a>
+  <a id="rightButton" class="btn btn-primary btn-lg alignright glyphicon glyphicon-chevron-right"></a>
 </div>
 
 
@@ -263,8 +282,20 @@ $(document).ready(function(){
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
   $('#sliding_menu_js_btn').append("<a href='logout'>Logout</a>");
   $('#sliding_menu_js_btn').append("<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</span>");
+
+  $( "#leftButton" ).click(function(){
+    console.log("in left tip");
+    $( "#leftTip" ).hide();
+  });
+
+  $( "#rightButton" ).click(function(){
+    console.log("in left tip");
+    $( "#rightTip" ).hide();
+  });
   
 });
+
+$('[data-toggle="tooltip"]').tooltip({'placement': 'right'});
 </script>
 
 <script src="/static/slider/src/js/jquery.sliding_menu.js"></script>
