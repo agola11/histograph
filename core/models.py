@@ -1,6 +1,7 @@
 from django.db import models, transaction
 from django_facebook.models import FacebookModel
 from django.contrib.auth.models import AbstractUser, UserManager
+from open_facebook import OpenFacebook
 import logging
 import time
 
@@ -8,6 +9,13 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
+
+  def get_friends(self):
+    graph = self.get_offline_graph()
+    friends = graph.get('me/friends')
+    friend_ids = map(lambda x: x['id'], friends['data'])
+    friend_users = HistographUser.objects.filter(facebook_id__in=friend_ids)
+    return friend_users
 
 class HistoryNode(models.Model):
   # choices for the transition type field
