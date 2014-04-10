@@ -17,28 +17,6 @@
 <body>
   
   <script type="text/javascript">
-    /*var data = [{"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]}];*/
-    
-    /*var node_counts = [];
-    var domain_names = new Array();
-    $.each(data, function(key, val) {
-      $.each(val['children'], function(key, val) {
-        domain_names.push(val['name']);
-        node_counts[val['name']] = val['node_count'];
-      });  
-    });  
-    $.each(data, function(key, val) { recursiveParse(key, val) });
-    function recursiveParse(key, val) {
-        console.log(val.name);
-        var node_count = val['children'];
-        if (value instanceof Object) {
-          $.each(value, function(key, val) {
-              recursiveParse(key, val)
-          });
-        }
-    }*/
-    
-
     d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
       var width = 1280, 
         height = 800, 
@@ -64,7 +42,7 @@
 
     node = root = data;
 
-    var nodes = pack.nodes(data[0]);
+    var nodes = pack.nodes(data);
 
     console.log(nodes);
 
@@ -86,10 +64,12 @@
     node.append("text")
       .text(function (d) {return d.depth == depth ? d.name : ""; })
       .style("text-anchor", "middle");
+    
+    });
 
-    function click(d) {
+	function click(d) {
     	if (d3.event.ctrlKey) {
-    		console.log(d.children);
+    		//console.log(d.children);
     		d3.select(this).remove();
     
     	}
@@ -105,17 +85,6 @@
       var t = canvas.transition()
         .duration(d3.event.altKey ? 7500 : 750);
 
-      /*t.selectAll("circle")
-        .attr("cx", function(d) { return x(d.x); })
-        .attr("cy", function(d) { return y(d.y); })
-        .attr("r", function(d) { return k * d.r; });
-
-      t.selectAll("text")
-        .attr("x", function(d) { return x(d.x); })
-        .attr("y", function(d) { return y(d.y); })
-        .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
-        */
-        //depth = depth + 1;
         if (p['children'] != null)
           depth = p.depth + 1;
         console.log(depth);
@@ -131,12 +100,31 @@
       .text(function (d) {return (d.depth == depth) ? d.name : ""; })
       .style("text-anchor", "middle"); 
         
-
     //node = d;
   	d3.event.stopPropagation();
 	}
-    });
     
+
+    /*var data = [{"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]}];*/
+    
+    /*var node_counts = [];
+    var domain_names = new Array();
+    $.each(data, function(key, val) {
+      $.each(val['children'], function(key, val) {
+        domain_names.push(val['name']);
+        node_counts[val['name']] = val['node_count'];
+      });  
+    });  
+    $.each(data, function(key, val) { recursiveParse(key, val) });
+    function recursiveParse(key, val) {
+        console.log(val.name);
+        var node_count = val['children'];
+        if (value instanceof Object) {
+          $.each(value, function(key, val) {
+              recursiveParse(key, val)
+          });
+        }
+    }*/
   </script>
 </body>
 </html>
