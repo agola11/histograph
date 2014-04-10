@@ -73,7 +73,7 @@ def reduce_url_dict(hn_list_tuple, level, url_dict, user_dict):
 		if len(hn_list[i]['url']) < level:
 			url = '/'.join(hn_list[i]['url'])
 			if url not in url_dict:
-				url_dict[url] = {'score':prev_score, 'last_title': hn_list[i][last_title]}
+				url_dict[url] = {'score':prev_score, 'last_title': hn_list[i]['last_title']}
 			else:
 				score = url_dict[url]['score']
 				score += prev_score
