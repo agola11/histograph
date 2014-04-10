@@ -89,6 +89,7 @@ def about(request):
         'authenticated': request.user.is_authenticated(),
         'user' : userT,
         'downloaded' : request.user.ext_downloaded,
+        'id': request.user.id,
         # 'friends': django_facebook.api.facebook_profile_data(),
   })
   return HttpResponse(template.render(context))

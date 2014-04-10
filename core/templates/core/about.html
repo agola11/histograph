@@ -109,14 +109,15 @@ border-color: #563d7c;
   <img src="{{ STATIC_URL }}Histograph-full.gif" width="30%" height="30%">
   <br><br><br>
   <p>{{user}}</p>
+  <p>{{id}}</p>
 <!--     <div id="buttons">
     <a id="leftTip" class="btn btn-tool btn-sm alignleft">Click below to view graphs of <br> your browsing history</a>
     <a id="rightTip" class="btn btn-tool btn-sm alignright">Click below to change <br> your graph settings</a>
   </div> -->
   <br><br><br>
   <div id="buttons">
-  <a id="leftButton" class="btn btn-primary btn-lg alignleft glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-placement="right" title="Tooltip on right"></a>
-  <a id="rightButton" class="btn btn-primary btn-lg alignright glyphicon glyphicon-chevron-right"></a>
+  <a id="leftButton" class="btn btn-primary btn-lg alignleft glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-placement="right" title="View graphs on your history"></a>
+  <a id="rightButton" class="btn btn-primary btn-lg alignright glyphicon glyphicon-chevron-right" data-toggle="tooltip" data-placement="left" title="Change settings"></a>
 </div>
 
 
@@ -295,7 +296,8 @@ $(document).ready(function(){
   
 });
 
-$('[data-toggle="tooltip"]').tooltip({'placement': 'right'});
+$('#leftButton').tooltip({'placement': 'right'});
+$('#rightButton').tooltip({'placement': 'left'});
 </script>
 
 <script src="/static/slider/src/js/jquery.sliding_menu.js"></script>
