@@ -72,7 +72,7 @@ def store_history(request):
     resp.status_code = 401
     return resp
 
-def about(request):
+def home(request):
   if (request.user.is_authenticated() == False):
     return redirect(login)
   if (request.user.ext_downloaded == False):
@@ -80,14 +80,14 @@ def about(request):
   # if (request.user.ext_downloaded == False):
   #   return redirect(install)
   domain = get_current_site(request).domain
-  template = loader.get_template('core/about.html')
+  template = loader.get_template('core/home.html')
   userT = request.user
   things = dir(userT)
   downloaded = dir(request.user)
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'authenticated': request.user.is_authenticated(),
-        'user' : userT,
+        'user_fullname' : request.user.get_full_name(),
         'downloaded' : request.user.ext_downloaded,
         'id': request.user.id,
         # 'friends': django_facebook.api.facebook_profile_data(),
@@ -104,7 +104,7 @@ def testLoad(request):
 
 def login(request):
   if request.user.is_authenticated():
-    return redirect(about)
+    return redirect(home)
   template = loader.get_template('core/login.html')
   context = RequestContext(request)
   return HttpResponse(template.render(context))
@@ -121,9 +121,9 @@ def team(request):
   })
   return HttpResponse(template.render(context))
 
-def what(request):
+def about(request):
   domain = get_current_site(request).domain
-  template = loader.get_template('core/what.html')
+  template = loader.get_template('core/about.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
   })
@@ -143,7 +143,7 @@ def setextension(request):
   request.user.ext_downloaded = True
   request.user.save()
   if (request.user.is_authenticated() == True):
-    return redirect(about)
+    return redirect(home)
   else: return redirect(login)
 
 

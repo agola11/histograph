@@ -25,7 +25,7 @@
             }
 
             // Se agregan elementos básicos
-            $('<div/>', { id: 'sliding_menu_js_btn'}).appendTo('body');
+            // $('<div/>', { id: 'sliding_menu_js_btn'}).appendTo('body');
 
             $('<div/>', { id: 'sliding_menu_js', class: 'cerrado' }).appendTo('body');
 
@@ -37,7 +37,7 @@
 
 
             // Se agrega un padding top para mostrar todo el contenido del sitio
-            $('body').css('padding-top', '60px');
+            // $('body').css('padding-top', '60px');
 
             // Se copia el menu original
             $('#sliding_menu_js ul').append($(this).html());
