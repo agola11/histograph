@@ -25,7 +25,7 @@
             }
 
             // Se agregan elementos básicos
-            $('<div/>', { id: 'sliding_menu_js_btn'}).appendTo('body');
+            // $('<div/>', { id: 'sliding_menu_js_btn'}).appendTo('body');
 
             $('<div/>', { id: 'sliding_menu_js', class: 'cerrado' }).appendTo('body');
 

@@ -9,6 +9,7 @@ from django.contrib.sessions.models import Session
 from django.utils import simplejson
 from django.db.models import Max
 from django.contrib.auth import logout as django_logout
+from itertools import islice
 import django_facebook
 import json
 import rec_algo
@@ -146,6 +147,14 @@ def setextension(request):
     return redirect(about)
   else: return redirect(login)
 
+
+def recommendations(request):
+  template = loader.get_template('core/recommendations.html')
+  url_dict = rec_algo.rank_urls(request.user.id)
+  context = RequestContext(request, {
+      'first' : url_dict[:5]
+    })
+  return HttpResponse(template.render(context))
 
 def manage(request):
   domain = get_current_site(request).domain

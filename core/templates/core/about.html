@@ -37,6 +37,10 @@ background-color: rgba(86, 61, 124, 0.49);
 border-color: #563d7c;
 }
 
+.tableClass {
+    width: 50%;
+}
+
 </style>
 
 </head>
@@ -161,7 +165,7 @@ border-color: #563d7c;
     <li><a href="">Testing Right</a></li>
     <li><a href="">Graph 4</a></li>
     <li><a href="">Graph 5</a></li>
-    <li><a onclick="manageHistory()">Manage History</a></li>
+    <li><a onclick="viewRankings()">View Rankings</a></li>
   </ul>
 </div>
 
@@ -247,6 +251,10 @@ function buttonClick5() {
 
 function manageHistory() {
   $("#testLoad").load("manage");
+}
+
+function viewRankings() {
+  $("#testLoad").load("recommendations");
 }
 
 
