@@ -38,9 +38,11 @@
     var pack = d3.layout.pack()
       .size([width, height - 50])
       .padding(10)
-      .value(function(d){return d.node_count});
+      .value(function(d){return d.node_count;});
 
     node = root = data;
+
+    console.log(data);
 
     var nodes = pack.nodes(data);
 
@@ -78,9 +80,9 @@
     }
 
     function zoom(p, i) {
-      var k = r / p.r / 2;
+      /*var k = r / p.r / 2;
       x.domain([p.x - p.r, p.x + p.r]);
-      y.domain([p.y - p.r, p.y + p.r]);
+      y.domain([p.y - p.r, p.y + p.r]);*/
 
       var t = canvas.transition()
         .duration(d3.event.altKey ? 7500 : 750);
