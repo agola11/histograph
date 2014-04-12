@@ -18,6 +18,9 @@
   
   <script type="text/javascript">
     d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
+      
+      var data = [{"node_count": 16, "name": "top_level", "children": [{"node_count": 2, "name": "google.com", "full_url": "google.com"}, {"node_count": 8, "children": [{"node_count": 8, "children": [{"node_count": 1, "name": "sports", "full_url": "reddit.com/r/sports"}, {"node_count": 7, "name": "tech", "full_url": "reddit.com/r/tech"}], "name": "r", "full_url": "reddit.com/r"}], "name": "reddit.com", "full_url": "reddit.com"}, {"node_count": 6, "name": "www.google.com", "full_url": "www.google.com"}]}];
+
       var width = 1280, 
         height = 800, 
         r = 720, 
@@ -42,7 +45,7 @@
 
     node = root = data;
 
-    var nodes = pack.nodes(data);
+    var nodes = pack.nodes(data[0]);
 
     console.log(nodes);
 
@@ -58,12 +61,17 @@
       .attr("r", function(d) { return d.r; })
       .attr("stroke", "#ADADAD") 
       .attr("stroke-width", "2")
-      .attr("fill", function (d) { return d.depth <= depth ? "steelblue" : "#fff";})
-      .attr("opacity", function (d) { return d.depth <= depth ? 0.25 : 0.0;});
+      .attr("fill", function (d) { return /*d.depth <= depth ? */"steelblue" /*: "#fff"*/;})
+      .attr("opacity", function (d) { return /*d.depth <= depth ? */0.25 /*: 0.0*/;});
+
+    /*node.append("text")
+      .text(function (d) {return d.depth == depth ? d.name : ""; })
+      .style("text-anchor", "middle");*/
 
     node.append("text")
-      .text(function (d) {return d.depth == depth ? d.name : ""; })
+      .text(function (d) {return (d['children'] == null) ? d.name : ""; })
       .style("text-anchor", "middle");
+
     
     });
 
