@@ -77,8 +77,6 @@ def home(request):
     return redirect(login)
   if (request.user.ext_downloaded == False):
     return redirect(install)
-  # if (request.user.ext_downloaded == False):
-  #   return redirect(install)
   domain = get_current_site(request).domain
   template = loader.get_template('core/home.html')
   userT = request.user
@@ -91,6 +89,14 @@ def home(request):
         'downloaded' : request.user.ext_downloaded,
         'id': request.user.id,
         # 'friends': django_facebook.api.facebook_profile_data(),
+  })
+  return HttpResponse(template.render(context))
+
+def explore(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('core/explore.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
   })
   return HttpResponse(template.render(context))
 

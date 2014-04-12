@@ -20,4 +20,5 @@ urlpatterns = patterns('',
     url(r'^setextension$', views.setextension, name='setextension'),
     url(r'^freq/(?P<user_id>\d+)$', views.send_frequencies, name='send_frequencies'),
     url(r'^rank$', views.send_ranked_urls, name='send_ranked_urls'),
+    url(r'^explore$', views.explore, name='explore'),
 )
