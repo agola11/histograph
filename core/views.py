@@ -77,8 +77,6 @@ def home(request):
     return redirect(login)
   if (request.user.ext_downloaded == False):
     return redirect(install)
-  # if (request.user.ext_downloaded == False):
-  #   return redirect(install)
   domain = get_current_site(request).domain
   template = loader.get_template('core/home.html')
   userT = request.user
@@ -91,6 +89,15 @@ def home(request):
         'downloaded' : request.user.ext_downloaded,
         'id': request.user.id,
         # 'friends': django_facebook.api.facebook_profile_data(),
+  })
+  return HttpResponse(template.render(context))
+
+def explore(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('core/explore.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        'user_fullname' : request.user.get_full_name(),
   })
   return HttpResponse(template.render(context))
 
@@ -118,6 +125,7 @@ def team(request):
   template = loader.get_template('core/team.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'user_fullname' : request.user.get_full_name(),
   })
   return HttpResponse(template.render(context))
 
@@ -126,6 +134,7 @@ def about(request):
   template = loader.get_template('core/about.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'user_fullname' : request.user.get_full_name(),
   })
   return HttpResponse(template.render(context))
 
@@ -134,6 +143,7 @@ def install(request):
   template = loader.get_template('core/install.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'user_fullname' : request.user.get_full_name(),
         'user': request.user
   })
   return HttpResponse(template.render(context))

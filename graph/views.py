@@ -52,7 +52,7 @@ def send_user_bubble(request, user_id):
 	return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
 
 def send_bubble(request):
-	hn_list = list(HistoryNode.objects.values('url'))
+	hn_list = list(HistoryNode.objects.filter(user=request.user).values('url'))
 	bubble_tree = graph_utils.send_bubble(hn_list)
 	return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
 
