@@ -67,6 +67,6 @@ def send_line_plot(request):
 	return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
 
 def user_digraph(request, user_id):
-	hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer'))
+	hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
 	digraph_data = graph_utils.send_digraph(hn_list)
 	return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
