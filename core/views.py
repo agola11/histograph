@@ -97,6 +97,7 @@ def explore(request):
   template = loader.get_template('core/explore.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'user_fullname' : request.user.get_full_name(),
   })
   return HttpResponse(template.render(context))
 
@@ -124,6 +125,7 @@ def team(request):
   template = loader.get_template('core/team.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'user_fullname' : request.user.get_full_name(),
   })
   return HttpResponse(template.render(context))
 
@@ -132,6 +134,7 @@ def about(request):
   template = loader.get_template('core/about.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'user_fullname' : request.user.get_full_name(),
   })
   return HttpResponse(template.render(context))
 
@@ -140,6 +143,7 @@ def install(request):
   template = loader.get_template('core/install.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'user_fullname' : request.user.get_full_name(),
         'user': request.user
   })
   return HttpResponse(template.render(context))

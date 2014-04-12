@@ -78,7 +78,11 @@ def create_history_nodes_from_json(payload, user):
 
   with transaction.atomic():
     for node in payload:
-      hn = HistoryNode(url=node['url'], last_title=node['last_title'], visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+      trunc_title = node['last_title']
+      if len(trunc_title) > 256:
+        trunc_title = trunc_title[:253] + '...'
+
+      hn = HistoryNode(url=node['url'], last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
       hn.save()
 
   # connect referrers
