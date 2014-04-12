@@ -131,7 +131,7 @@ def send_digraph(hn_list):
 
 	referrers = []
 	for hn in hn_list:
-		referres.append(hn['referrer'])
+		referrers.append(hn['referrer'])
 
 	return referrers
 
