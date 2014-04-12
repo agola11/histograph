@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'histograph.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'^core/', include('core.urls')),
+    url(r'', include('core.urls')),
     url(r'^graph/', include('graph.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('django_facebook.auth_urls')),    

@@ -1,0 +1,106 @@
+{% extends "core/base.html" %}
+
+{% block graphs-nav %}class="active"{% endblock %}
+
+{% block content %}
+<div id="row">
+  <div class="col-sm-1">
+    <a id="leftButton" style="margin-top:400px;" class="btn btn-primary btn-lg btn-side-menu alignleft glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-placement="right" title="View graphs on your history"></a>
+  </div>
+  <div id="testLoad" class="col-sm-10" align="center"></div>
+  <div class="col-sm-1">
+    <a id="rightButton" style="margin-top:400px;" class="btn btn-primary btn-lg btn-side-menu alignright glyphicon glyphicon-chevron-right" data-toggle="tooltip" data-placement="left" title="Change settings"></a>
+  </div>
+</div>
+</div>
+
+<div id="menu" style="display:none;">
+  <ul >
+    <li><a onclick="buttonClick1()">Sunburst</a></li>
+    <li><a onclick="buttonClick2()">Pie</a></li>
+    <li><a href="">Graph 3</a></li>
+    <li><a href="">Graph 4</a></li>
+    <li><a href="">Graph 5</a></li>
+    <li><a onclick="manageHistory()">Manage History</a></li>
+  </ul>
+</div>
+
+<div id="menu_right" style="display:none;">
+  <ul >
+    <li><a onclick="buttonClick1()">Sunburst</a></li>
+    <li><a onclick="buttonClick2()">Pie</a></li>
+    <li><a href="">Testing Right</a></li>
+    <li><a href="">Graph 4</a></li>
+    <li><a href="">Graph 5</a></li>
+    <li><a onclick="manageHistory()">Manage History</a></li>
+  </ul>
+</div>
+
+<script type="text/javascript">
+// load graphs on click
+function buttonClick1() {
+  $("#testLoad").load("../graph/sunburst");
+  // setTimeout(buttonClickA, 100);
+}
+
+function buttonClickA() {
+  $("#testLoad").load("../graph/sunburst");
+}
+
+function buttonClick2() {
+  $("#testLoad").load("../graph/pie");
+}
+
+function buttonClick3() {
+  console.log("graph1 loading");
+  $("#testLoad").load("testLoad");
+}
+
+function buttonClick4() {
+  console.log("graph1 loading");
+  $("#testLoad").load("testLoad");
+}
+
+function buttonClick5() {
+  console.log("graph1 loading");
+  $("#testLoad").load("testLoad");
+}
+
+function manageHistory() {
+  $("#testLoad").load("manage");
+}
+
+
+</script>
+
+<!-- initialize slider plugin -->
+<script>
+$(document).ready(function(){
+  $('#menu ul').sliding_menu_js({
+    toggle_button: true, 
+    transitionSpeed: 0.5, 
+    easing: 'ease', 
+  });
+
+  $('#menu_right ul').sliding_menu_js_right({
+    toggle_button: true, 
+    transitionSpeed: 0.5, 
+    easing: 'ease', 
+  });
+
+  $("#testLoad").load("../graph/sunburst");
+
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $('#leftButton').tooltip({'placement': 'right'});
+  $('#rightButton').tooltip({'placement': 'left'});  
+});
+</script>
+
+<script src="/static/slider/src/js/jquery.sliding_menu.js"></script>
+<script src="/static/slider/src/js/jquery.sliding_menu_right.js"></script>
+
+{% endblock %}
