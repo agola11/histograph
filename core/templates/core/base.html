@@ -1,0 +1,111 @@
+<!doctype html>
+{% load staticfiles %}
+<html lang="en" ng-app>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Histograph</title>
+  <link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="/static/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script> 
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <link rel="stylesheet" href="/static/mycss.css">
+  <link rel="stylesheet" href="/static/slider/src/css/jquery.sliding_menu.css">
+  <link href="http://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet" type="text/css">
+  <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+  <style type="text/css">
+
+.alignleft {
+  float: left;
+}
+.alignright {
+  float: right;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #6d1daa;
+  border-color: #6d1daa;
+}
+
+.btn-primary:hover {
+  background-color: #2153ab;
+  border-color: #2153ab;
+}
+
+.btn-tool {
+  color: #fff;
+  background-color: rgba(86, 61, 124, 0.49);
+  border-color: #6d1daa;
+}
+
+.btn-side-menu {
+  padding: 12px 8px;
+}
+
+.navbar {
+  background-color: #ead9f8;
+}
+
+.navbutton {
+  background-color: #a4a4ff;
+  padding: 5px 5px;
+  margin: 10px 5px 0px 5px;
+}
+
+.nav-pills>li.active>a {
+  background-color: #f11b38;
+}
+
+.nav-pills>li:hover>a {
+  background-color: #2153ab;
+  color: #fff;
+}
+
+.nav-pills>li.active:hover>a {
+  background-color: #2153ab;
+}
+
+body {
+  color: #6d1daa;
+  background-color: #fff;
+}
+
+body a {
+  color: #2153ab;
+}
+  </style>
+
+</head>
+<body>
+
+<div class="container-fluid">
+<div class="navbar row">
+  <div class="col-sm-4" style="padding: 10px 0px 10px 10px;">
+    <a href=""><img src="{{ STATIC_URL }}Histograph-full.gif" height="50px"></img></a>
+  </div>
+  <div class="col-sm-8">
+    <div class="row">
+      <div class="col-sm-12" style="padding:10px 10px 0px 0px; text-align:right;">
+	{{ user_fullname }} | <a href="logout">logout</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+	<ul class="nav nav-pills alignright" style="margin-right:10%;">
+	  <li {% block graphs-nav %}{% endblock %}><a href="http://{{ domain }}">Graphs</a></li>
+	  <li {% block install-nav %}{% endblock %}><a href="install">Download</a></li>
+	  <li {% block about-nav %}{% endblock %}><a href="about">About</a></li>
+	  <li {% block team-nav %}{% endblock %}><a href="team">Team</a></li>
+	</ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

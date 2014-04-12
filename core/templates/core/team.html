@@ -1,54 +1,8 @@
-<!doctype html>
-{% load staticfiles %}
-<html lang="en" ng-app>
-<head>
-	<meta charset="utf-8">
-	<title>Dat Team Doe</title>
-	<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-	<script src="/static/sidr/src/jquery.sidr.js"></script>
-	<link rel="stylesheet" href="/static/sidr/src/myCSS.css">
-	<link rel="stylesheet" href="/static/sidr/src/jquery.sidr.dark.css">
-	<link href='http://fonts.googleapis.com/css?family=Open+Sans:700' rel='stylesheet' type='text/css'>
-	<style type="text/css">
-/*  body { background: url('{{STATIC_URL}}purple-giraffe-hi.png'); }
-*/  
-	.thumbnail.with-caption {
-	  display: inline-block;
-	  background: #f5f5f5;
-	}
-	.thumbnail.with-caption p {
-	  margin: 0;
-	  padding-top: 0.5em;
-	}
-	.thumbnail.with-caption small:before {
-	  content: '\2014 \00A0';
-	}
-	.thumbnail.with-caption small {
-	  width: 100%;
-	  text-align: right;
-	  display: inline-block;
-	  color: #999;
-	}
-	</style>
+{% extends "core/base.html" %}
 
-</head>
-<body>
-	<header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
-	  <div class="container">
-	    <div class="navbar-header">
-	      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
-	        <span class="sr-only">Toggle navigation</span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	      </button>
-	      <a href="about" class="navbar-brand">Home</a>
-	    </div>
-	    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
-	    </nav>
-	  </div>
-	</header>
+{% block team-nav %}class="active"{% endblock %}
+
+{% block content %}
 	<div align="center">
     <img src="{{ STATIC_URL }}histograph.jpg" width="40%" height="40%">
 	</div>
@@ -74,5 +28,4 @@
 	<p>Keeps the group running<small>Aaron</small></p>
 	</div>
 	</div>
-</body>
-</html>
+{% endblock %}

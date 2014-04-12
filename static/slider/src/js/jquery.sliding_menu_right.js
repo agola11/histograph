@@ -37,7 +37,7 @@
 
 
             // Se agrega un padding top para mostrar todo el contenido del sitio
-            $('body').css('padding-top', '60px');
+            // $('body').css('padding-top', '60px');
 
             // Se copia el menu original
             $('#sliding_menu_js_right ul').append($(this).html());
