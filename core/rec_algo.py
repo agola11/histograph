@@ -50,7 +50,7 @@ def reduce_user_dict(hn_list, level, user_dict):
 		if i+1 >= len(hn_list) or hn_list[i]['url'][level-1] != hn_list[i+1]['url'][level-1]:
 			templist.append(hn_list[i])
 			l.append(templist)
-			user_dict[('/'.join(hn_list[i]['url'][:level]))] = (count)/(len(hn_list)-removed))
+			user_dict[('/'.join(hn_list[i]['url'][:level]))] = (count)/(len(hn_list)-removed)
 			templist = []
 			count = 1
 		else:
