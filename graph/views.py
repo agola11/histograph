@@ -39,10 +39,10 @@ def user_sunburst(request, user_id):
 
 def sunburst(request): 
   domain = get_current_site(request).domain
-  template = loader.get_template('graph/sunburst-user.html')
+  template = loader.get_template('graph/sunburst.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
-        'user_id': request.user.id,
+        #'user_id': request.user.id,
         })
   return HttpResponse(template.render(context))
 
