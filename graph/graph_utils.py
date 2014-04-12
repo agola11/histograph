@@ -121,9 +121,20 @@ def send_digraph(hn_list):
 	hn_list = map(split_url, hn_list)
 	domains = map(lambda hn: hn['url'][0], hn_list)
 	domains = list(OrderedDict.fromkeys(domains, 0))
+
+	'''
 	nodes = []
 	for hn in hn_list:
 		nodes.append({'name':'/'.join(hn['url']), 'group':domains.index(hn['url'][0])})
+		urls.append('/'.join(hn['url']))
+	'''
 
-	
+	referrers = []
+	for hn in hn_list:
+		referres.append(hn['referrer'])
+
+	return referrers
+
+
+
 
