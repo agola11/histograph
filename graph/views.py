@@ -28,6 +28,15 @@ def pie(request):
         })
   return HttpResponse(template.render(context))
 
+
+def line_plot(request): 
+  domain = get_current_site(request).domain
+  template = loader.get_template('graph/line.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        })
+  return HttpResponse(template.render(context))
+
 def user_sunburst(request, user_id): 
   domain = get_current_site(request).domain
   template = loader.get_template('graph/sunburst-user.html')
@@ -67,6 +76,6 @@ def send_line_plot(request):
 	return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
 
 def user_digraph(request, user_id):
-	hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer'))
+	hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
 	digraph_data = graph_utils.send_digraph(hn_list)
 	return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
