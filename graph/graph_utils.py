@@ -105,6 +105,10 @@ def send_line_plot(hn_list):
 	
 	for hn in hn_list:
 		line_dict[hn['visit_time']][hn['url'][0]] += 1
+
+	return str(line_dict)
+
+	'''
 	
 	payload = ''
 	payload += 'date' + ',' + ','.join(set_domains) + '\n'
@@ -114,6 +118,7 @@ def send_line_plot(hn_list):
 		payload += date + ',' + ','.join(counts) + '\n'
 
 	return payload
+	'''
 
 def send_digraph(hn_list):
 	hn_list = filter(filter_http, hn_list)
