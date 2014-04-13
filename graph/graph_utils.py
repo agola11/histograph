@@ -115,3 +115,29 @@ def send_line_plot(hn_list):
 
 	return payload
 
+def send_digraph(hn_list):
+	hn_list = filter(filter_http, hn_list)
+	hn_list = map(chop_protocol, hn_list)
+	hn_list = map(split_url, hn_list)
+	domains = map(lambda hn: hn['url'][0], hn_list)
+	domains = list(OrderedDict.fromkeys(domains, 0))
+
+	nodes = []
+	id_dict = {}
+	i=0
+
+	for hn in hn_list:
+		nodes.append({'name':'/'.join(hn['url']), 'group':domains.index(hn['url'][0])})
+		id_dict[hn['id']] = i
+		i+=1
+
+	links = []
+	for hn in hn_list:
+		if hn['referrer'] != None:
+			links.append({'source':id_dict[hn['referrer']], 'target':id_dict[hn['id']], 'value': 1})
+
+	return {'nodes':nodes, 'links':links}
+
+
+
+
