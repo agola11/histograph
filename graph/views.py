@@ -28,6 +28,15 @@ def pie(request):
         })
   return HttpResponse(template.render(context))
 
+
+def line_plot(request): 
+  domain = get_current_site(request).domain
+  template = loader.get_template('graph/line.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        })
+  return HttpResponse(template.render(context))
+
 def user_sunburst(request, user_id): 
   domain = get_current_site(request).domain
   template = loader.get_template('graph/sunburst-user.html')
