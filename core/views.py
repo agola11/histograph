@@ -162,7 +162,7 @@ def recommendations(request):
   template = loader.get_template('core/recommendations.html')
   url_dict = rec_algo.rank_urls(request.user.id)
   context = RequestContext(request, {
-      'first' : url_dict[:5]
+      'first' : url_dict[:25]
     })
   return HttpResponse(template.render(context))
 
