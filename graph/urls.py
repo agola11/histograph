@@ -10,4 +10,5 @@ urlpatterns = patterns('',
     url(r'^sunburst/(?P<user_id>\d+)$', views.user_sunburst, name='user_sunburst'),
     url(r'^sunburst$', views.sunburst, name='sunburst'),
     url(r'^circle$', views.circle, name='circle'), 
+    url(r'^digraph/(?P<user_id>\d+)$', views.user_digraph, name='user_digraph'),
 )
