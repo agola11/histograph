@@ -159,7 +159,7 @@ d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
   site.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
+      .style("stroke", function(d) { return color(d.name); })
       .attr("title", function(d) { return d.name; });
   /*site.selectAll("circle")
     .data( function(d) {return(d.values);} )
