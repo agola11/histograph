@@ -21,7 +21,7 @@
     <li><a href="">Graph 3</a></li>
     <li><a href="">Graph 4</a></li>
     <li><a href="">Graph 5</a></li>
-    <li><a onclick="recommendations()">Recommended Sites</a></li>
+    <li><a onclick="manageHistory()">Manage History</a></li>
   </ul>
 </div>
 
@@ -70,10 +70,6 @@ function manageHistory() {
   $("#testLoad").load("manage");
 }
 
-function recommendations() {
-  $("#testLoad").load("recommendations");
-}
-
 
 </script>
 
@@ -92,7 +88,7 @@ $(document).ready(function(){
     easing: 'ease', 
   });
 
-  $("#testLoad").load("recommendations");
+  $("#testLoad").load("../graph/sunburst");
 
 });
 </script>

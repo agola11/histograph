@@ -160,9 +160,13 @@ def setextension(request):
 
 def recommendations(request):
   template = loader.get_template('core/recommendations.html')
-  url_dict = rec_algo.rank_urls(request.user.id)
+  # url_dict = rec_algo.rank_urls(request.user.id)
   context = RequestContext(request, {
-      'first' : url_dict[:25]
+        'domain': get_current_site(request).domain,
+        'authenticated': request.user.is_authenticated(),
+        'user_fullname' : request.user.get_full_name(),
+        'downloaded' : request.user.ext_downloaded,
+        'id': request.user.id,
     })
   return HttpResponse(template.render(context))
 
