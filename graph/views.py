@@ -79,3 +79,11 @@ def user_digraph(request, user_id):
 	hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
 	digraph_data = graph_utils.send_digraph(hn_list)
 	return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
+
+def digraph(request):
+  domain = get_current_site(request).domain
+  template = loader.get_template('graph/digraph.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        })
+  return HttpResponse(template.render(context))  
