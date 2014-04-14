@@ -111,7 +111,9 @@ def send_line_plot(hn_list):
 		line_dict[hn['visit_time']][hn['url'][0]] += 1
 		all_domains[hn['url'][0]] += 1
 
-	return(line_dict)
+	ranked_domains = list(all_domains.items())
+	ranked_domains  = list(reversed(sorted(ranked_domains, key=lambda (x,y): y)))
+	return({'sorted_domains':ranked_domains, 'line_dict':line_dict})
 
 def send_digraph(hn_list):
 	hn_list = filter(filter_http, hn_list)
