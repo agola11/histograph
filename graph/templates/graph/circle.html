@@ -2,7 +2,6 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <link type="text/css" rel="stylesheet" href="style.css"/>
     <style type="text/css">
 
 text {
@@ -40,7 +39,6 @@ circle.child:hover {
   </head>
   <body>
     <script src="http://d3js.org/d3.v3.min.js"></script>
-    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.layout.js"></script>
 <script type="text/javascript">
 var w = 1280,
     h = 800,
@@ -66,13 +64,14 @@ var vis = d3.select("body").append("svg")
 d3.json("http://{{ domain }}/graph/bubble", function(data) {
   /*var data = {"node_count": 16, "name": "top_level", "children": [{"node_count": 2, "name": "google.com", "full_url": "google.com"}, {"node_count": 8, "children": [{"node_count": 8, "children": [{"node_count": 1, "name": "sports", "full_url": "reddit.com/r/sports"}, {"node_count": 7, "name": "tech", "full_url": "reddit.com/r/tech"}], "name": "r", "full_url": "reddit.com/r"}], "name": "reddit.com", "full_url": "reddit.com"}, {"node_count": 6, "name": "www.google.com", "full_url": "www.google.com"}]};*/
 
-  /*var data = {"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]};*/
+/*  var data = {"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]}; */
 
   node = root = data;
 
   addPlaceholders(root);
 
-  var nodes = pack.nodes(root);
+  var nodes = pack.nodes(root)
+      .filter(function(d) {return d.r > 5; });
 
   removePlaceholders(nodes);
 
@@ -83,7 +82,8 @@ d3.json("http://{{ domain }}/graph/bubble", function(data) {
   var node = vis.selectAll(".node")
     .data(nodes)
     .enter()
-    .append("g");
+    .append("g")
+    .on("click", click);
 
   node.append("circle")
     .attr("cx", function(d) { return d.x; })
@@ -101,13 +101,15 @@ d3.json("http://{{ domain }}/graph/bubble", function(data) {
     
   node.attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; });
 
-  var fil = node.filter(function (d) {return d.depth <= depth; }).on("click", click);
+//  var fil = node.filter(function (d) {return d.depth <= depth; }).on("click", click);
 
   //d3.select(window).on("click", function() { zoom(root); });
 });
 
 function click(d) {
-  if (d3.event.ctrlKey) {  	
+console.log("clicked on "+d.full_url);
+  
+if (d3.event.ctrlKey) {  	
     d3.select(this).remove();
     var linked = true;
     var json = {
@@ -115,7 +117,7 @@ function click(d) {
     	"linked": linked
     }
     console.log(JSON.stringify(json));
-    d3.xhr("http://{{ domain }}/graph/bubble").post(JSON.stringify(json)); 
+    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json").post(JSON.stringify(json)); 
   }
   else {
     zoom(d);
@@ -153,14 +155,15 @@ function zoom(d, i) {
       .attr("y", function(d) { return y(d.y); })
       .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
 
-  node.filter(function (d) {return d.depth <= depth; }).on("click", click);
-  node.filter(function (d) {return d.depth > depth; }).on("click", doNothing);
-  //node = d;
+  vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
+//  node.filter(function (d) {return d.depth > depth; }).on("click", doNothing);
+//    vis.selectAll(".node").on("click", function(d) {return d.depth <= depth ? click : doNothing; });
+//node = d;
   d3.event.stopPropagation();
 };
 
 function doNothing(d) {
-
+  console.log("do nothing");
 };
 
 function addPlaceholders(node) {

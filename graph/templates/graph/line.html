@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2.5px;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
+<script type="text/javascript"/><script type="text/javascript"> src="/static/jquery.tipsy.js"></script>
+<script>
+//http://bl.ocks.org/Matthew-Weber/5645518
+var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+var x = d3.time.scale()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var line = d3.svg.line()
+    .interpolate("basis")
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.visits); });
+
+var formatDate = d3.time.format("%b %d, '%y");
+
+//defines a function to be used to append the title to the tooltip.  you can set how you want it to display here.
+var maketip = function (d) {                     
+         var tip = '<p class="tip3">' + d.name + '<p class="tip1">' + d.value + '</p> <p class="tip3">'+  formatDate(d.date)+'</p>';
+             return tip;}
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
+   var counts = d3.entries(data);
+   counts = counts.sort(function(a, b) {
+   return d3.ascending(a.key, b.key);  
+});
+   color.domain(d3.keys(counts[0]['value']));
+
+  counts.forEach(function(d) {
+    d.date = parseDate(d.key);
+  });
+
+ //console.log(color.domain());
+
+  var sites = color.domain().map(function(name) {
+    return {
+      name: name,
+      values: counts.map(function(d) {
+        return {date: d.date, visits: +d['value'][name]};
+      })
+    };
+  });
+
+ //console.log(sites);
+
+  x.domain(d3.extent(counts, function(d) { return d.date; }));
+
+  y.domain([
+    d3.min(sites, function(c) { return d3.min(c.values, function(v) { return v.visits; }); }),
+    d3.max(sites, function(c) { return d3.max(c.values, function(v) { return v.visits; }); })
+  ]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Visits");
+
+  var site = svg.selectAll(".site")
+      .data(sites)
+    .enter().append("g")
+      .attr("class", "site")
+      .on("mouseover", function (d) {                                  
+          d3.select(this)                          //on mouseover of each line, give it a nice thick stroke
+          .style("stroke-width",'6px');
+          
+          var selectthegraphs = $('.site').not(this);     //select all the rest of the lines, except the one you are hovering on and drop their opacity
+          d3.selectAll(selectthegraphs)
+            .style("opacity",0.2);
+          
+         /* var getname = document.getElementById(d.name);    //use get element cause the ID names have spaces in them
+          var selectlegend = $('.legend').not(getname);    //grab all the legend items that match the line you are on, except the one you are hovering on
+
+          d3.selectAll(selectlegend)    // drop opacity on other legend names
+            .style("opacity",.2);
+
+          d3.select(getname)
+            .attr("class", "legend-select");  //change the class on the legend name that corresponds to hovered line to be bolder   */      
+      })
+      .on("mouseout", function(d) {        //undo everything on the mouseout
+          d3.select(this)
+            .style("stroke-width",'2.5px');
+          
+          var selectthegraphs = $('.site').not(this);
+          d3.selectAll(selectthegraphs)
+            .style("opacity",1);
+          
+          /*var getname = document.getElementById(d.name);
+          var getname2= $('.legend[fakeclass="fakelegend"]')
+          var selectlegend = $('.legend').not(getname2).not(getname);
+
+          d3.selectAll(selectlegend)
+            .style("opacity",1);
+          
+          d3.select(getname)
+            .attr("class", "legend");*/         
+      });
+
+  site.append("path")
+      .attr("class", "line")
+      .attr("d", function(d) { return line(d.values); })
+      .style("stroke", function(d) { return color(d.name); });
+
+      
+  site.selectAll("circle")
+    .data( function(d) {return(d.values);} )
+    .enter()
+    .append("circle")
+      .attr("class","tipcircle")
+      .attr("cx", function(d,i){return x(d.date)})
+      .attr("cy",function(d,i){return y(d.visits)})
+      .attr("r",12)
+      .style('opacity', 1e-6)//1e-6
+      .attr ("title", maketip);
+
+  //make my tooltips work
+  $('circle').tipsy({opacity:.9, gravity:'n', html:true});
+
+  /*site.append("text")
+      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.visits) + ")"; })
+      .attr("x", 3)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.name; });*/
+});
+
+</script>

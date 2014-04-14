@@ -99,21 +99,17 @@ def send_line_plot(hn_list):
 	hn_list = sorted(hn_list, key=lambda hn: hn['visit_time'])
 	hn_list = map(split_url, hn_list)
 	domains = map(lambda hn: hn['url'][0], hn_list)
-	set_domains = list(OrderedDict.fromkeys(domains, 0))
+	domains.insert(0, 'date')
 	dates = map(lambda hn: hn['visit_time'], hn_list)
-	line_dict = OrderedDict.fromkeys(dates, OrderedDict.fromkeys(domains, 0))
+	line_dict = OrderedDict.fromkeys(dates)
 	
 	for hn in hn_list:
+		if line_dict[hn['visit_time']] == None:
+			line_dict[hn['visit_time']] = OrderedDict.fromkeys(domains, 0)
+			line_dict[hn['visit_time']]['date'] = hn['visit_time']
 		line_dict[hn['visit_time']][hn['url'][0]] += 1
-	
-	payload = ''
-	payload += 'date' + ',' + ','.join(set_domains) + '\n'
 
-	for date in line_dict:
-		counts = map(lambda hn: str(hn), line_dict[date].values())
-		payload += date + ',' + ','.join(counts) + '\n'
-
-	return payload
+	return(line_dict.values())
 
 def send_digraph(hn_list):
 	hn_list = filter(filter_http, hn_list)
@@ -122,18 +118,21 @@ def send_digraph(hn_list):
 	domains = map(lambda hn: hn['url'][0], hn_list)
 	domains = list(OrderedDict.fromkeys(domains, 0))
 
-	'''
 	nodes = []
+	id_dict = {}
+	i=0
+
 	for hn in hn_list:
 		nodes.append({'name':'/'.join(hn['url']), 'group':domains.index(hn['url'][0])})
-		urls.append('/'.join(hn['url']))
-	'''
+		id_dict[hn['id']] = i
+		i+=1
 
-	referrers = []
+	links = []
 	for hn in hn_list:
-		referrers.append(hn['referrer'])
+		if hn['referrer'] != None:
+			links.append({'source':id_dict[hn['referrer']], 'target':id_dict[hn['id']], 'value': 1})
 
-	return referrers
+	return {'nodes':nodes, 'links':links}
 
 
 

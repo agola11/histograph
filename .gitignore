@@ -11,3 +11,6 @@ log/
 # local settings
 histograph/local_settings.py
 histograph/wsgi.py
+
+# static files
+static_prod/

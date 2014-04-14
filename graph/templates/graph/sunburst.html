@@ -62,6 +62,7 @@
         <div id="explanation" style="visibility: hidden;">
           <span id="percentage"></span><br/>
           of visits begin with this sequence of pages
+          <span class="glyphicon glyphicon-circle-arrow-left"></span>
         </div>
       </div>
     </div>
@@ -99,15 +100,24 @@ var arc = d3.svg.arc()
     .innerRadius(function(d) { return Math.sqrt(d.y); })
     .outerRadius(function(d) { return Math.sqrt(d.y + d.dy); });
 
+// Basic setup of page elements.
+initializeBreadcrumbTrail();
+
+var rootd;
+
 d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
+      console.log(data);
       createVisualization(data);
+      rootd = data;
 });
 
 // Main function to draw and set up the visualization, once we have the data.
-function createVisualization(json) {
+function createVisualization(root) {
 
-  // Basic setup of page elements.
-  initializeBreadcrumbTrail();
+  d3.select("#container").selectAll("path").remove();
+  d3.select("#center").remove();
+
+  console.log(root);
 
   // Bounding circle underneath the sunburst, to make it easier to detect
   // when the mouse leaves the parent g.
@@ -116,21 +126,33 @@ function createVisualization(json) {
       .style("opacity", 0);
 
   // For efficiency, filter nodes to keep only those large enough to see.
-  var nodes = partition.nodes(json)
+  var nodes = partition.nodes(root)
       .filter(function(d) {
-      return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
+      return (d.dx > 0.01); // 0.005 radians = 0.29 degrees
       });
 
-  var path = vis.data([json]).selectAll("path")
-      .data(nodes)
-      .enter().append("svg:path")
-      .attr("display", function(d) { return d.depth ? null : "none"; })
-      .attr("d", arc)
-      .attr("fill-rule", "evenodd")
-      .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
-      .style("opacity", 1)
-      .on("mouseover", mouseover)
-      .on("click", click);
+  console.log(nodes);
+
+  var path = vis.data([root]).selectAll("path")
+    .data(nodes)
+    .enter().append("svg:path")
+    .attr("display", function(d) { return d.depth ? null : "none"; })
+    .attr("d", arc)
+    .attr("fill-rule", "evenodd")
+    .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
+    .style("opacity", 1)
+    .on("mouseover", mouseover)
+    .on("click", clickdown);
+
+  var center = vis.append("svg:circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", 130)
+    .style("opacity", 0)
+    .style("pointer-events", "all")
+    .attr("id", "center")
+    .on("mouseover", mouseleave)
+    .on("click", clickup);
 
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave) ;
@@ -139,33 +161,20 @@ function createVisualization(json) {
   totalSize = path.node().__data__.value;
  };
 
-function click(d)
+function clickdown(d)
 {
-  d3.select("#container").selectAll("path").remove();
-  
-  var nodes = partition.nodes(d.parent)
-      .filter(function(d) {
-      return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
-      }) ;
-  
-  var path = vis.data([d]).selectAll("path")
-      .data(nodes)
-      .enter().append("svg:path")
-      .attr("display", function(d) { return d.depth ? null : "none"; })
-      .attr("d", arc)
-      .attr("fill-rule", "evenodd")
-      .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
-      .style("opacity", 1)
-      .on("mouseover", mouseover)
-      .on("click", click)
-      .each(stash)
-        .transition()
-        .duration(750)
-        .attrTween("d", arcTween);
-  ;
+  if (d.children != undefined) {
+    createVisualization(d);
+    rootd = d;
+  }
+}
 
-  // Get total size of the tree = value of root node from partition.
-  totalSize = path.node().__data__.value;
+function clickup(d)
+{
+  if (rootd.parent != undefined) {
+    createVisualization(rootd.parent);
+    rootd = rootd.parent;
+  }
 }
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
@@ -201,6 +210,7 @@ function mouseover(d) {
 // Restore everything to full opacity when moving off the visualization.
 function mouseleave(d) {
 
+  console.log("LEAVE");
   // Hide the breadcrumb trail
   d3.select("#trail")
       .style("visibility", "hidden");
@@ -211,7 +221,7 @@ function mouseleave(d) {
   // Transition each segment to full opacity and then reactivate it.
   d3.selectAll("path")
       .transition()
-      .duration(1000)
+      .duration(100)
       .style("opacity", 1)
       .each("end", function() {
               d3.select(this).on("mouseover", mouseover);
@@ -219,7 +229,7 @@ function mouseleave(d) {
 
   d3.select("#explanation")
       .transition()
-      .duration(1000)
+      .duration(100)
       .style("visibility", "hidden");
 }
 
@@ -247,19 +257,33 @@ function initializeBreadcrumbTrail() {
     .style("fill", "#000");
 }
 
+function getTextWidth(t) {
+  var o = $('<div>' + t + '</div>')
+            .css({'position': 'absolute', 'float': 'left', 'white-space': 'nowrap', 'visibility': 'hidden'})
+            .appendTo($('body')),
+      w = o.width();
+  o.remove();
+  return w;
+}
+
 // Generate a string that describes the points of a breadcrumb polygon.
 function breadcrumbPoints(d, i) {
   var points = [];
+
+  var w = getTextWidth(d.name) + 30;
+
   points.push("0,0");
-  points.push(b.w + ",0");
-  points.push(b.w + b.t + "," + (b.h / 2));
-  points.push(b.w + "," + b.h);
+  points.push(w + ",0");
+  points.push(w + b.t + "," + (b.h / 2));
+  points.push(w + "," + b.h);
   points.push("0," + b.h);
   if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
     points.push(b.t + "," + (b.h / 2));
   }
   return points.join(" ");
 }
+
+var ws = new Array();
 
 // Update the breadcrumb trail to show the current sequence and percentage.
 function updateBreadcrumbs(nodeArray, percentageString) {
@@ -277,15 +301,21 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .style("fill", function(d) { return colors((d.children ? d : d.parent).name); });
 
   entering.append("svg:text")
-      .attr("x", (b.w + b.t) / 2)
+      .attr("x", function(d) { return (getTextWidth(d.name) + 30 + b.t) / 2 })
       .attr("y", b.h / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
       .text(function(d) { return d.name; });
 
+  ws[0] = 0;
+  for (i = 1; i < g.size(); i++) {
+    ws[i] = getTextWidth(g[0][i - 1].__data__.name) + 30 + b.s;
+    ws[i] += ws[i - 1];
+  }
+
   // Set position for entering and updating nodes.
   g.attr("transform", function(d, i) {
-    return "translate(" + i * (b.w + b.s) + ", 0)";
+    return "translate(" + ws[i] + ", 0)";
   });
 
   // Remove exiting nodes.
@@ -293,7 +323,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Now move and update the percentage at the end.
   d3.select("#trail").select("#endlabel")
-      .attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
+      .attr("x", function(d) { (nodeArray.length + 0.5) * (ws[g.size() - 1] + b.s) })
       .attr("y", b.h / 2)
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
@@ -304,16 +334,6 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .style("visibility", "");
 
 }
-
- function arcTween(a){
-                    var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
-                    return function(t) {
-                        var b = i(t);
-                        a.x0 = b.x;
-                        a.dx0 = b.dx;
-                        return arc(b);
-                    };
-                };
         
 function stash(d) {
                     d.x0 = 0; // d.x;

@@ -9,6 +9,7 @@
   <link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="/static/pace.min.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="/static/waypoints/waypoints.min.js"></script>
   <script src="/static/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script> 
   <script src="http://d3js.org/d3.v3.min.js"></script>
   <link rel="stylesheet" href="/static/mycss.css">
@@ -165,7 +166,7 @@ body a {
 </head>
 <body>
 
-<div class="container-fluid">
+<div id="root-content" class="container-fluid">
 <div class="navbar row">
   <div class="col-sm-4" style="padding: 10px 0px 10px 10px;">
     <a href=""><img src="{{ STATIC_URL }}Histograph-full.gif" height="50px"></img></a>
@@ -180,7 +181,7 @@ body a {
       <div class="col-sm-12">
 	<ul class="nav nav-pills alignright" style="margin-right:10%;">
 	  <li {% block graphs-nav %}{% endblock %}><a href="http://{{ domain }}">Graphs</a></li>
-	  <li {% block explore-nav %}{% endblock %}><a href="explore">Explore</a></li>
+	  <li {% block explore-nav %}{% endblock %}><a href="recommendations">Explore</a></li>
 	  <li {% block install-nav %}{% endblock %}><a href="install">Download</a></li>
 	  <li {% block about-nav %}{% endblock %}><a href="about">About</a></li>
 	  <li {% block team-nav %}{% endblock %}><a href="team">Team</a></li>
