@@ -109,16 +109,15 @@ if (d3.event.shiftKey) {
     var linked = true;
     var json = {
     	"url": d.full_url, 
-        "linked": linked
-    }
+        "block_links": linked
+    };
     var send = JSON.stringify(json);
     console.log(send);
     var csrftoken = getCookie('csrftoken');
-    d3.xhr("http://{{ domain }}/save_blocked_site")
+    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json")
     .header("X-CSRFToken", csrftoken) 
-    .header("Content-Type", "application/json")
     .post(function(error, send) {
-       console.log(error);
+       console.log(error['response']);
     }); 
   }
   else {
