@@ -133,7 +133,7 @@ def send_digraph(hn_list):
 
 	links = []
 	for hn in hn_list:
-		if hn['referrer'] != None and hn['referrer'] in id_dict:
+		if hn['referrer'] != None and (hn['referrer'] in id_dict and hn['id'] in id_dict):
 			links.append({'source':id_dict[hn['referrer']], 'target':id_dict[hn['id']], 'value': 1})
 
 	return {'nodes':nodes, 'links':links}
