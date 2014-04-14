@@ -7,7 +7,6 @@ from django.utils import simplejson
 from django.http import Http404
 from datetime import datetime
 from urlparse import urlparse
-import copy
 try:
 	from collections import OrderedDict
 except ImportError:
@@ -100,12 +99,12 @@ def send_line_plot(hn_list):
 	hn_list = sorted(hn_list, key=lambda hn: hn['visit_time'])
 	hn_list = map(split_url, hn_list)
 	domains = map(lambda hn: hn['url'][0], hn_list)
-	set_domains = list(OrderedDict.fromkeys(domains, 0))
-	dates = map(lambda hn: hn['visit_time'], hn_list)
-	vals = OrderedDict.fromkeys(domains, 0))
-	line_dict = OrderedDict.fromkeys(dates, copy.deepcopy(vals))
+	dates = set(map(lambda hn: hn['visit_time'], hn_list))
+	line_dict = dict.fromkeys(dates)
 	
 	for hn in hn_list:
+		if line_dict[hn['visit_time']] == None:
+			line_dict[hn['visit_time']] = OrderedDict.fromkeys(domains, 0)
 		line_dict[hn['visit_time']][hn['url'][0]] += 1
 
 	return str(line_dict)
