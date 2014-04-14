@@ -59,7 +59,7 @@ var line = d3.svg.line()
 
 //defines a function to be used to append the title to the tooltip.  you can set how you want it to display here.
 var maketip = function (d) {                     
-         var tip = '<p class="tip3">' + d.name + '<p class="tip1">' + NumbType(d.value) + '</p> <p class="tip3">'+  formatDate(d.date)+'</p>';
+         var tip = '<p class="tip3">' + d.name + '<p class="tip1">' + d.value + '</p> <p class="tip3">'+  parseDate(d.date)+'</p>';
              return tip;}
 
 var svg = d3.select("body").append("svg")
@@ -165,7 +165,7 @@ d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
     .append("circle")
       .attr("class","tipcircle")
       .attr("cx", function(d,i){return x(d.date)})
-      .attr("cy",function(d,i){return y(d.value)})
+      .attr("cy",function(d,i){return y(d.visits)})
       .attr("r",12)
       .style('opacity', 1e-6)//1e-6
       .attr ("title", maketip);
