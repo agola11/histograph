@@ -71,7 +71,7 @@ d3.json("http://{{ domain }}/graph/bubble", function(data) {
   addPlaceholders(root);
 
   var nodes = pack.nodes(root)
-      .filter(function(d) {return d.r > 5; });
+      .filter(function(d) {return d.r > 1; });
 
   removePlaceholders(nodes);
 
@@ -109,15 +109,18 @@ d3.json("http://{{ domain }}/graph/bubble", function(data) {
 function click(d) {
 console.log("clicked on "+d.full_url);
   
-if (d3.event.ctrlKey) {  	
+if (d3.event.shiftKey) {  	
     d3.select(this).remove();
     var linked = true;
     var json = {
     	"url": d.full_url,
     	"linked": linked
     }
+    var send = JSON.stringify(json);
     console.log(JSON.stringify(json));
-    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json").post(JSON.stringify(json)); 
+    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json").post(function(error, send) {
+       console.log(error['response']);
+    }); 
   }
   else {
     zoom(d);
