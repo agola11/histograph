@@ -62,10 +62,6 @@ var vis = d3.select("body").append("svg")
     .attr("transform", "translate(" + (w - r) / 2 + "," + (h - r) / 2 + ")");
 
 d3.json("http://{{ domain }}/graph/bubble", function(data) {
-  /*var data = {"node_count": 16, "name": "top_level", "children": [{"node_count": 2, "name": "google.com", "full_url": "google.com"}, {"node_count": 8, "children": [{"node_count": 8, "children": [{"node_count": 1, "name": "sports", "full_url": "reddit.com/r/sports"}, {"node_count": 7, "name": "tech", "full_url": "reddit.com/r/tech"}], "name": "r", "full_url": "reddit.com/r"}], "name": "reddit.com", "full_url": "reddit.com"}, {"node_count": 6, "name": "www.google.com", "full_url": "www.google.com"}]};*/
-
-/*  var data = {"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]}; */
-
   node = root = data;
 
   addPlaceholders(root);
@@ -101,8 +97,6 @@ d3.json("http://{{ domain }}/graph/bubble", function(data) {
     
   node.attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; });
 
-//  var fil = node.filter(function (d) {return d.depth <= depth; }).on("click", click);
-
   //d3.select(window).on("click", function() { zoom(root); });
 });
 
@@ -118,7 +112,11 @@ if (d3.event.shiftKey) {
     }
     var send = JSON.stringify(json);
     console.log(JSON.stringify(json));
-    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json").post(function(error, send) {
+    var csrftoken = getCookie('csrftoken');
+
+    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json")
+    .header("X-CSRFToken", csrftoken)
+    .post(function(error, send) {
        console.log(error['response']);
     }); 
   }
@@ -168,6 +166,22 @@ function zoom(d, i) {
 function doNothing(d) {
   console.log("do nothing");
 };
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 function addPlaceholders(node) {
   if(node.children) {
