@@ -19,9 +19,11 @@ def filter_http(hn):
 
 def chop_protocol(hn):
 	url = hn['url']
+	if url[-1] == '/':
+		url = url[:-1]
 	if url.startswith('http://'):
 		url = url[7:]
-	elif url.startswith('https://'):
+	if url.startswith('https://'):
 		url = url[8:]
 	hn['url'] = url
 	return hn
