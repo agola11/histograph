@@ -39,6 +39,7 @@ circle.child:hover {
   </head>
   <body>
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
 <script type="text/javascript">
 var w = 1280,
     h = 800,
@@ -111,13 +112,12 @@ if (d3.event.shiftKey) {
     	"linked": linked
     }
     var send = JSON.stringify(json);
-    console.log(JSON.stringify(json));
+    console.log(send);
     var csrftoken = getCookie('csrftoken');
-
     d3.xhr("http://{{ domain }}/save_blocked_site", "application/json")
     .header("X-CSRFToken", csrftoken)
     .post(function(error, send) {
-       console.log(error['response']);
+       console.log(error);
     }); 
   }
   else {
