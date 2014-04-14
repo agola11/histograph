@@ -108,14 +108,15 @@ if (d3.event.shiftKey) {
     d3.select(this).remove();
     var linked = true;
     var json = {
-    	"url": d.full_url,
-    	"linked": linked
+    	"url": d.full_url, 
+        "linked": linked
     }
     var send = JSON.stringify(json);
     console.log(send);
     var csrftoken = getCookie('csrftoken');
-    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json")
-    .header("X-CSRFToken", csrftoken)
+    d3.xhr("http://{{ domain }}/save_blocked_site")
+    .header("X-CSRFToken", csrftoken) 
+    .header("Content-Type", "application/json")
     .post(function(error, send) {
        console.log(error);
     }); 
