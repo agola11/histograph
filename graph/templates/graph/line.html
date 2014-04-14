@@ -27,7 +27,7 @@ body {
 <body>
 <script src="http://d3js.org/d3.v3.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
-<script type="text/javascript" src="jquery.tipsy.js"></script>
+<script type="text/javascript" src="/static/jquery.tipsy.js"></script>
 <script>
 //http://bl.ocks.org/Matthew-Weber/5645518
 var margin = {top: 20, right: 80, bottom: 30, left: 50},
@@ -172,7 +172,7 @@ d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
 
   //make my tooltips work
   $('circle').tipsy({opacity:.9, gravity:'n', html:true});
-  
+
   /*site.append("text")
       .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
       .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.visits) + ")"; })
