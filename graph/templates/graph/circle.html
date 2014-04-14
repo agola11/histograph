@@ -118,7 +118,20 @@ if (d3.event.shiftKey) {
     .header("X-CSRFToken", csrftoken) 
     .post(function(error, send) {
        console.log(error['response']);
-    }); 
+    });
+    jQuery.ajax({
+        url: "http://{{ domain }}/save_blocked_site",
+        headers:{"X-CSRFToken":csrftoken},
+        type:"POST",
+        success: function(data, textStatus, jqXHR) {
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log( jqXHR.responseText );
+          return;
+        },
+        data: JSON.stringify(json),
+        async: true
+      }); 
   }
   else {
     zoom(d);
