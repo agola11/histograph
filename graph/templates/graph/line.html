@@ -61,28 +61,32 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("http://{{ domain }}/line/6", function(error, data) {
+d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
    var counts = d3.entries(data);
-   console.log(counts);
-   color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }
-));
+   counts = counts.sort(function(a, b) {
+   return d3.ascending(a.key, b.key);  
+});
+//   console.log(counts[0]['value']);
+   color.domain(d3.keys(counts[0]['value']));
 
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
+  counts.forEach(function(d) {
+    d.date = parseDate(d.key);
   });
+
+ console.log(color.domain());
 
   var sites = color.domain().map(function(name) {
     return {
       name: name,
-      values: data.map(function(d) {
-        return {date: d.date, visits: +d[name]};
+      values: counts.map(function(d) {
+        return {date: d.date, visits: +d['value'][name]};
       })
     };
   });
 
  console.log(sites);
 
-  x.domain(d3.extent(data, function(d) { return d.date; }));
+  x.domain(d3.extent(counts, function(d) { return d.date; }));
 
   y.domain([
     d3.min(sites, function(c) { return d3.min(c.values, function(v) { return v.visits; }); }),
@@ -112,14 +116,18 @@ d3.json("http://{{ domain }}/line/6", function(error, data) {
   site.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
+      .style("stroke", function(d) { return color(d.name); })
+      .on("mouseover", function(d, i) {
+         d3.select(this).insert("svg:text", this.nextSibling).text(d.name); });
 
-  site.append("text")
+
+  site.append
+  /*site.append("text")
       .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
       .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.visits) + ")"; })
       .attr("x", 3)
       .attr("dy", ".35em")
-      .text(function(d) { return d.name; });
+      .text(function(d) { return d.name; });*/
 });
 
 </script>
