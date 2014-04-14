@@ -62,6 +62,7 @@
         <div id="explanation" style="visibility: hidden;">
           <span id="percentage"></span><br/>
           of visits begin with this sequence of pages
+          <span class="glyphicon glyphicon-circle-arrow-left"></span>
         </div>
       </div>
     </div>
@@ -105,6 +106,7 @@ initializeBreadcrumbTrail();
 var rootd;
 
 d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
+      console.log(data);
       createVisualization(data);
       rootd = data;
 });
@@ -115,7 +117,7 @@ function createVisualization(root) {
   d3.select("#container").selectAll("path").remove();
   d3.select("#center").remove();
 
-  console.log(root); 
+  console.log(root);
 
   // Bounding circle underneath the sunburst, to make it easier to detect
   // when the mouse leaves the parent g.
@@ -124,10 +126,10 @@ function createVisualization(root) {
       .style("opacity", 0);
 
   // For efficiency, filter nodes to keep only those large enough to see.
-  var nodes = partition.nodes(root);
-      // .filter(function(d) {
-      // return (d.dx > 0.005); // 0.005 radians = 0.29 degrees
-      // });
+  var nodes = partition.nodes(root)
+      .filter(function(d) {
+      return (d.dx > 0.01); // 0.005 radians = 0.29 degrees
+      });
 
   console.log(nodes);
 
@@ -140,11 +142,7 @@ function createVisualization(root) {
     .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
     .style("opacity", 1)
     .on("mouseover", mouseover)
-    .on("click", clickdown)
-    .each(stash)
-    .transition()
-    .duration(750)
-    .attrTween("d", arcTween);
+    .on("click", clickdown);
 
   var center = vis.append("svg:circle")
     .attr("cx", 0)
@@ -223,7 +221,7 @@ function mouseleave(d) {
   // Transition each segment to full opacity and then reactivate it.
   d3.selectAll("path")
       .transition()
-      .duration(1000)
+      .duration(100)
       .style("opacity", 1)
       .each("end", function() {
               d3.select(this).on("mouseover", mouseover);
@@ -231,7 +229,7 @@ function mouseleave(d) {
 
   d3.select("#explanation")
       .transition()
-      .duration(1000)
+      .duration(100)
       .style("visibility", "hidden");
 }
 
@@ -336,16 +334,6 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .style("visibility", "");
 
 }
-
- function arcTween(a){
-                    var i = d3.interpolate({x: a.x0, dx: a.dx0}, a);
-                    return function(t) {
-                        var b = i(t);
-                        a.x0 = b.x;
-                        a.dx0 = b.dx;
-                        return arc(b);
-                    };
-                };
         
 function stash(d) {
                     d.x0 = 0; // d.x;
