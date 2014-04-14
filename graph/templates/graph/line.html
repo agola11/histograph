@@ -72,7 +72,7 @@ var svg = d3.select("body").append("svg")
 
 d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
    var counts = d3.entries(data['line_dict']);
-   console.log(counts);
+   console.log(data);
    counts = counts.sort(function(a, b) {
    return d3.ascending(a.key, b.key);  
 }); 
