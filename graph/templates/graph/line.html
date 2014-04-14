@@ -57,6 +57,8 @@ var line = d3.svg.line()
     .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.visits); });
 
+var formatDate = d3.time.format("%b %d, '%y");
+
 //defines a function to be used to append the title to the tooltip.  you can set how you want it to display here.
 var maketip = function (d) {                     
          var tip = '<p class="tip3">' + d.name + '<p class="tip1">' + d.value + '</p> <p class="tip3">'+  formatDate(d.date)+'</p>';
