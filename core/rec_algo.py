@@ -2,7 +2,6 @@ from __future__ import division
 from core.models import HistoryNode
 from urlparse import urlparse
 from django.http import Http404
-import numpy
 try:
     from collections import OrderedDict
 except ImportError:
@@ -17,12 +16,18 @@ def filter_http(hn):
 	l = urlparse(hn['url'])
 	return(l.scheme == 'http')
 
+def filter_https(hn):
+	l = urlparse(hn['url'])
+	return(l.scheme == 'https')
+
 def clean_url(hn):
 	url = hn['url']
 	if url[-1] == '/':
 		url = url[:-1]
 	if url.startswith('http://'):
 		url = url[7:]
+	if url.startswith('https://'):
+		url = url[8:]
 	hn['url'] = url
 	return hn
 
@@ -135,12 +140,15 @@ def rank_urls(user):
 	url_dict = {}
 
 	hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
+	secure_hn_list = filter(filter_https, hn_list)
+	secure_hn_list = map(clean_url, secure_hn_list)
+	secure_user_urls = set(map(lambda hn: hn['url'], filter(lambda hn: hn['user__id']==user, secure_hn_list)))
 	hn_list = filter(filter_http, hn_list)
 	hn_list = map(clean_url, hn_list)
 	hn_list = sorted(hn_list, key=lambda hn: hn['url'])
 
 	user_ids = set(map(lambda hn: hn['user__id'], hn_list))
-	user_urls = set(map(lambda hn: hn['url'], filter(lambda hn: hn['user__id']==user, hn_list)))
+	user_urls = secure_user_urls.union(set(map(lambda hn: hn['url'], filter(lambda hn: hn['user__id']==user, hn_list))))
 
 	hn_list = map(split_url, hn_list)
 
