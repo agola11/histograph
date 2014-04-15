@@ -9,23 +9,23 @@
     <style>
 
 
-#main {
+/*#main {
   width: 750px;
-}
+}*/
 
-#sidebar {
+/*#sidebar {
   float: right;
   width: 100px;
 }
-
-#sequence {
+*/
+/*#sequence {
   width: 600px;
   height: 70px;
-}
+}*/
 
-#legend {
+/*#legend {
   padding: 10px 0 0 3px;
-}
+}*/
 
 #sequence text, #legend text {
   fill: #fff;
@@ -37,13 +37,15 @@
 
 #chart path {
   stroke: #fff;
+  width: 100%;
+  height: 100%;
 }
 
 #explanation {
   position: absolute;
-  top: 260px;
+/*  top: 230px;
   left: 305px;
-  width: 140px;
+  width: 140px;*/
   text-align: center;
   color: #666;
   z-index: -1;
@@ -51,6 +53,10 @@
 
 #percentage {
   font-size: 2.5em;
+}
+
+#count {
+  font-size: 1.5em;
 }
 
     </style>
@@ -61,6 +67,7 @@
       <div id="chart">
         <div id="explanation" style="visibility: hidden;">
           <span id="percentage"></span><br/>
+          <span id="count"></span><br/>
           of visits begin with this sequence of pages
           <span class="glyphicon glyphicon-circle-arrow-left"></span>
         </div>
@@ -68,13 +75,13 @@
     </div>
     <script type="text/javascript">
       // Dimensions of sunburst.
-var width = 750;
-var height = 600;
+var width = $(window).width();
+var height = $(window).height() - 200;
 var radius = Math.min(width, height) / 2;
 
 // Breadcrumb dimensions: width, height, spacing, width of tip/tail.
 var b = {
-  w: 150, h: 30, s: 3, t: 10
+  h: 30, s: 3, t: 10
 };
 
 // Mapping of step names to colors.
@@ -84,14 +91,13 @@ var colors = d3.scale.category10();
 var totalSize = 0; 
 
 var vis = d3.select("#chart").append("svg:svg")
-    .attr("width", width)
-    .attr("height", height)
     .append("svg:g")
     .attr("id", "container")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
 var partition = d3.layout.partition()
     .size([2 * Math.PI, radius * radius])
+    .children(function(d) { return (d.gdepth < (rootd.gdepth + 4)) ? d.gchildren : null; })
     .value(function(d) { return d.node_count; });
 
 var arc = d3.svg.arc()
@@ -106,9 +112,8 @@ initializeBreadcrumbTrail();
 var rootd;
 
 d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
-      console.log(data);
-      createVisualization(data);
       rootd = data;
+      createVisualization(data);
 });
 
 // Main function to draw and set up the visualization, once we have the data.
@@ -117,13 +122,13 @@ function createVisualization(root) {
   d3.select("#container").selectAll("path").remove();
   d3.select("#center").remove();
 
-  console.log(root);
-
   // Bounding circle underneath the sunburst, to make it easier to detect
   // when the mouse leaves the parent g.
   vis.append("svg:circle")
       .attr("r", radius)
       .style("opacity", 0);
+
+  console.log(root);
 
   // For efficiency, filter nodes to keep only those large enough to see.
   var nodes = partition.nodes(root)
@@ -133,13 +138,20 @@ function createVisualization(root) {
 
   console.log(nodes);
 
+  var innerr = Math.sqrt(nodes[1].y);
+
+  d3.select("#explanation")
+    .style("top", Math.round(height / 2 - innerr * 0.5).toString() + "px")
+    .style("left", Math.round(width / 2 - innerr * 0.8).toString() + "px")
+    .style("width", Math.round(innerr * 1.6).toString() + "px");
+
   var path = vis.data([root]).selectAll("path")
     .data(nodes)
     .enter().append("svg:path")
     .attr("display", function(d) { return d.depth ? null : "none"; })
     .attr("d", arc)
     .attr("fill-rule", "evenodd")
-    .style("fill", function(d) { return colors((d.children ? d : d.parent).name); })
+    .style("fill", function(d) { return (d.gchildren) ? colors((d.children ? d : d.parent).name) : "black"; })
     .style("opacity", 1)
     .on("mouseover", mouseover)
     .on("click", clickdown);
@@ -147,7 +159,7 @@ function createVisualization(root) {
   var center = vis.append("svg:circle")
     .attr("cx", 0)
     .attr("cy", 0)
-    .attr("r", 130)
+    .attr("r", innerr)
     .style("opacity", 0)
     .style("pointer-events", "all")
     .attr("id", "center")
@@ -163,17 +175,19 @@ function createVisualization(root) {
 
 function clickdown(d)
 {
-  if (d.children != undefined) {
-    createVisualization(d);
+  if (d.gchildren) {
     rootd = d;
+    createVisualization(rootd);
+  } else {
+    window.open("http://" + d.full_url, '_blank');
   }
 }
 
 function clickup(d)
 {
-  if (rootd.parent != undefined) {
-    createVisualization(rootd.parent);
+  if (rootd.parent) {
     rootd = rootd.parent;
+    createVisualization(rootd);
   }
 }
 
@@ -185,9 +199,13 @@ function mouseover(d) {
   if (percentage < 0.1) {
     percentageString = "< 0.1%";
   }
+  var countString = "(" + d.value + ")";
 
   d3.select("#percentage")
       .text(percentageString);
+
+  d3.select("#count")
+      .text(countString);
 
   d3.select("#explanation")
       .style("visibility", "");
@@ -209,8 +227,6 @@ function mouseover(d) {
 
 // Restore everything to full opacity when moving off the visualization.
 function mouseleave(d) {
-
-  console.log("LEAVE");
   // Hide the breadcrumb trail
   d3.select("#trail")
       .style("visibility", "hidden");
@@ -247,10 +263,12 @@ function getAncestors(node) {
 
 function initializeBreadcrumbTrail() {
   // Add the svg area.
-  var trail = d3.select("#sequence").append("svg:svg")
-      .attr("width", width)
-      .attr("height", 50)
-      .attr("id", "trail");
+  var trail = d3.select("#sequence")
+      // .style("width", "100%")
+      .append("svg:svg")
+        // .attr("width", "%100")
+        .attr("height", 50)
+        .attr("id", "trail");
   // Add the label at the end, for the percentage.
   trail.append("svg:text")
     .attr("id", "endlabel")
@@ -298,7 +316,7 @@ function updateBreadcrumbs(nodeArray, percentageString) {
 
   entering.append("svg:polygon")
       .attr("points", breadcrumbPoints)
-      .style("fill", function(d) { return colors((d.children ? d : d.parent).name); });
+      .style("fill", function(d) { return (d.gchildren) ? colors((d.children ? d : d.parent).name) : "black"; });
 
   entering.append("svg:text")
       .attr("x", function(d) { return (getTextWidth(d.name) + 30 + b.t) / 2 })

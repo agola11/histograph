@@ -42,6 +42,7 @@ def store_blocked_sites(request):
   payload = json.loads(request.body)
   bs = BlockedSite()
   bs.url = payload['url']
+  bs.block_links = payload['block_links']
   bs.user = request.user
   bs.save()
 

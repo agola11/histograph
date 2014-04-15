@@ -4,12 +4,12 @@
 
 {% block content %}
 <div id="row">
-  <div class="col-sm-1">
-    <a id="leftButton" style="margin-top:400px;" class="btn btn-primary btn-lg btn-side-menu alignleft glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-placement="right" title="View graphs on your history"></a>
+  <div id="testLoad" class="col-sm-12" align="center"></div>
+  <div style="position:absolute; top:50%; right:20px">
+    <a id="rightButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-right" data-toggle="tooltip" data-container="body" data-placement="left" title="Change settings"></a>
   </div>
-  <div id="testLoad" class="col-sm-10" align="center"></div>
-  <div class="col-sm-1">
-    <a id="rightButton" style="margin-top:400px;" class="btn btn-primary btn-lg btn-side-menu alignright glyphicon glyphicon-chevron-right" data-toggle="tooltip" data-placement="left" title="Change settings"></a>
+  <div style="position:absolute; top:50%; left:20px;">
+    <a id="leftButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-container="body" data-placement="right" title="View graphs on your history"></a>
   </div>
 </div>
 </div>
@@ -95,8 +95,8 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
-  $('#leftButton').tooltip({'placement': 'right'});
-  $('#rightButton').tooltip({'placement': 'left'});  
+  $('#leftButton').tooltip();
+  $('#rightButton').tooltip();  
 });
 </script>
 

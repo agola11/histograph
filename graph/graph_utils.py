@@ -62,19 +62,17 @@ def reduce_bubble_tree(child, level):
 	return children
 
 def update_bubble_tree(children, level):
-	if level > 4:
-		return
-
 	for child in children:
+		child['gdepth'] = level - 1
 		children = reduce_bubble_tree(child, level)
 		if children:
-			child['children'] = children
+			child['gchildren'] = children
 		update_bubble_tree(children, level+1)
 
 def remove_urls(bubble_root):
 	del(bubble_root['urls'])
-	if 'children' in bubble_root:
-		for child in bubble_root['children']:
+	if 'gchildren' in bubble_root:
+		for child in bubble_root['gchildren']:
 			remove_urls(child)
 
 def send_bubble(hn_list):
