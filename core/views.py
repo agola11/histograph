@@ -188,3 +188,6 @@ def send_ranked_urls(request):
   url_dict = rec_algo.rank_urls(request.user.id)
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 
+def send_ranked_urls_u(request, user_id):
+  url_dict = rec_algo.rank_urls(int(user_id))
+  return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')

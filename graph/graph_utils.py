@@ -19,9 +19,11 @@ def filter_http(hn):
 
 def chop_protocol(hn):
 	url = hn['url']
+	if url[-1] == '/':
+		url = url[:-1]
 	if url.startswith('http://'):
 		url = url[7:]
-	elif url.startswith('https://'):
+	if url.startswith('https://'):
 		url = url[8:]
 	hn['url'] = url
 	return hn
@@ -97,17 +99,19 @@ def send_line_plot(hn_list):
 	hn_list = sorted(hn_list, key=lambda hn: hn['visit_time'])
 	hn_list = map(split_url, hn_list)
 	domains = map(lambda hn: hn['url'][0], hn_list)
-	domains.insert(0, 'date')
+	all_domains = dict.fromkeys(domains, 0)
 	dates = map(lambda hn: hn['visit_time'], hn_list)
 	line_dict = OrderedDict.fromkeys(dates)
 	
 	for hn in hn_list:
 		if line_dict[hn['visit_time']] == None:
 			line_dict[hn['visit_time']] = OrderedDict.fromkeys(domains, 0)
-			line_dict[hn['visit_time']]['date'] = hn['visit_time']
 		line_dict[hn['visit_time']][hn['url'][0]] += 1
+		all_domains[hn['url'][0]] += 1
 
-	return(line_dict.values())
+	ranked_domains = list(all_domains.items())
+	ranked_domains  = list(reversed(sorted(ranked_domains, key=lambda (x,y): y)))
+	return({'sorted_domains':ranked_domains, 'line_dict':line_dict})
 
 def send_digraph(hn_list):
 	hn_list = filter(filter_http, hn_list)
@@ -127,7 +131,7 @@ def send_digraph(hn_list):
 
 	links = []
 	for hn in hn_list:
-		if hn['referrer'] != None:
+		if hn['referrer'] != None and (hn['referrer'] in id_dict and hn['id'] in id_dict):
 			links.append({'source':id_dict[hn['referrer']], 'target':id_dict[hn['id']], 'value': 1})
 
 	return {'nodes':nodes, 'links':links}

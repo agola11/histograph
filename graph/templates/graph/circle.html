@@ -39,6 +39,7 @@ circle.child:hover {
   </head>
   <body>
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
 <script type="text/javascript">
 var w = 1280,
     h = 800,
@@ -62,16 +63,12 @@ var vis = d3.select("body").append("svg")
     .attr("transform", "translate(" + (w - r) / 2 + "," + (h - r) / 2 + ")");
 
 d3.json("http://{{ domain }}/graph/bubble", function(data) {
-  /*var data = {"node_count": 16, "name": "top_level", "children": [{"node_count": 2, "name": "google.com", "full_url": "google.com"}, {"node_count": 8, "children": [{"node_count": 8, "children": [{"node_count": 1, "name": "sports", "full_url": "reddit.com/r/sports"}, {"node_count": 7, "name": "tech", "full_url": "reddit.com/r/tech"}], "name": "r", "full_url": "reddit.com/r"}], "name": "reddit.com", "full_url": "reddit.com"}, {"node_count": 6, "name": "www.google.com", "full_url": "www.google.com"}]};*/
-
-/*  var data = {"node_count": 5, "name": "top_level", "children": [{"node_count": 2, "name": "www.reddit.com", "children": [{"node_count": 2, "name": "r", "children": [{"node_count": 1, "name": "sports"}, {"node_count": 1, "name": "funny"}]}]}, {"node_count": 2, "name": "stackoverflow.com", "children": [{"node_count": 2, "name": "questions"}, {"node_count": 1, "name": "tags"}]}]}; */
-
   node = root = data;
 
   addPlaceholders(root);
 
   var nodes = pack.nodes(root)
-      .filter(function(d) {return d.r > 5; });
+      .filter(function(d) {return d.r > 1; });
 
   removePlaceholders(nodes);
 
@@ -101,23 +98,40 @@ d3.json("http://{{ domain }}/graph/bubble", function(data) {
     
   node.attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; });
 
-//  var fil = node.filter(function (d) {return d.depth <= depth; }).on("click", click);
-
   //d3.select(window).on("click", function() { zoom(root); });
 });
 
 function click(d) {
 console.log("clicked on "+d.full_url);
   
-if (d3.event.ctrlKey) {  	
+if (d3.event.shiftKey) {  	
     d3.select(this).remove();
     var linked = true;
     var json = {
-    	"url": d.full_url,
-    	"linked": linked
-    }
-    console.log(JSON.stringify(json));
-    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json").post(JSON.stringify(json)); 
+    	"url": d.full_url, 
+        "block_links": linked
+    };
+    var send = JSON.stringify(json);
+    console.log(send);
+    var csrftoken = getCookie('csrftoken');
+    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json")
+    .header("X-CSRFToken", csrftoken) 
+    .post(function(error, send) {
+       console.log(error['response']);
+    });
+    jQuery.ajax({
+        url: "http://{{ domain }}/save_blocked_site",
+        headers:{"X-CSRFToken":csrftoken},
+        type:"POST",
+        success: function(data, textStatus, jqXHR) {
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log( jqXHR.responseText );
+          return;
+        },
+        data: JSON.stringify(json),
+        async: true
+      }); 
   }
   else {
     zoom(d);
@@ -165,6 +179,22 @@ function zoom(d, i) {
 function doNothing(d) {
   console.log("do nothing");
 };
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 function addPlaceholders(node) {
   if(node.children) {

@@ -27,9 +27,9 @@ body {
 <body>
 <script src="http://d3js.org/d3.v3.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
-<script type="text/javascript"/><script type="text/javascript"> src="/static/jquery.tipsy.js"></script>
 <script>
 //http://bl.ocks.org/Matthew-Weber/5645518
+
 var margin = {top: 20, right: 80, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -70,11 +70,12 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
-   var counts = d3.entries(data);
+d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
+   var counts = d3.entries(data['line_dict']);
+   console.log(data);
    counts = counts.sort(function(a, b) {
    return d3.ascending(a.key, b.key);  
-});
+}); 
    color.domain(d3.keys(counts[0]['value']));
 
   counts.forEach(function(d) {
@@ -92,7 +93,7 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
     };
   });
 
- //console.log(sites);
+ console.log(sites);
 
   x.domain(d3.extent(counts, function(d) { return d.date; }));
 
@@ -126,16 +127,7 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
           
           var selectthegraphs = $('.site').not(this);     //select all the rest of the lines, except the one you are hovering on and drop their opacity
           d3.selectAll(selectthegraphs)
-            .style("opacity",0.2);
-          
-         /* var getname = document.getElementById(d.name);    //use get element cause the ID names have spaces in them
-          var selectlegend = $('.legend').not(getname);    //grab all the legend items that match the line you are on, except the one you are hovering on
-
-          d3.selectAll(selectlegend)    // drop opacity on other legend names
-            .style("opacity",.2);
-
-          d3.select(getname)
-            .attr("class", "legend-select");  //change the class on the legend name that corresponds to hovered line to be bolder   */      
+            .style("opacity",0.2);      
       })
       .on("mouseout", function(d) {        //undo everything on the mouseout
           d3.select(this)
@@ -143,17 +135,7 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
           
           var selectthegraphs = $('.site').not(this);
           d3.selectAll(selectthegraphs)
-            .style("opacity",1);
-          
-          /*var getname = document.getElementById(d.name);
-          var getname2= $('.legend[fakeclass="fakelegend"]')
-          var selectlegend = $('.legend').not(getname2).not(getname);
-
-          d3.selectAll(selectlegend)
-            .style("opacity",1);
-          
-          d3.select(getname)
-            .attr("class", "legend");*/         
+            .style("opacity",1);         
       });
 
   site.append("path")
@@ -162,7 +144,7 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
       .style("stroke", function(d) { return color(d.name); });
 
       
-  site.selectAll("circle")
+  /*site.selectAll("circle")
     .data( function(d) {return(d.values);} )
     .enter()
     .append("circle")
@@ -171,10 +153,10 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
       .attr("cy",function(d,i){return y(d.visits)})
       .attr("r",12)
       .style('opacity', 1e-6)//1e-6
-      .attr ("title", maketip);
+      .attr ("title", maketip);*/
 
   //make my tooltips work
-  $('circle').tipsy({opacity:.9, gravity:'n', html:true});
+  //$('circle').tipsy({opacity:.9, gravity:'n', html:true});
 
   /*site.append("text")
       .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
