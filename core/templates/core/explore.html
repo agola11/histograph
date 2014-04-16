@@ -1,0 +1,75 @@
+{% extends "core/base.html" %}
+
+{% block explore-nav %}class="active"{% endblock %}
+
+{% block content %}
+<body>
+	<div align="center" id="all">
+		{% for key, value in first %}
+		<div class="rnd">
+			{% if value.last_title %}
+			<h6 align="left"> {{value.last_title}} </h6>
+			{% else %}
+			<h6 align="left"> {{key}} </h6>
+			{% endif %}
+			<a a href="http://{{key}}" target="_blank" class="btn btn-lg btn-success alignleft">Go</a>
+			<button class="btn btn-sm-red alignright">{{value.score}}</button>
+		</div>
+		<br>
+		{% endfor %}
+	</div>
+
+	<script type="text/javascript">
+	// $('#all').waypoint(function(direction) {
+	// 	if (direction == 'down') {
+	// 		alert('Basic example callback triggered.');
+	// 	}
+	// });
+
+$(window).scroll(function() {
+	if($(window).scrollTop() + $(window).height() == $(document).height()) {
+		base = updateJSON();
+		base = base + 50;		
+	}
+});
+</script>
+
+<script type="text/javascript">
+function updateJSON() {
+	var items = [];
+	for (i = base; i < base+50; i++) {
+		if (jsonResp[i][1]['last_title']) {
+			items.push( "<div class='rnd'><h6 align='left'>" + jsonResp[i][1]['last_title'] + "</h6>" );
+		}
+		else {
+			items.push( "<div class='rnd'><h6 align='left'>" + jsonResp[i][0] + "</h6>" );
+		}
+		items.push("<a a href='http://" + jsonResp[i][0] + "'" + " target='_blank' class='btn btn-lg btn-success alignleft'>Go</a>");
+		items.push("<button class='btn btn-sm-red alignright'>" + jsonResp[i][1]['score'] + "</button>");
+		items.push("</div><br>");
+	}
+
+	$( "<ul/>", {
+		"class": "my-new-list",
+		html: items.join( "" )
+	}).appendTo( "#all" );
+
+	return base+50;
+}
+</script>
+
+<script type="text/javascript">
+</script>
+
+<script type="text/javascript">
+var jsonResp = null;
+var base = 0;
+$(document).ready(function(){
+	$.getJSON( "rank", function( data ) {
+		jsonResp = data;
+		updateJSON(base);
+	});
+});
+</script>
+{% endblock %}
+
