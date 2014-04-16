@@ -2,6 +2,7 @@ from __future__ import division
 from core.models import HistoryNode
 from urlparse import urlparse
 from django.http import Http404
+from math import log1p, sqrt
 try:
     from collections import OrderedDict
 except ImportError:
@@ -30,6 +31,16 @@ def clean_url(hn):
 		url = url[8:]
 	hn['url'] = url
 	return hn
+
+# Compute Bhattacharya Distance between two distributions
+def bhatta_dist(d1, d2):
+	cumul = 0
+	for url in d1:
+		if url not in d2:
+			cumul += 0
+		else:
+			cumul += sqrt(d1[url]*d2[url])
+	return log1p(cumul)
 
 def split_url(hn):
 	url = hn['url']
