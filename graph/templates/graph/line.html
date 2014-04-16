@@ -70,7 +70,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
+d3.json("http://{{ domain }}/graph/line/ {{ user_id }}", function(error, data) {
    var counts = d3.entries(data['line_dict']);
    console.log(data);
    counts = counts.sort(function(a, b) {
@@ -142,9 +142,8 @@ d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
       .style("stroke", function(d) { return color(d.name); });
-
-      
-  /*site.selectAll("circle")
+    
+  site.selectAll("circle")
     .data( function(d) {return(d.values);} )
     .enter()
     .append("circle")
@@ -153,10 +152,10 @@ d3.json("http://{{ domain }}/graph/line/6", function(error, data) {
       .attr("cy",function(d,i){return y(d.visits)})
       .attr("r",12)
       .style('opacity', 1e-6)//1e-6
-      .attr ("title", maketip);*/
+      .attr ("title", maketip);
 
   //make my tooltips work
-  //$('circle').tipsy({opacity:.9, gravity:'n', html:true});
+  $('circle').tipsy({opacity:.9, gravity:'n', html:true});
 
   /*site.append("text")
       .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
