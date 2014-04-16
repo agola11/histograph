@@ -21,7 +21,7 @@ def send_history(request, user_id):
   return HttpResponse(resp, content_type="application/json")
 
 def send_most_recent_history_time(request, extension_id):
-  hn = HistoryNode.objects.filter(extension_id=extension_id)
+  hn = HistoryNode.objects.filter(extension_id=extension_id, user=request.user)
   if len(hn) == 0:
     t = {'visit_time__max': 0}
   else:
@@ -94,15 +94,6 @@ def home(request):
   })
   return HttpResponse(template.render(context))
 
-def explore(request):
-  domain = get_current_site(request).domain
-  template = loader.get_template('core/explore.html')
-  context = RequestContext(request, {
-        'domain': get_current_site(request).domain,
-        'user_fullname' : request.user.get_full_name(),
-  })
-  return HttpResponse(template.render(context))
-
 def testLoad(request):
   domain = get_current_site(request).domain
   template = loader.get_template('core/testLoad.html')
@@ -159,8 +150,8 @@ def setextension(request):
   else: return redirect(login)
 
 
-def recommendations(request):
-  template = loader.get_template('core/recommendations.html')
+def explore(request):
+  template = loader.get_template('core/explore.html')
   # url_dict = rec_algo.rank_urls(request.user.id)
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
