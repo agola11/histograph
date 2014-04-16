@@ -39,12 +39,23 @@ def send_blocked_sites(request):
     return resp
 
 def store_blocked_sites(request):
-  payload = json.loads(request.body)
-  bs = BlockedSite()
-  bs.url = payload['url']
-  bs.block_links = payload['block_links']
-  bs.user = request.user
-  bs.save()
+  if request.user.is_authenticated():
+    payload = json.loads(request.body)
+    bs = BlockedSite()
+    bs.url = payload['url']
+    bs.block_links = payload['block_links']
+    bs.user = request.user
+    bs.save()
+  
+    resp = HttpResponse()
+    resp.status_code = 200
+    return resp
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
+  
+
 
 def send_new_extension_id(request):
   extid = ExtensionID.objects.get(pk=1)
