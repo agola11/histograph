@@ -54,6 +54,7 @@ var pack = d3.layout.pack()
     .size([r, r])
     .padding(10)
     .sort(d3.descending)
+    .children(function(d) { return d.gchildren; })
     .value(function(d) { return d.node_count; });
 
 var vis = d3.select("body").append("svg")
@@ -75,6 +76,7 @@ d3.json("http://{{ domain }}/graph/bubble", function(data) {
   centerNodes(nodes);
 
   makePositionsRelativeToZero(nodes);
+
 
   var node = vis.selectAll(".node")
     .data(nodes)
@@ -108,17 +110,18 @@ if (d3.event.shiftKey) {
     d3.select(this).remove();
     var linked = true;
     var json = {
-    	"url": d.full_url, 
-        "block_links": linked
+    "url": d.full_url, 
+    "block_links": linked,
     };
     var send = JSON.stringify(json);
+    //var send = "{ \"url\":\"facebook.com\",\"block_links\":true }";
     console.log(send);
     var csrftoken = getCookie('csrftoken');
-    d3.xhr("http://{{ domain }}/save_blocked_site", "application/json")
+    /*d3.xhr("http://{{ domain }}/save_blocked_site", "application/json")
     .header("X-CSRFToken", csrftoken) 
     .post(function(error, send) {
        console.log(error['response']);
-    });
+    });*/
     jQuery.ajax({
         url: "http://{{ domain }}/save_blocked_site",
         headers:{"X-CSRFToken":csrftoken},
@@ -129,7 +132,7 @@ if (d3.event.shiftKey) {
           console.log( jqXHR.responseText );
           return;
         },
-        data: JSON.stringify(json),
+        data: send,
         async: true
       }); 
   }
@@ -177,7 +180,7 @@ function zoom(d, i) {
 };
 
 function doNothing(d) {
-  console.log("do nothing");
+ // console.log("do nothing");
 };
 
 function getCookie(name) {
