@@ -3,92 +3,143 @@
 {% block graphs-nav %}class="active"{% endblock %}
 
 {% block content %}
+
+<script src="/static/bootstrap-slider.js"></script>
+<link href="/static/bootstrap-slider.css" rel="stylesheet">
+
 <div id="row">
-  <div id="testLoad" class="col-sm-12" align="center"></div>
+  <div id="load" class="col-sm-12" align="center"></div>
+
+  <div id="leftmenu" class="menuclosed" style="transition: left 0.5s ease; -webkit-transition: left 0.5s ease;">
+    <div class="btn-group-vertical">
+      <button type="button" class="btn btn-default btn-lg" onClick="loadSunburst()">Sunburst</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDigraph()">Digraph</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadLineplot()">Line Plot</button>
+    </div>
+  </div>
+
+  <div id="leftmenu_over">
+  </div>
+
+  <div id="rightmenu" class="menuclosed" style="transition: right 0.5s ease; -webkit-transition: right 0.5s ease;">
+    <div style="margin-top: 20px; margin-left: 20px;">
+      <input type="text" class="dateslider" value="" data-slider-min="0" data-slider-max="300" data-slider-step="1" data-slider-value="[0,30]" data-slider-orientation="vertical">
+    </div>
+  </div>
+
+  <div id="rightmenu_over">
+  </div>
+
   <div style="position:absolute; top:50%; right:20px">
     <a id="rightButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-right" data-toggle="tooltip" data-container="body" data-placement="left" title="Change settings"></a>
   </div>
+
   <div style="position:absolute; top:50%; left:20px;">
     <a id="leftButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-container="body" data-placement="right" title="View graphs on your history"></a>
   </div>
 </div>
-</div>
-
-<div id="menu" style="display:none;">
-  <ul >
-    <li><a onclick="buttonClick1()">Sunburst</a></li>
-    <li><a onclick="buttonClick2()">Pie</a></li>
-    <li><a href="">Graph 3</a></li>
-    <li><a href="">Graph 4</a></li>
-    <li><a href="">Graph 5</a></li>
-    <li><a onclick="manageHistory()">Manage History</a></li>
-  </ul>
-</div>
-
-<div id="menu_right" style="display:none;">
-  <ul >
-    <li><a onclick="buttonClick1()">Sunburst</a></li>
-    <li><a onclick="buttonClick2()">Pie</a></li>
-    <li><a href="">Testing Right</a></li>
-    <li><a href="">Graph 4</a></li>
-    <li><a href="">Graph 5</a></li>
-    <li><a onclick="manageHistory()">Manage History</a></li>
-  </ul>
-</div>
 
 <script type="text/javascript">
 // load graphs on click
-function buttonClick1() {
-  $("#testLoad").load("../graph/sunburst");
-  // setTimeout(buttonClickA, 100);
+function loadSunburst() {
+  $("#load").load("../graph/sunburst");
 }
 
-function buttonClickA() {
-  $("#testLoad").load("../graph/sunburst");
+function loadDigraph() {
+  $("#load").load("../graph/pie");
 }
 
-function buttonClick2() {
-  $("#testLoad").load("../graph/pie");
+function loadLineplot() {
+  $("#load").load("../graph/pie");
 }
-
-function buttonClick3() {
-  console.log("graph1 loading");
-  $("#testLoad").load("testLoad");
-}
-
-function buttonClick4() {
-  console.log("graph1 loading");
-  $("#testLoad").load("testLoad");
-}
-
-function buttonClick5() {
-  console.log("graph1 loading");
-  $("#testLoad").load("testLoad");
-}
-
-function manageHistory() {
-  $("#testLoad").load("manage");
-}
-
 
 </script>
 
 <!-- initialize slider plugin -->
 <script>
 $(document).ready(function(){
-  $('#menu ul').sliding_menu_js({
-    toggle_button: true, 
-    transitionSpeed: 0.5, 
-    easing: 'ease', 
+  $('#leftButton').click(function () {
+      toggleleftmenu();
   });
 
-  $('#menu_right ul').sliding_menu_js_right({
-    toggle_button: true, 
-    transitionSpeed: 0.5, 
-    easing: 'ease', 
+  $('#leftmenu_over').click(function () {
+      closeleftmenu();
   });
 
-  $("#testLoad").load("../graph/sunburst");
+  function toggleleftmenu (){
+      if ( $('#leftmenu').hasClass('menuopen') ) {
+          closeleftmenu();
+      } else {
+          openleftmenu();
+      }
+  }
+
+  function openleftmenu(){
+      if ( $('#leftmenu').hasClass('menuclosed') ) {
+          $('#leftmenu').css('left','0px');
+          $('#leftmenu').removeClass('menuclosed');
+          $('#leftmenu').addClass('menuopen');
+          $('#leftmenu_over').show();
+      };
+  }
+
+  function closeleftmenu(){
+      if ( $('#leftmenu').hasClass('menuopen') ) {
+          $('#leftmenu').css('left','-300px');
+          $('#leftmenu').removeClass('menuopen')
+          $('#leftmenu').addClass('menuclosed')
+          $('#leftmenu_over').hide();
+      };
+  }
+
+  $('#rightButton').click(function () {
+      togglerightmenu();
+  });
+
+  $('#rightmenu_over').click(function () {
+      closerightmenu();
+  });
+
+  function togglerightmenu (){
+      if ( $('#rightmenu').hasClass('menuopen') ) {
+          closerightmenu();
+      } else {
+          openrightmenu();
+      }
+  }
+
+  function openrightmenu(){
+      if ( $('#rightmenu').hasClass('menuclosed') ) {
+          $('#rightmenu').css('right','0px');
+          $('#rightmenu').removeClass('menuclosed');
+          $('#rightmenu').addClass('menuopen');
+          $('#rightmenu_over').show();
+      };
+  }
+
+  function closerightmenu(){
+      if ( $('#rightmenu').hasClass('menuopen') ) {
+          $('#rightmenu').css('right','-300px');
+          $('#rightmenu').removeClass('menuopen')
+          $('#rightmenu').addClass('menuclosed')
+          $('#rightmenu_over').hide();
+      };
+  }
+
+  $('.dateslider').slider({
+    formater: function(value) {
+      var date = new Date();
+      date.setDate(date.getDate() - value);
+      var d = date.getDate();
+      var m = date.getMonth() + 1;
+      var y = date.getFullYear();
+
+      return m + '/' + d + '/' + y;
+    }
+  })
+    .on('slideStop', loadSunburst);
+
+  loadSunburst();
 
 });
 </script>
@@ -100,7 +151,6 @@ $(document).ready(function(){
 });
 </script>
 
-<script src="/static/slider/src/js/jquery.sliding_menu.js"></script>
-<script src="/static/slider/src/js/jquery.sliding_menu_right.js"></script>
+<!-- <script src="/static/sidebar.js"></script> -->
 
 {% endblock %}

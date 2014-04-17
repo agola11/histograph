@@ -21,7 +21,7 @@ def send_history(request, user_id):
   return HttpResponse(resp, content_type="application/json")
 
 def send_most_recent_history_time(request, extension_id):
-  hn = HistoryNode.objects.filter(extension_id=extension_id)
+  hn = HistoryNode.objects.filter(extension_id=extension_id, user=request.user)
   if len(hn) == 0:
     t = {'visit_time__max': 0}
   else:
@@ -39,12 +39,23 @@ def send_blocked_sites(request):
     return resp
 
 def store_blocked_sites(request):
-  payload = json.loads(request.body)
-  bs = BlockedSite()
-  bs.url = payload['url']
-  bs.block_links = payload['block_links']
-  bs.user = request.user
-  bs.save()
+  if request.user.is_authenticated():
+    payload = json.loads(request.body)
+    bs = BlockedSite()
+    bs.url = payload['url']
+    bs.block_links = payload['block_links']
+    bs.user = request.user
+    bs.save()
+  
+    resp = HttpResponse()
+    resp.status_code = 200
+    return resp
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
+  
+
 
 def send_new_extension_id(request):
   extid = ExtensionID.objects.get(pk=1)
@@ -91,15 +102,6 @@ def home(request):
         'downloaded' : request.user.ext_downloaded,
         'id': request.user.id,
         # 'friends': django_facebook.api.facebook_profile_data(),
-  })
-  return HttpResponse(template.render(context))
-
-def explore(request):
-  domain = get_current_site(request).domain
-  template = loader.get_template('core/explore.html')
-  context = RequestContext(request, {
-        'domain': get_current_site(request).domain,
-        'user_fullname' : request.user.get_full_name(),
   })
   return HttpResponse(template.render(context))
 
@@ -159,8 +161,8 @@ def setextension(request):
   else: return redirect(login)
 
 
-def recommendations(request):
-  template = loader.get_template('core/recommendations.html')
+def explore(request):
+  template = loader.get_template('core/explore.html')
   # url_dict = rec_algo.rank_urls(request.user.id)
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,

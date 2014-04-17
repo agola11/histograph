@@ -111,10 +111,15 @@ initializeBreadcrumbTrail();
 
 var rootd;
 
-d3.json("http://{{ domain }}/graph/bubble", function(error, data) {
-      rootd = data;
-      createVisualization(data);
-});
+var val = $('.dateslider').slider('getValue');
+loadData(val[1], val[0]);
+
+function loadData(starttime, endtime) {
+  d3.json("http://{{ domain }}/graph/bubble/" + starttime + "/" + endtime, function(error, data) {
+        rootd = data;
+        createVisualization(data);
+  });
+}
 
 // Main function to draw and set up the visualization, once we have the data.
 function createVisualization(root) {
