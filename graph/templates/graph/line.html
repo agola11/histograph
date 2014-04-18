@@ -81,7 +81,7 @@ var svg = d3.select("body").append("svg")
 
 d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
    var counts = d3.entries(data['line_dict']);
-   console.log(data);
+   console.log({{ user_id }});
    counts = counts.sort(function(a, b) {
    return d3.ascending(a.key, b.key);  
 }); 
@@ -153,7 +153,7 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
       .style("stroke", function(d) { return color(d.name); });
     
   site.selectAll("circle")
-    .data( function(d) {return(d.values);} )
+    .data( function(d) {return(d['value']);} )
     .enter()
     .append("circle")
       .attr("class","tipcircle")
