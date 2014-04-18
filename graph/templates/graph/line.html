@@ -79,7 +79,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
+/*d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
    var counts = d3.entries(data['line_dict']);
    console.log({{ user_id }});
    counts = counts.sort(function(a, b) {
@@ -100,9 +100,25 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
         return {date: d.date, visits: +d['value'][name]};
       })
     };
-  });
+  }); */
 
  //console.log(sites);
+
+  d3.csv("/static/sampleline.csv", function(error, data) {
+    color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+
+  data.forEach(function(d) {
+    d.date = parseDate(d.date);
+  });
+
+  var sities = color.domain().map(function(name) {
+    return {
+      name: name,
+      values: data.map(function(d) {
+        return {date: d.date, visits: +d[name]};
+      })
+    };
+  });
 
   x.domain(d3.extent(counts, function(d) { return d.date; }));
 
@@ -153,7 +169,7 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
       .style("stroke", function(d) { return color(d.name); });
     
   site.selectAll("circle")
-    .data( function(d) {return(d['value']);} )
+    .data( function(d) {return(d.value);} )
     .enter()
     .append("circle")
       .attr("class","tipcircle")
@@ -164,7 +180,7 @@ d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function(error, data) {
       .style("pointer-event", "all")
       .on('mouseover', tip.show)
       .on('mouseout', tip.hide);
-
+      
       //.attr("title", maketip);
 
   //make my tooltips work
