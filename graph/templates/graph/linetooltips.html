@@ -125,6 +125,13 @@
 
 
         //seriesData = seriesData.filter(function (d) {return selected_domains.indexOf(d.name) != -1; });
+        
+        var seriesData_filtered = [];
+        seriesData.forEach(function (d) {
+          if (selected_domains.indexOf(d.name) != -1)
+            seriesData_filtered.push(d);
+        }); 
+
         console.log(seriesData);
 
         x.domain(d3.extent(data, function(d) { return d.date; }));
