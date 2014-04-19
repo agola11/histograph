@@ -28,16 +28,16 @@
   <body>
     <h2 style="padding-left:60px;">Domain Visits Over Time</h2>
     <select id="drop">
-      <option value="10">10</option>
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="all">All</option>
+      <option value=10>10</option>
+      <option value=25>25</option>
+      <option value=50>50</option>
     </select>
     <script src="http://d3js.org/d3.v3.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
     <link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
     <script>
+     /* <option value="all">All</option> */
       var margin = {top: 20, right: 55, bottom: 30, left: 40},
           width  = 1000 - margin.left - margin.right,
           height = 500  - margin.top  - margin.bottom;
@@ -84,13 +84,12 @@
           .on("change", change);
 
         function change() {
-          console.log(this.value);
+          display(this.value)
         }
 
       var top_domains;
 
       d3.json("http://{{ domain }}/graph/line/5", function (error, json) {
-
         var labelVar = 'date';
         var data = d3.entries(json['line_dict']);
         var domain_array = json['sorted_domains'];
@@ -99,15 +98,11 @@
           top_domains.push(d[0]);
         });
 
-        selected_domains = top_domains.slice(0, 5);
-        console.log(selected_domains);
-
         data = data.sort(function(a, b) {
           return d3.ascending(a.key, b.key);  
         });
 
         var varNames = d3.keys(data[0]['value']);
-        //console.log(varNames.length);
         color.domain(varNames);
 
         data.forEach(function(d) {
@@ -123,9 +118,12 @@
           };
         });
 
+        display(5);
 
-        //seriesData = seriesData.filter(function (d) {return selected_domains.indexOf(d.name) != -1; });
+      });
         
+      function display(numDomains) {  
+        selected_domains = top_domains.slice(0, numDomains);
         var seriesData = [];
         seriesData_all.forEach(function (d) {
           if (selected_domains.indexOf(d.name) != -1)
@@ -186,7 +184,7 @@
            .on("mouseover", tip.show)
            .on("mouseout",   tip.hide);
 
-      });
+      };
     </script>
   </body>
 </html>
