@@ -59,7 +59,7 @@
         var labelVar = 'date';
         var varNames = d3.keys(data[0]).filter(function (key) { return key !== labelVar;});
         color.domain(varNames);
-
+        
         var seriesData = varNames.map(function (name) {
           return {
             name: name,
@@ -69,7 +69,9 @@
           };
         });
 
-        x.domain(data.map(function (d) { return d.quarter; }));
+        console.log(seriesData);
+
+        x.domain(data.map(function (d) { return d.date; }));
         y.domain([
           d3.min(seriesData, function (c) { 
             return d3.min(c.values, function (d) { return d.value; });

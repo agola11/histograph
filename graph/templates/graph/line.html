@@ -120,7 +120,7 @@ var svg = d3.select("body").append("svg")
     };
   });
   counts = data;
-
+ 
   x.domain(d3.extent(counts, function(d) { return d.date; }));
 
   y.domain([
@@ -147,18 +147,16 @@ var svg = d3.select("body").append("svg")
       .data(sites)
     .enter().append("g")
       .attr("class", "site")
-      .on("mouseover", function (d) {                                  
+      .on("mouseover", function (d) {                             
           d3.select(this)                          //on mouseover of each line, give it a nice thick stroke
-          .style("stroke-width",'6px');
-          
+          .style("stroke-width",'6px');          
           var selectthegraphs = $('.site').not(this);     //select all the rest of the lines, except the one you are hovering on and drop their opacity
           d3.selectAll(selectthegraphs)
             .style("opacity",0.2);      
       })
       .on("mouseout", function(d) {        //undo everything on the mouseout
           d3.select(this)
-            .style("stroke-width",'2.5px');
-          
+            .style("stroke-width",'2.5px');          
           var selectthegraphs = $('.site').not(this);
           d3.selectAll(selectthegraphs)
             .style("opacity",1);         
@@ -170,7 +168,7 @@ var svg = d3.select("body").append("svg")
       .style("stroke", function(d) { return color(d.name); });
     
   site.selectAll(".point")
-          .data(function (d) { return d.visits; })
+          .data(series)
           .enter().append("circle")
            .attr("class", "point")
            .attr("cx", function (d) { return x(d.date); })
@@ -196,8 +194,7 @@ var svg = d3.select("body").append("svg")
             trigger: 'manual',
             html : true,
             content: function() { 
-              return "Quarter: " + d.label + 
-                     "<br/>Rounds: " + d3.format(",")(d.value ? d.value: d.y1 - d.y0); }
+              return maketip(); }
           });
           $(this).popover('show')
         }
