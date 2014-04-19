@@ -28,13 +28,9 @@
   <body>
     <h2 style="padding-left:60px;">Domain Visits Over Time</h2>
     
-    <form action="">
-      <select name="sites">
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="15">15</option>
-        <option value="20+">20+</option>
-      </select>
+    <form>
+      <label><input type="radio" name="dataset" value="apples" checked> Apples</label>
+      <label><input type="radio" name="dataset" value="oranges"> Oranges</label>
     </form>
 
     <script src="http://d3js.org/d3.v3.js"></script>
@@ -85,9 +81,12 @@
        var formatDate = d3.time.format("%b %d, '%y");
 
 
-       d3.selectAll("option")
-        .on("change", console.log(this.value));
+       d3.selectAll("input")
+        .on("change", change);
 
+      function change() {
+        console.log(this.value);
+      }
       d3.json("http://{{ domain }}/graph/line/5", function (error, json) {
 
         var labelVar = 'date';
