@@ -85,7 +85,7 @@
        var formatDate = d3.time.format("%b %d, '%y");
 
 
-       d3.selectAll("input")
+       d3.selectAll("option")
         .on("change", console.log(this.value));
 
       d3.json("http://{{ domain }}/graph/line/5", function (error, json) {
