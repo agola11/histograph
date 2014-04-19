@@ -75,21 +75,26 @@
 
        var formatDate = d3.time.format("%b %d, '%y");
 
-      d3.csv("/static/sampleline.csv", function (error, data) {
+      d3.json("http://{{ domain }}/graph/line/3", function (error, json) {
 
         var labelVar = 'date';
-        var varNames = d3.keys(data[0]).filter(function (key) { return key !== labelVar;});
+        var data = d3.entries(json['line_dict']);
+        data = data.sort(function(a, b) {
+          return d3.ascending(a.key, b.key);  
+        });
+
+        var varNames = d3.keys(data[0]['value'];
         color.domain(varNames);
         
         data.forEach(function(d) {
-          d.date = parseDate(d.date);
+          d.date = parseDate(d.key);
         });
 
         var seriesData = varNames.map(function (name) {
           return {
             name: name,
             values: data.map(function (d) {
-              return {name: name, label: d.date, value: +d[name]};
+              return {name: name, label: d.date, value: +d['value'][name]};
             })
           };
         });
