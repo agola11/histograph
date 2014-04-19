@@ -28,7 +28,9 @@
   <body>
     <h2 style="padding-left:60px;">Domain Visits Over Time</h2>
     <select id="drop">
-       
+      <option value=5>5</option>
+      <option value=10>10</option>
+      <option value=15>15</option>
     </select>
     <script src="http://d3js.org/d3.v3.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
@@ -77,6 +79,13 @@
 
        var formatDate = d3.time.format("%b %d, '%y");
       
+      d3.selectAll('select')
+          .on("change", change);
+
+        function change() {
+          console.log(this.value);
+        }
+
       d3.json("http://{{ domain }}/graph/line/5", function (error, json) {
 
         var labelVar = 'date';
@@ -89,7 +98,7 @@
         console.log(varNames.length);
         color.domain(varNames);
         
-        labels = ["5", "10", "15", "20", "all"];
+        /*labels = ["5", "10", "15", "20", "all"];
         options = [5, 10, 15, 20, varNames.length];
 
         d3.select("#drop")
@@ -98,15 +107,7 @@
           .data(options)
           .enter()
           .append("option")
-          .text(function(d) {return labels[d]; })
-
-        d3.selectAll('select')
-          .on("change", change);
-
-        function change() {
-          console.log(this.selectedIndex);
-        }
-
+          .text(function(d) {return labels[d]; })*/
 
         data.forEach(function(d) {
           d.date = parseDate(d.key);
