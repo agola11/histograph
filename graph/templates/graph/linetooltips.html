@@ -21,6 +21,7 @@
     <script src="http://d3js.org/d3.v3.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" charset="utf-8"></script>
     <link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
     <script>
       var margin = {top: 20, right: 55, bottom: 30, left: 40},
           width  = 1000 - margin.left - margin.right,
@@ -54,6 +55,15 @@
         .append("g")
           .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+      var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+      var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function (d) {
+        return '<p class="tip3">' + d.name + '<p class="tip1">' + d.value + '</p> <p class="tip3">'+  formatDate(d.label)+'</p>';
+     });
+
       d3.csv("/static/sampleline.csv", function (error, data) {
 
         var labelVar = 'date';
@@ -64,7 +74,7 @@
           return {
             name: name,
             values: data.map(function (d) {
-              return {name: name, label: d[labelVar], value: +d[name]};
+              return {name: name, label: parseDate(d[labelVar]), value: +d[name]};
             })
           };
         });
@@ -81,6 +91,8 @@
           })
         ]);
 
+        svg.call(tip);
+
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
@@ -94,7 +106,7 @@
             .attr("y", 6)
             .attr("dy", ".71em")
             .style("text-anchor", "end")
-            .text("Number of Rounds");
+            .text("Visits");
 
         var series = svg.selectAll(".series")
             .data(seriesData)
@@ -112,14 +124,14 @@
           .data(function (d) { return d.values; })
           .enter().append("circle")
            .attr("class", "point")
-           .attr("cx", function (d) { return x(d.label) + x.rangeBand()/2; })
+           .attr("cx", function (d) { return x(d.label); })
            .attr("cy", function (d) { return y(d.value); })
            .attr("r", "5px")
            .style("fill", function (d) { return color(d.name); })
            .style("stroke", "grey")
            .style("stroke-width", "2px")
-           .on("mouseover", function (d) { showPopover.call(this, d); })
-           .on("mouseout",  function (d) { removePopovers(); })
+           .on("mouseover", tip.show)
+           .on("mouseout",   tip.hide)
 
         var legend = svg.selectAll(".legend")
             .data(varNames.slice().reverse())
@@ -141,25 +153,6 @@
             .style("text-anchor", "end")
             .text(function (d) { return d; });
 
-        function removePopovers () {
-          $('.popover').each(function() {
-            $(this).remove();
-          }); 
-        }
-
-        function showPopover (d) {
-          $(this).popover({
-            title: d.name,
-            placement: 'auto top',
-            container: 'body',
-            trigger: 'manual',
-            html : true,
-            content: function() { 
-              return "Quarter: " + d.label + 
-                     "<br/>Rounds: " + d3.format(",")(d.value ? d.value: d.y1 - d.y0); }
-          });
-          $(this).popover('show')
-        }
       });
     </script>
   </body>
