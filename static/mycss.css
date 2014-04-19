@@ -44,15 +44,23 @@ h1, h2, h3, body {
 	cursor: pointer;
 }
 
-div.rnd
+div.explore_div
 {
-border: 2px solid #a1a1a1;
-padding: 0%0%;
-background: #dddddd;
-width: 600px;
-height: 100px;
-border-radius: 25px;
-padding: 10px 10px;
+	background: #fff;
+	width: 80%;
+	height: 100px;
+}
+
+.circle {
+    width: 40px;
+    height: 40px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px; 
+    background: #6d1daa;
+    color: #fff;
+    font-size: 16px;
+    padding-top: 8px;
 }
 
 .alignleft {

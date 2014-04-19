@@ -4,19 +4,22 @@
 
 {% block content %}
 <body>
-	<div align="center" id="all">
-		{% for key, value in first %}
+	<div align="center" class="col-sm-8 col-sm-offset-2" id="all">
+		<!-- {% for key, value in first %}
 		<div class="rnd">
 			{% if value.last_title %}
+			<svg width="20" height="20">
+				<circle cx="10" cy="10" r="10" fill="#ddd" />
+			</svg>
 			<h6 align="left"> {{value.last_title}} </h6>
 			{% else %}
 			<h6 align="left"> {{key}} </h6>
 			{% endif %}
 			<a a href="http://{{key}}" target="_blank" class="btn btn-lg btn-success alignleft">Go</a>
 			<button class="btn btn-sm-red alignright">{{value.score}}</button>
+			<hl>
 		</div>
-		<br>
-		{% endfor %}
+		{% endfor %} -->
 	</div>
 
 	<script type="text/javascript">
@@ -39,26 +42,60 @@ function updateJSON() {
 	var items = [];
 	for (i = base; i < base+50; i++) {
 		if (jsonResp[i][1]['last_title']) {
-			items.push( "<div class='rnd'><h6 align='left'>" + jsonResp[i][1]['last_title'] + "</h6>" );
+			var new_div = $("<div>")
+				.addClass("explore_div")
+				.addClass("row")
+				.append($("<div>")
+					.addClass("circle")
+					.css("float", "left")
+					.css("margin", "20px 0px")
+					.text(i + 1)
+				)
+				.append($("<a>")
+					.attr("href", "http://" + jsonResp[i][0])
+					.attr("target", "_blank")
+					.append($("<h4>")
+						.css("float", "left")
+						.css("margin", "30px 0px 0px 20px")
+						.text(jsonResp[i][1]['last_title'])
+					)
+				)
+				.append($("<hr>")
+				);
+
+			$("#all").append(new_div);
+
+			// $("#all").append("div:rnd");
+			// var svg = main.append("svg");
+			// var circle = svg.attr("width", "20")
+			// 	.attr("height", "20")
+			// 	.append("circle");
+
+			// circle.attr("cx", "10")
+			// 	.attr("cy", "10")
+			// 	.attr("r", "10")
+			// 	.attr("fill", "#ddd");
+			// main.append("")
+
+			// items.push( "<div class='rnd'><svg width='20' height='20'><circle cx='10' cy='10' r='10' fill='#ddd' /></svg><h6 align='left'>" + jsonResp[i][1]['last_title'] + "</h6>" );
 		}
-		else {
-			items.push( "<div class='rnd'><h6 align='left'>" + jsonResp[i][0] + "</h6>" );
-		}
-		items.push("<a a href='http://" + jsonResp[i][0] + "'" + " target='_blank' class='btn btn-lg btn-success alignleft'>Go</a>");
-		items.push("<button class='btn btn-sm-red alignright'>" + jsonResp[i][1]['score'] + "</button>");
-		items.push("</div><br>");
+		// else {
+		// 	items.push( "<div class='rnd'><h6 align='left'>" + jsonResp[i][0] + "</h6>" );
+		// }
+		// items.push("<a a href='http://" + jsonResp[i][0] + "'" + " target='_blank' class='btn btn-lg btn-success alignleft'>Go</a>");
+		// items.push("<button class='btn btn-sm-red alignright'>" + jsonResp[i][1]['score'] + "</button>");
+		// items.push("</div><br>");
 	}
 
-	$( "<ul/>", {
-		"class": "my-new-list",
-		html: items.join( "" )
-	}).appendTo( "#all" );
+	// $( "<ul/>", {
+	// 	"class": "my-new-list",
+	// 	html: items.join( "" )
+	// }).appendTo( "#all" );
 
 	return base+50;
-}
-</script>
 
-<script type="text/javascript">
+	$("#all").html($("#all").html());
+}
 </script>
 
 <script type="text/javascript">

@@ -3,9 +3,6 @@
   <head>
     <meta charset="utf-8">
     <title>Sequences sunburst</title>
-    <script src="http://d3js.org/d3.v3.min.js"></script>
-    <link rel="stylesheet" type="text/css"
-      href="https://fonts.googleapis.com/css?family=Open+Sans:600">
     <style>
 
 
@@ -116,8 +113,8 @@ loadData(val[1], val[0]);
 
 function loadData(starttime, endtime) {
   d3.json("http://{{ domain }}/graph/bubble/" + starttime + "/" + endtime, function(error, data) {
-        rootd = data;
-        createVisualization(data);
+      rootd = data;
+      createVisualization(data);
   });
 }
 

@@ -76,13 +76,21 @@ def send_user_line_plot(request, user_id):
   line_data = graph_utils.send_line_plot(hn_list)
   return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
 
-def send_line_plot(request):
-  hn_list = list(HistoryNode.objects.values('url','visit_time'))
+def send_line_plot(request, starttime, endtime):
+  now = time.mktime(datetime.now().timetuple()) * 1000
+  startstamp = now - int(starttime) * 24 * 3600 * 1000
+  endstamp = now - int(endtime) * 24 * 3600 * 1000
+  hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp))
+  hn_list = list(hn_objs.values('url','visit_time'))
   line_data = graph_utils.send_line_plot(hn_list)
   return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
 
-def user_digraph(request, user_id):
-  hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
+def send_digraph(request, starttime, endtime):
+  now = time.mktime(datetime.now().timetuple()) * 1000
+  startstamp = now - int(starttime) * 24 * 3600 * 1000
+  endstamp = now - int(endtime) * 24 * 3600 * 1000
+  hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp), referrer__isnull=False)
+  hn_list = list(hn_objs.values('url','referrer','id'))
   digraph_data = graph_utils.send_digraph(hn_list)
   return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
 
