@@ -89,10 +89,11 @@
 
       var top_domains = [];
       var seriesData_all;
-
+      var data;
+      
       d3.json("http://{{ domain }}/graph/line/5", function (error, json) {
         var labelVar = 'date';
-        var data = d3.entries(json['line_dict']);
+        data = d3.entries(json['line_dict']);
         var domain_array = json['sorted_domains'];
         domain_array.forEach(function(d) {
           top_domains.push(d[0]);
