@@ -32,7 +32,7 @@ def pie(request):
 
 def line_plot(request): 
   domain = get_current_site(request).domain
-  template = loader.get_template('graph/line.html')
+  template = loader.get_template('graph/linetooltips.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'user_id': request.user.id,
