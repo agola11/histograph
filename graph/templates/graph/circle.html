@@ -135,7 +135,10 @@ if (d3.event.shiftKey) {
 	        data: send,
 	        async: true
 	      });
-    } 
+    }
+    else {
+    	d3.select(this).select("circle").attr("class", "child"); 
+	}
   }
   else {
     zoom(d);
