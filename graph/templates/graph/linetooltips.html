@@ -99,9 +99,8 @@
           top_domains.push(d[0]);
         });
 
-        //console.log(top_domain);
-
         selected_domains = top_domains.slice(0, 5);
+        console.log(selected_domains);
 
         data = data.sort(function(a, b) {
           return d3.ascending(a.key, b.key);  
@@ -125,7 +124,7 @@
         });
 
 
-        seriesData = seriesData.filter(function (d) {return selected_domains.indexOf(d.name) != -1; });
+        //seriesData = seriesData.filter(function (d) {return selected_domains.indexOf(d.name) != -1; });
         console.log(seriesData);
 
         x.domain(d3.extent(data, function(d) { return d.date; }));
