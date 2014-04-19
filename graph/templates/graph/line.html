@@ -169,30 +169,38 @@ var svg = d3.select("body").append("svg")
       .attr("d", function(d) { return line(d.values); })
       .style("stroke", function(d) { return color(d.name); });
     
-  site.selectAll("circle")
-    .data( function(d) {return(d.value);} )
-    .enter()
-    .append("circle")
-      .attr("class","tipcircle")
-      .attr("cx", function(d,i){return x(d.date)})
-      .attr("cy",function(d,i){return y(d.visits)})
-      .attr("r",12)
-      .style('opacity', 1e-6)//1e-6
-      .style("pointer-event", "all")
-      .on('mouseover', tip.show)
-      .on('mouseout', tip.hide);
-      
-      //.attr("title", maketip);
+  site.selectAll(".point")
+          .data(function (d) { return d.visits; })
+          .enter().append("circle")
+           .attr("class", "point")
+           .attr("cx", function (d) { return x(d.date); })
+           .attr("cy", function (d) { return y(d.visits); })
+           .attr("r", "5px")
+           .style("fill", function (d) { return color(d.name); })
+           .style("stroke", "grey")
+           .style("stroke-width", "2px")
+           .on("mouseover", function (d) { showPopover.call(this, d); })
+           .on("mouseout",  function (d) { removePopovers(); })
+    
+    function removePopovers () {
+          $('.popover').each(function() {
+            $(this).remove();
+          }); 
+        }
 
-  //make my tooltips work
-  //$('.circle').tipsy({opacity:.9, gravity:'n', html:true});
-
-  /*site.append("text")
-      .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
-      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.visits) + ")"; })
-      .attr("x", 3)
-      .attr("dy", ".35em")
-      .text(function(d) { return d.name; });*/
+        function showPopover (d) {
+          $(this).popover({
+            title: d.name,
+            placement: 'auto top',
+            container: 'body',
+            trigger: 'manual',
+            html : true,
+            content: function() { 
+              return "Quarter: " + d.label + 
+                     "<br/>Rounds: " + d3.format(",")(d.value ? d.value: d.y1 - d.y0); }
+          });
+          $(this).popover('show')
+        }
 });
 
 </script>
