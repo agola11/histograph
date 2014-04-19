@@ -185,9 +185,9 @@
            .attr("class", "point")
            .attr("cx", function (d) { return x(d.label); })
            .attr("cy", function (d) { return y(d.value); })
-           .attr("r", "5px")
+           .attr("r", "3px")
            .style("fill", function (d) { return color(d.name); })
-           .style("stroke", "grey")
+           .style("stroke", function (d) { return color(d.name); })
            .style("stroke-width", "2px")
            .on("mouseover", tip.show)
            .on("mouseout",   tip.hide);
