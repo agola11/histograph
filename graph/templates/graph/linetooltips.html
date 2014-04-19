@@ -125,7 +125,7 @@
         });
 
 
-        data = filter(function (d) {return selected_domains.indexOf(d.name) != -1; });
+        data = data.filter(function (d) {return selected_domains.indexOf(d.name) != -1; });
         //console.log(seriesData);
 
         x.domain(d3.extent(data, function(d) { return d.date; }));
