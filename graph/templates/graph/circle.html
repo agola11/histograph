@@ -182,7 +182,7 @@ function zoom(d, i) {
 
   vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
   
-  $(".node").tooltip({'container': 'body', 'placement': 'top'});
+  $(".circle").tooltip({'container': 'body', 'placement': 'top'});
 
   d3.event.stopPropagation();
 };
