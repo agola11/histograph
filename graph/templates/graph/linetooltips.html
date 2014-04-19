@@ -75,7 +75,7 @@
 
        var formatDate = d3.time.format("%b %d, '%y");
 
-      d3.json("http://{{ domain }}/graph/line/3", function (error, json) {
+      d3.json("http://{{ domain }}/graph/line/5", function (error, json) {
 
         var labelVar = 'date';
         var data = d3.entries(json['line_dict']);
@@ -83,7 +83,7 @@
           return d3.ascending(a.key, b.key);  
         });
 
-        var varNames = d3.keys(data[0]['value'];
+        var varNames = d3.keys(data[0]['value']);
         color.domain(varNames);
         
         data.forEach(function(d) {
