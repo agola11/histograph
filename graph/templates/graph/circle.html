@@ -92,16 +92,19 @@ d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .attr("r", function(d) {return d.r; })
-    .attr("class", function(d) { return d.depth <= depth ? "parent" : "child"; });
+    .attr("class", function(d) { return d.depth <= depth ? "parent" : "child"; })
+    .attr("title", function(d) { return d.name; });
 
-  node.append("text")
+  $(".node").tooltip({'container': 'body', 'placement': 'top'});
+
+  /*node.append("text")
     .attr("x", function(d) { return d.x; })
     .attr("y", function(d) { return d.y; })
     .attr("dy", ".35em")
     .attr("text-anchor", "middle")
     .style("opacity", function(d) { return d.r > 20 ? 1 : 0; })
-    .text(function(d) { return d.depth != depth ? "" : d.name; });
-    
+    .text(function(d) { return d.depth != depth ? "" : d.name; */
+
   node.attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; });
 
   //d3.select(window).on("click", function() { zoom(root); });
@@ -166,16 +169,19 @@ function zoom(d, i) {
       .attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; })
       .attr("cx", function(d) { return x(d.x); })
       .attr("cy", function(d) { return y(d.y); })
-      .attr("r", function(d) { return k * d.r; });
+      .attr("r", function(d) { return k * d.r; })
+      .attr("title", function(d) { return d.name; });
 
-  t.selectAll("text")
+  /*t.selectAll("text")
       .text(function(d) { return d.depth != depth ? "" : d.name; })
       .attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; })
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
-      .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
+      .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; }); */
 
   vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
+  $(".node").tooltip({'container': 'body', 'placement': 'top'});
+  
   d3.event.stopPropagation();
 };
 
