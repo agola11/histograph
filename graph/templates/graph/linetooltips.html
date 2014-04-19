@@ -114,7 +114,7 @@
           d.date = parseDate(d.key);
         });
 
-        var seriesData = varNames.map(function (name) {
+        var seriesData_all = varNames.map(function (name) {
           return {
             name: name,
             values: data.map(function (d) {
@@ -126,13 +126,13 @@
 
         //seriesData = seriesData.filter(function (d) {return selected_domains.indexOf(d.name) != -1; });
         
-        var seriesData_filtered = [];
-        seriesData.forEach(function (d) {
+        var seriesData = [];
+        seriesData_all.forEach(function (d) {
           if (selected_domains.indexOf(d.name) != -1)
-            seriesData_filtered.push(d);
+            seriesData.push(d);
         }); 
 
-        console.log(seriesData_filtered);
+        console.log(seriesData);
 
         x.domain(d3.extent(data, function(d) { return d.date; }));
         y.domain([
