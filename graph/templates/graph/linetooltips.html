@@ -132,7 +132,7 @@
             seriesData_filtered.push(d);
         }); 
 
-        console.log(seriesData);
+        console.log(seriesData_filtered);
 
         x.domain(d3.extent(data, function(d) { return d.date; }));
         y.domain([
