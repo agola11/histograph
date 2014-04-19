@@ -179,9 +179,9 @@ function zoom(d, i) {
       .attr("y", function(d) { return y(d.y); })
       .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; }); */
 
-  vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
-  $(".node").tooltip({'container': 'body', 'placement': 'top'});
-  
+  vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click)
+     .tooltip({'container': 'body', 'placement': 'top'});
+
   d3.event.stopPropagation();
 };
 
