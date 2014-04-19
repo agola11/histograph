@@ -87,13 +87,13 @@
           display(this.value)
         }
 
-      var top_domains;
+      var top_domains = [];
+      var seriesData_all;
 
       d3.json("http://{{ domain }}/graph/line/5", function (error, json) {
         var labelVar = 'date';
         var data = d3.entries(json['line_dict']);
         var domain_array = json['sorted_domains'];
-        var top_domains = [];
         domain_array.forEach(function(d) {
           top_domains.push(d[0]);
         });
@@ -109,7 +109,7 @@
           d.date = parseDate(d.key);
         });
 
-        var seriesData_all = varNames.map(function (name) {
+        seriesData_all = varNames.map(function (name) {
           return {
             name: name,
             values: data.map(function (d) {
