@@ -14,7 +14,7 @@ text.parent {
 }
 
 circle {
-  fill: #006699;
+  fill: #ccc;
   stroke: #999;
   pointer-events: all;
 }
@@ -25,6 +25,11 @@ circle.parent {
   stroke: steelblue;
 }
 
+circle.blocked {
+  fill:#BDBDB8;
+  fill-opacity: .1;
+  pointer-events: none;
+}
 circle.parent:hover {
   stroke: #ff7f0e;
   stroke-width: .5px;
@@ -35,10 +40,6 @@ circle.child:hover {
   stroke-width: .5px;
 }
 
-circle.blocked {
-  fill:#BDBDB8;
-  pointer-events: none;
-}
   </style>
   </head>
   <body>
@@ -111,7 +112,7 @@ function click(d) {
 console.log("clicked on "+d.full_url);
   
 if (d3.event.shiftKey) {  	
-    d3.select(this)
+    d3.select(this).select("circle")
     	.attr("class", "blocked");
     var linked = true;
     var json = {
