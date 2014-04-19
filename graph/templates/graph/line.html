@@ -111,7 +111,7 @@ var svg = d3.select("body").append("svg")
     d.date = parseDate(d.date);
   });
 
-  var sities = color.domain().map(function(name) {
+  var sites = color.domain().map(function(name) {
     return {
       name: name,
       values: data.map(function(d) {
@@ -119,6 +119,7 @@ var svg = d3.select("body").append("svg")
       })
     };
   });
+  counts = data;
 
   x.domain(d3.extent(counts, function(d) { return d.date; }));
 
