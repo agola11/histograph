@@ -64,17 +64,23 @@
         return '<p class="tip3">' + d.name + '<p class="tip1">' + d.value + '</p> <p class="tip3">'+  formatDate(d.label)+'</p>';
      });
 
+       var formatDate = d3.time.format("%b %d, '%y");
+
       d3.csv("/static/sampleline.csv", function (error, data) {
 
         var labelVar = 'date';
         var varNames = d3.keys(data[0]).filter(function (key) { return key !== labelVar;});
         color.domain(varNames);
         
+        data.forEach(function(d) {
+          d.date = parseDate(d.date);
+        });
+
         var seriesData = varNames.map(function (name) {
           return {
             name: name,
             values: data.map(function (d) {
-              return {name: name, label: parseDate(d[labelVar]), value: +d[name]};
+              return {name: name, label: d.date, value: +d[name]};
             })
           };
         });
