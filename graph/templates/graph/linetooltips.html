@@ -94,9 +94,9 @@
         var labelVar = 'date';
         var data = d3.entries(json['line_dict']);
         var domain_array = json['sorted_domains'];
-        var top_domain = [];
+        var top_domains = [];
         domain_array.forEach(function(d) {
-          top_domain.push(d[0]);
+          top_domains.push(d[0]);
         });
 
         //console.log(top_domain);
