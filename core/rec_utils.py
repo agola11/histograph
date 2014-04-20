@@ -41,7 +41,7 @@ class url_graph:
 		self.root = None
 
 	def create(self):
-		return graph_node("root", 0, None, 0)
+		return graph_node("root", 0, 0)
 
 	def rec_insert(top_root, hn, level, curr_root):
 		if len(hn['url']) < level:
@@ -65,7 +65,7 @@ class url_graph:
 	def insert(self, root, hn):
 		hn = clean_url(hn)
 		hn = split_url(hn)
-		root = rec_insert(root, hn, 1, None)
+		root = self.rec_insert(root, hn, 1, None)
 		return root
 
 def filter_http(hn):
