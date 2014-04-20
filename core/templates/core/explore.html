@@ -31,39 +31,80 @@
 
 $(window).scroll(function() {
 	if($(window).scrollTop() + $(window).height() == $(document).height()) {
-		base = updateJSON();
-		base = base + 50;		
+		updateJSON();
 	}
 });
 </script>
 
 <script type="text/javascript">
+function truncate(string){
+	if (string.length > 50)
+		return string.substring(0,50)+'...';
+	else
+		return string;
+};
+
 function updateJSON() {
 	var items = [];
 	for (i = base; i < base+50; i++) {
+		var title;
+		var color;
 		if (jsonResp[i][1]['last_title']) {
-			var new_div = $("<div>")
-				.addClass("explore_div")
-				.addClass("row")
-				.append($("<div>")
-					.addClass("circle")
-					.css("float", "left")
-					.css("margin", "20px 0px")
-					.text(i + 1)
-				)
-				.append($("<a>")
-					.attr("href", "http://" + jsonResp[i][0])
-					.attr("target", "_blank")
-					.append($("<h4>")
-						.css("float", "left")
-						.css("margin", "30px 0px 0px 20px")
-						.text(jsonResp[i][1]['last_title'])
-					)
-				)
-				.append($("<hr>")
-				);
+			title = jsonResp[i][1]['last_title'];
+		}
+		else title = jsonResp[i][0];
+		if (i == 89) {
+			console.log(truncate(title));
+		}
+		if (parseFloat(jsonResp[i][1]['score']) > 150) {
+			color = '#f11b38';
+		}
+		else if (parseFloat(jsonResp[i][1]['score']) > 75) {
+			color = '#fd751c';
+		}
 
-			$("#all").append(new_div);
+		else {
+			color = '#12a286';
+		}
+		var new_div = $("<div>")
+		.addClass("explore_div")
+		.addClass("row")
+		.append($("<div>")
+			.addClass("circle")
+			.css("float", "left")
+			.css("margin", "20px 0px")
+			.text(i + 1)
+			)
+		.append($("<a>")
+			.attr("href", "http://" + jsonResp[i][0])
+			.attr("target", "_blank")
+			.append($("<h4>")
+				.css("float", "left")
+				.css("margin", "30px 0px 0px 20px")
+				.text(truncate(title))
+				)
+			)
+		.append($("<br><br>")
+			)
+		.append($("<h6>")
+			.css("float", "left")
+			.css("margin", "30px 0px 0px 20px")
+			.text(truncate(jsonResp[i][0].split("/")[0]))
+			)
+
+		.append($("<div>")
+			.addClass("score_circle")
+			.css("float", "right")
+			.css("margin", "10px 0px")
+			.css("background", color)
+			.text(parseFloat(jsonResp[i][1]['score']).toFixed(1))
+			)
+		.append($("<br><br><br>")
+			)
+		.append($("<hr>")
+			);
+
+		$("#all").append(new_div);
 
 			// $("#all").append("div:rnd");
 			// var svg = main.append("svg");
@@ -78,7 +119,6 @@ function updateJSON() {
 			// main.append("")
 
 			// items.push( "<div class='rnd'><svg width='20' height='20'><circle cx='10' cy='10' r='10' fill='#ddd' /></svg><h6 align='left'>" + jsonResp[i][1]['last_title'] + "</h6>" );
-		}
 		// else {
 		// 	items.push( "<div class='rnd'><h6 align='left'>" + jsonResp[i][0] + "</h6>" );
 		// }
@@ -92,9 +132,9 @@ function updateJSON() {
 	// 	html: items.join( "" )
 	// }).appendTo( "#all" );
 
-	return base+50;
+base = base+50;
 
-	$("#all").html($("#all").html());
+$("#all").html($("#all").html());
 }
 </script>
 
@@ -104,7 +144,7 @@ var base = 0;
 $(document).ready(function(){
 	$.getJSON( "rank", function( data ) {
 		jsonResp = data;
-		updateJSON(base);
+		updateJSON();
 	});
 });
 </script>
