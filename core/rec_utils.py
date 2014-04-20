@@ -62,25 +62,6 @@ class url_graph:
 	def create(self):
 		return graph_node("root", 0, 0)
 
-	def rec_insert(top_root, hn, level, curr_root):
-		if len(hn['url']) < level:
-			return top_root
-		url_snip = url[level-1]
-		if curr_root.children == None:
-			curr_root.children = {}
-			child = graph_node(url_snip, 1, level)
-			curr_root.children[url_snip] = child
-			rec_insert(top_root, hn, level+1, child)
-		else:
-			if url_snip in root.children:
-				child = graph_node(url_snip, 1, level)
-				curr_root.children[url_snip] = child
-				rec_insert(top_root, hn, level+1, child)
-			else:
-				child = curr_root.children[url_snip]
-				child.node_count += 1
-				rec_insert(top_root, hn, level+1, child)
-
 	def insert(self, root, hn):
 		hn = clean_url(hn)
 		hn = split_url(hn)
