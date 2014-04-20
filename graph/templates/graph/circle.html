@@ -93,10 +93,9 @@ d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
     .attr("cy", function(d) { return d.y; })
     .attr("r", function(d) {return d.r; })
     .attr("class", function(d) { return d.depth <= depth ? "parent" : "child"; })
-    .attr("data-toggle", "tooltip")
     .attr("title", function(d) { return d.name; });
 
-  $(".node").tooltip({'container': 'body', 'placement': 'top'});
+  //$(".node").tooltip({'container': 'body', 'placement': 'top'});
 
   /*node.append("text")
     .attr("x", function(d) { return d.x; })
@@ -171,8 +170,8 @@ function zoom(d, i) {
       .attr("cx", function(d) { return x(d.x); })
       .attr("cy", function(d) { return y(d.y); })
       .attr("r", function(d) { return k * d.r; })
-      .attr("data-toggle", "tooltip")
-      .attr("title", function(d) { return d.name; });
+      .append("title")
+      .text(function(d) { return d.name; });
 
   /*t.selectAll("text")
       .text(function(d) { return d.depth != depth ? "" : d.name; })
@@ -183,7 +182,7 @@ function zoom(d, i) {
 
   vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
   
-  $(".node").tooltip({'container': 'body', 'placement': 'top'});
+  //$(".node").tooltip({'container': 'body', 'placement': 'top'});
 
   d3.event.stopPropagation();
 };
