@@ -146,7 +146,7 @@ if (d3.event.shiftKey) {
 	}
   }
   else {
-    if(d3.select(this).attr("visibility") == "visible") {
+    if(d.depth <= depth) {
     	zoom(d);
     }
   }
