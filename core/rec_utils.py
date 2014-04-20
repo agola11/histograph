@@ -28,28 +28,6 @@ def split_url(hn):
 	hn['url'] = url
 	return hn    
 
-def rec_insert(top_root, hn, level, curr_root):
-	if len(hn['url']) < level:
-		return top_root
-	url_snip = hn['url'][level-1]
-	if curr_root.children == None:
-		curr_root.children = {}
-		child = graph_node(url_snip, 1, level)
-		curr_root.children[url_snip] = child
-	else:
-		if url_snip not in curr_root.children:
-			child = graph_node(url_snip, 1, level)
-			curr_root.children[url_snip] = child
-		else:
-			child = curr_root.children[url_snip]
-			child.node_count += 1
-	
-	if level not in self.levels:
-		self.levels[level] = 1
-	else:
-		self.levels[level] += 1
-	rec_insert(top_root, hn, level+1, child)
-
 class graph_node:
 	def __init__(self, name, node_count, level):
 		self.name = name
@@ -67,10 +45,32 @@ class url_graph:
 		self.levels[0] = 1
 		return graph_node("root", 0, 0)
 
+	def rec_insert(self,top_root, hn, level, curr_root):
+		if len(hn['url']) < level:
+			return top_root
+		url_snip = hn['url'][level-1]
+		if curr_root.children == None:
+			curr_root.children = {}
+			child = graph_node(url_snip, 1, level)
+			curr_root.children[url_snip] = child
+		else:
+			if url_snip not in curr_root.children:
+				child = graph_node(url_snip, 1, level)
+				curr_root.children[url_snip] = child
+			else:
+				child = curr_root.children[url_snip]
+				child.node_count += 1
+	
+		if level not in self.levels:
+			self.levels[level] = 1
+		else:
+			self.levels[level] += 1
+		rec_insert(top_root, hn, level+1, child)
+
 	def insert(self, root, hn):
 		hn = clean_url(hn)
 		hn = split_url(hn)
-		root = rec_insert(root, hn, 1, root)
+		root = self.rec_insert(root, hn, 1, root)
 		return root
 
 def filter_http(hn):
