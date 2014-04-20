@@ -125,15 +125,14 @@ console.log("clicked on "+d.full_url);
 var linked;
 var blocked;
 var shiftPressed = d3.event.shiftKey;
-var altPressed = d3.event.altKey;
 var ctrlPressed = d3.event.ctrlKey;
-if (shiftPressed || altPressed || ctrlPressed) {  	
-    if (shiftPressed) {
+if (shiftPressed || ctrlPressed) {  	
+    if (shiftPressed & ctrlPressed) {
 	    d3.select(this).select("circle").attr("class", "blockedlinks");
 	    linked = true;
 	    blocked = true;
 	}
-    else if (altPressed) {
+    else if (shiftPressed) {
     	d3.select(this).select("circle").attr("class", "blocked"); 
     	linked = false;
     	blocked = true;	    
