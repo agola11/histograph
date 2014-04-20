@@ -11,6 +11,7 @@ from django.db.models import Max
 from django.contrib.auth import logout as django_logout
 from itertools import islice
 import django_facebook
+import rec_utils
 import json
 import rec_algo
 
@@ -191,5 +192,6 @@ def send_ranked_urls(request):
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 
 def send_ranked_urls_u(request, user_id):
-  url_dict = rec_algo.rank_urls(int(user_id))
-  return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
+  hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
+  graph = rec_utils.construct_graph(hn_list)
+  return HttpResponse(simplejson.dumps(graph.__dict__, content_type='application/json')
