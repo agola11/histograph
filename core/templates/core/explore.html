@@ -84,13 +84,6 @@ function updateJSON() {
 				.text(truncate(title))
 				)
 			)
-		.append($("<br><br>")
-			)
-		.append($("<h6>")
-			.css("float", "left")
-			.css("margin", "30px 0px 0px 20px")
-			.text(truncate(jsonResp[i][0].split("/")[0]))
-			)
 
 		.append($("<div>")
 			.addClass("score_circle")
@@ -98,13 +91,23 @@ function updateJSON() {
 			.css("margin", "10px 0px")
 			.css("background", color)
 			.text(parseFloat(jsonResp[i][1]['score']).toFixed(1))
-			)
-		.append($("<br><br><br>")
-			)
-		.append($("<hr>")
 			);
 
 		$("#all").append(new_div);
+
+		var url_div = $("<div>")
+		.addClass("row")
+		.append($("<h6>")
+			.css("float", "left")
+			.css("margin", "0px 0px 0px 160px")
+			.text(truncate(jsonResp[i][0].split("/")[0]))
+			)
+		.append($("<br>")
+			)
+		.append($("<hr>")
+			);
+		$("#all").append(url_div);
+
 
 			// $("#all").append("div:rnd");
 			// var svg = main.append("svg");
