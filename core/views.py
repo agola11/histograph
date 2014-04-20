@@ -14,6 +14,7 @@ import django_facebook
 import rec_utils
 import json
 import rec_algo
+import jsonpickle
 
 # TODO: change to simplejson?
 def send_history(request, user_id):
@@ -192,8 +193,6 @@ def send_ranked_urls(request):
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 
 def send_ranked_urls_u(request, user_id):
-  resp = HttpResponse()
   hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
   graph = rec_utils.construct_graph(hn_list)
-  serializers.serialize('json', graph, stream=resp)
-  return HttpResponse(resp, content_type="application/json")
+  return HttpResponse(jsonpickle.encode(graph), content_type="application/json")
