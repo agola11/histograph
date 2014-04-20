@@ -156,18 +156,20 @@ if (d3.event.shiftKey || d3.event.tabKey || d3.event.altKey) {
 	        success: function(data, textStatus, jqXHR) {
 	        },
 	        error: function(jqXHR, textStatus, errorThrown) {
-	          console.log( jqXHR.responseText );
+	          //console.log( jqXHR.responseText );
 	          return;
 	        },
 	        data: send,
 	        async: true
 	      });
   }
+	}
   else {
     if(d.depth <= depth) {
     	zoom(d);
     }
   }
+
 };
 
 function zoom(d, i) {
