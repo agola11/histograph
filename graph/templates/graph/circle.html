@@ -74,12 +74,12 @@ var vis = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + (w - r) / 2 + "," + (h - r) / 2 + ")");
 
-var blocked_urls;
-
-d3.csv("/static/data.csv", function (error, data) {
+var blocked_urls = ["www.facebook.com", "mail.google.com"];
+var blocked_links = ["www.amazon.com", "piazza.com"];
+/*d3.csv("/static/data.csv", function (error, data) {
   console.log(data[0]);
   console.log(data[1]);
-});
+});*/
 
 d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
   node = root = data;
@@ -105,7 +105,13 @@ d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .attr("r", function(d) {return d.r; })
-    .attr("class", function(d) { return d.depth <= depth ? "parent" : "child"; });
+    .attr("class", function(d) { 
+      if (blocked_urls.indexOf(d.full_url) != -1)
+        return "blocked";
+      else if (blocked_links.indexOf(d.full_url) != -1)
+        return "blockedlinks";
+      else
+        return d.depth <= depth ? "parent" : "child"; });
 
   console.log(node);
 
@@ -127,6 +133,7 @@ d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
 });
 
 function click(d) {
+
 console.log("clicked on "+d.full_url);
 
 var linked;
@@ -198,11 +205,17 @@ function zoom(d, i) {
       .duration(d3.event.altKey ? 7500 : 750);
 
   t.selectAll("circle")
-      .attr("class", function(d) { return d.depth < depth ? "parent" : "child"; })
       .attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; })
       .attr("cx", function(d) { return x(d.x); })
       .attr("cy", function(d) { return y(d.y); })
-      .attr("r", function(d) { return k * d.r; });
+      .attr("r", function(d) { return k * d.r; })
+      .attr("class", function(d) { 
+      if (blocked_urls.indexOf(d.full_url) != -1)
+        return "blocked";
+      else if (blocked_links.indexOf(d.full_url) != -1)
+        return "blockedlinks";
+      else
+        return d.depth < depth ? "parent" : "child"; });
 
   t.selectAll("text")
       .text(function(d) { return d.depth != depth ? "" : d.name; })
