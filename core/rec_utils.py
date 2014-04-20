@@ -22,7 +22,7 @@ class url_graph:
 		self.root = None
 
 	def create(self):
-		return graph_node("root", 0, None, 0)
+		return graph_node("root", 0, 0)
 
 	def clean_url(hn):
 		url = hn['url']
