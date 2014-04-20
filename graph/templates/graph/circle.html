@@ -98,6 +98,8 @@ d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
       .append("title")
       .text(function(d) { return d.name; });
 
+  console.log(node);
+
   //$(".node").tooltip({'container': 'body', 'placement': 'top'});
 
   /*node.append("text")
@@ -185,6 +187,14 @@ function zoom(d, i) {
 
   vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
   
+  node.filter(function (d) {return d.depth != depth;})
+      .append("title")
+      .text("");
+
+  node.filter(function (d) {return d.depth == depth;})
+      .append("title")
+      .text(function(d) { return d.name; });
+
   //$(".node").tooltip({'container': 'body', 'placement': 'top'});
 
   d3.event.stopPropagation();
