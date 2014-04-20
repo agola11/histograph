@@ -194,4 +194,4 @@ def send_ranked_urls(request):
 def send_ranked_urls_u(request, user_id):
   hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
   graph = rec_utils.construct_graph(hn_list)
-  return HttpResponse(simplejson.dumps(graph.__dict__, content_type='application/json')
+  return HttpResponse(simplejson.dumps(graph.__dict__), content_type='application/json')
