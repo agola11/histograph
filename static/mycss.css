@@ -51,6 +51,10 @@ div.explore_div
 	height: 100px;
 }
 
+div.explore_div>a {
+	color: blue;
+}
+
 .circle {
     width: 40px;
     height: 40px;
@@ -145,4 +149,13 @@ div.explore_div
 	top: 0px;
 	z-index: 998;
 	display: none;
+}
+
+hr {
+    border: 0;
+    height: 1px;
+    background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(109, 29, 170, 0.4), rgba(0,0,0,0)); 
+    background-image:    -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
+    background-image:     -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
+    background-image:      -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,0)); 
 }
