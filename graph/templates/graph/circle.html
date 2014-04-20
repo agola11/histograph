@@ -74,6 +74,13 @@ var vis = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + (w - r) / 2 + "," + (h - r) / 2 + ")");
 
+var blocked_urls;
+
+d3.csv("/static/data.csv", function (error, data) {
+  console.log(data[0]);
+  console.log(data[1]);
+});
+
 d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
   node = root = data;
 
@@ -126,6 +133,7 @@ var linked;
 var blocked;
 var shiftPressed = d3.event.shiftKey;
 var ctrlPressed = d3.event.ctrlKey;
+
 if (shiftPressed || ctrlPressed) {  	
     if (shiftPressed & ctrlPressed) {
 	    d3.select(this).select("circle").attr("class", "blockedlinks");
@@ -205,16 +213,12 @@ function zoom(d, i) {
 
   vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
   
-  /*console.log(t.selectAll("circle").filter(function (d) {return d.depth != depth;}));
-  
+  /*console.log(t.selectAll("circle").filter(function (d) {return d.depth != depth;}));  
   console.log(t.selectAll("circle").filter(function (d) {return d.depth == depth;})); 
-
   t.selectAll("circle").filter(function (d) {return d.depth == depth;})
       .append("title")
       .text(function(d) { return d.name; });*/
-
   //$(".node").tooltip({'container': 'body', 'placement': 'top'});
-
   d3.event.stopPropagation();
 };
 
