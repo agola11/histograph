@@ -43,7 +43,9 @@ class url_graph:
 
 	def create(self):
 		self.levels[0] = 1
-		return graph_node("root", 0, 0)
+                root = graph_node("root", 0, 0)
+                self.root = root
+		return root
 
 	def rec_insert(self,top_root, hn, level, curr_root):
 		if len(hn['url']) < level:
@@ -65,7 +67,7 @@ class url_graph:
 			self.levels[level] = 1
 		else:
 			self.levels[level] += 1
-		rec_insert(top_root, hn, level+1, child)
+		self.rec_insert(top_root, hn, level+1, child)
 
 	def insert(self, root, hn):
 		hn = clean_url(hn)
@@ -83,6 +85,6 @@ def construct_graph(hn_list):
 	root = graph.create()
 	for hn in hn_list:
 		graph.insert(root, hn)
-	return root
+	return graph
 
 
