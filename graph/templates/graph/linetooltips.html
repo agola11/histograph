@@ -167,7 +167,21 @@
         var series = svg.selectAll(".series")
             .data(seriesData)
           .enter().append("g")
-            .attr("class", "series");
+            .attr("class", "series")
+            .on("mouseover", function (d) {                             
+              d3.select(this)                          //on mouseover of each line, give it a nice thick stroke
+              .style("stroke-width",'6px');          
+              var selectthegraphs = $('.series').not(this);     //select all the rest of the lines, except the one you are hovering on and drop their opacity
+              d3.selectAll(selectthegraphs)
+                .style("opacity",0.2);      
+            })
+            .on("mouseout", function(d) {        //undo everything on the mouseout
+                d3.select(this)
+                  .style("stroke-width",'2.5px');          
+                var selectthegraphs = $('.series').not(this);
+                d3.selectAll(selectthegraphs)
+                  .style("opacity",1);         
+            });
 
         /*series.selectAll("path").remove();
         series.selectAll(".point").remove();*/
