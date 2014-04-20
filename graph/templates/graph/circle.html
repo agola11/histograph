@@ -28,6 +28,12 @@ circle.blocked {
   fill:#BDBDB8;
   fill-opacity: .1;
 }
+
+circle.blocked-links {
+  fill:#CC0000;
+  fill-opacity: .1;
+}
+
 circle.parent:hover {
   stroke: #ff7f0e;
   stroke-width: .5px;
@@ -100,35 +106,48 @@ d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
       .append("title")
       .text(function(d) { return d.name; });
 
-
   //$(".node").tooltip({'container': 'body', 'placement': 'top'});
 
-  /*node.append("text")
+  node.append("text")
     .attr("x", function(d) { return d.x; })
     .attr("y", function(d) { return d.y; })
     .attr("dy", ".35em")
     .attr("text-anchor", "middle")
     .style("opacity", function(d) { return d.r > 20 ? 1 : 0; })
-    .text(function(d) { return d.depth != depth ? "" : d.name; */
+    .text(function(d) { return d.depth != depth ? "" : d.name;
 
   node.attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; });
-
-  //d3.select(window).on("click", function() { zoom(root); });
 });
 
 function click(d) {
 console.log("clicked on "+d.full_url);
-  
-if (d3.event.shiftKey) {  	
-    if (d3.select(this).select("circle").attr("class") != "blocked")  {
-	    d3.select(this).select("circle").attr("class", "blocked");
-	    var linked = true;
-	    var json = {
+
+var linked;
+var blocked;
+
+if (d3.event.shiftKey || d3.event.tabKey || d3.event.altKey) {  	
+    if (d3.event.tabKey) {
+	    d3.select(this).select("circle").attr("class", "blocked-links");
+	    linked = true;
+	    blocked = true;
+	}
+    else if (d3.event.shiftKey) {
+    	d3.select(this).select("circle").attr("class", "blocked"); 
+    	linked = false;
+    	blocked = true;	    
+	}
+	else if (d3.event.altKey) {
+		d3.select(this).select("circle").attr("class", "child"); 
+    	linked = false;
+    	blocked = false;
+	}
+	var json = {
 	    "url": d.full_url, 
 	    "block_links": linked,
+	    "blocked": blocked
 	    };
-	    var send = JSON.stringify(json);
-	    console.log(send);
+	var send = JSON.stringify(json);
+	console.log(send);
 	    var csrftoken = getCookie('csrftoken');
 	    jQuery.ajax({
 	        url: "http://{{ domain }}/save_blocked_site",
@@ -143,10 +162,6 @@ if (d3.event.shiftKey) {
 	        data: send,
 	        async: true
 	      });
-    }
-    else {
-    	d3.select(this).select("circle").attr("class", "child"); 
-	}
   }
   else {
     if(d.depth <= depth) {
@@ -179,22 +194,22 @@ function zoom(d, i) {
       .attr("cy", function(d) { return y(d.y); })
       .attr("r", function(d) { return k * d.r; });
 
-  /*t.selectAll("text")
+  t.selectAll("text")
       .text(function(d) { return d.depth != depth ? "" : d.name; })
       .attr("visibility", function(d) {return d.depth > depth ? "hidden" : "visible"; })
       .attr("x", function(d) { return x(d.x); })
       .attr("y", function(d) { return y(d.y); })
-      .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; }); */
+      .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; });
 
   vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
   
-  console.log(t.selectAll("circle").filter(function (d) {return d.depth != depth;}));
+  /*console.log(t.selectAll("circle").filter(function (d) {return d.depth != depth;}));
   
   console.log(t.selectAll("circle").filter(function (d) {return d.depth == depth;})); 
 
   t.selectAll("circle").filter(function (d) {return d.depth == depth;})
       .append("title")
-      .text(function(d) { return d.name; });
+      .text(function(d) { return d.name; });*/
 
   //$(".node").tooltip({'container': 'body', 'placement': 'top'});
 
