@@ -47,6 +47,12 @@ class url_graph:
                 self.root = root
 		return root
 
+	def get_levels(self):
+		return self.levels
+
+	def get_graph(self):
+		return self.root
+
 	def rec_insert(self,top_root, hn, level, curr_root):
 		if len(hn['url']) < level:
 			return top_root
