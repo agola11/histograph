@@ -9,6 +9,25 @@ except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
 
+def clean_url(hn):
+	url = hn['url']
+	if url[-1] == '/':
+		url = url[:-1]
+	if url.startswith('http://'):
+		url = url[7:]
+	if url.startswith('https://'):
+		url = url[8:]
+	hn['url'] = url
+	return hn
+
+def split_url(hn):
+	url = hn['url']
+	url = url.split('/')
+	if url[-1] == '':
+		del(url[-1])
+	hn['url'] = url
+	return hn    
+
 class graph_node:
 	def __init__(self, name, node_count, level):
 		self.name = name
@@ -22,26 +41,7 @@ class url_graph:
 		self.root = None
 
 	def create(self):
-		return graph_node("root", 0, 0)
-
-	def clean_url(hn):
-		url = hn['url']
-		if url[-1] == '/':
-			url = url[:-1]
-		if url.startswith('http://'):
-			url = url[7:]
-		if url.startswith('https://'):
-			url = url[8:]
-		hn['url'] = url
-		return hn
-
-	def split_url(hn):
-		url = hn['url']
-		url = url.split('/')
-		if url[-1] == '':
-			del(url[-1])
-		hn['url'] = url
-		return hn
+		return graph_node("root", 0, None, 0)
 
 	def rec_insert(top_root, hn, level, curr_root):
 		if len(hn['url']) < level:
