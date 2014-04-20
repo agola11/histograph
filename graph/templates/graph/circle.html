@@ -97,7 +97,7 @@ d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
       .text(function(d) { return d.name; });
 
   node.filter(function (d) {return d.depth <= depth;})
-      .attr("title").remove();
+      .attr("title", null);
 
   //$(".node").tooltip({'container': 'body', 'placement': 'top'});
 
