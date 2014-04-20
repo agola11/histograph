@@ -136,7 +136,7 @@ if (d3.event.shiftKey || d3.event.tabKey || d3.event.altKey) {
     	linked = false;
     	blocked = true;	    
 	}
-	else if (d3.event.altKey) {
+	else {
 		d3.select(this).select("circle").attr("class", "child"); 
     	linked = false;
     	blocked = false;
@@ -163,7 +163,7 @@ if (d3.event.shiftKey || d3.event.tabKey || d3.event.altKey) {
 	        async: true
 	      });
   }
-	}
+
   else {
     if(d.depth <= depth) {
     	zoom(d);
@@ -236,7 +236,7 @@ function getCookie(name) {
         }
     }
     return cookieValue;
-}
+};
 
 function addPlaceholders(node) {
   if(node.children) {
@@ -296,5 +296,5 @@ function makePositionsRelativeToZero( nodes ) {
     }
 };
   </script>
-  </body>
+</body>
 </html>
