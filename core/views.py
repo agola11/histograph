@@ -125,6 +125,8 @@ def logout(request):
     return redirect(login)
 
 def team(request):
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('core/team.html')
   context = RequestContext(request, {
@@ -134,6 +136,8 @@ def team(request):
   return HttpResponse(template.render(context))
 
 def about(request):
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('core/about.html')
   context = RequestContext(request, {
@@ -143,6 +147,8 @@ def about(request):
   return HttpResponse(template.render(context))
 
 def install(request):
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('core/install.html')
   context = RequestContext(request, {
@@ -162,6 +168,8 @@ def setextension(request):
 
 
 def explore(request):
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   template = loader.get_template('core/explore.html')
   # url_dict = rec_algo.rank_urls(request.user.id)
   context = RequestContext(request, {
