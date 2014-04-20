@@ -186,6 +186,9 @@ function zoom(d, i) {
       .attr("y", function(d) { return y(d.y); })
       .style("opacity", function(d) { return k * d.r > 20 ? 1 : 0; }); */
 
+  var c = t.selectAll("circle");
+  console.log(c);
+  
   vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
   
   t.selectAll("circle").filter(function (d) {return d.depth != depth;})
