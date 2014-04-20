@@ -144,33 +144,32 @@ if (d3.event.shiftKey || d3.event.tabKey || d3.event.altKey) {
 	var json = {
 	    "url": d.full_url, 
 	    "block_links": linked,
-	    "blocked": blocked
+	    "blocked": blocked,
 	    };
 	var send = JSON.stringify(json);
 	console.log(send);
-	    var csrftoken = getCookie('csrftoken');
-	    jQuery.ajax({
-	        url: "http://{{ domain }}/save_blocked_site",
-	        headers:{"X-CSRFToken":csrftoken},
-	        type:"POST",
-	        success: function(data, textStatus, jqXHR) {
-	        },
-	        error: function(jqXHR, textStatus, errorThrown) {
-	          //console.log( jqXHR.responseText );
-	          return;
-	        },
-	        data: send,
-	        async: true
-	      });
+    var csrftoken = getCookie('csrftoken');
+    jQuery.ajax({
+        url: "http://{{ domain }}/save_blocked_site",
+        headers:{"X-CSRFToken":csrftoken},
+        type:"POST",
+        success: function(data, textStatus, jqXHR) {
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.log( jqXHR.responseText );
+          return;
+        },
+        data: send,
+        async: true
+      });
   }
 
   else {
-    if(d.depth <= depth) {
+    if(d.depth <= depth)
     	zoom(d);
-    }
   }
 
-};
+}
 
 function zoom(d, i) {
   var k = r / d.r / 2;
@@ -295,6 +294,6 @@ function makePositionsRelativeToZero( nodes ) {
         node.y -= offsetY;
     }
 };
-  </script>
+</script>
 </body>
 </html>
