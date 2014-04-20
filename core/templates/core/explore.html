@@ -48,12 +48,23 @@ function updateJSON() {
 	var items = [];
 	for (i = base; i < base+50; i++) {
 		var title;
+		var color;
 		if (jsonResp[i][1]['last_title']) {
 			title = jsonResp[i][1]['last_title'];
 		}
 		else title = jsonResp[i][0];
 		if (i == 89) {
 			console.log(truncate(title));
+		}
+		if (parseFloat(jsonResp[i][1]['score']) > 150) {
+			color = '#f11b38';
+		}
+		else if (parseFloat(jsonResp[i][1]['score']) > 75) {
+			color = '#fd751c';
+		}
+
+		else {
+			color = '#12a286';
 		}
 		var new_div = $("<div>")
 		.addClass("explore_div")
@@ -72,6 +83,21 @@ function updateJSON() {
 				.css("margin", "30px 0px 0px 20px")
 				.text(truncate(title))
 				)
+			)
+		.append($("<br><br>")
+			)
+		.append($("<h6>")
+			.css("float", "left")
+			.css("margin", "30px 0px 0px 20px")
+			.text(truncate(jsonResp[i][0].split("/")[0]))
+			)
+
+		.append($("<div>")
+			.addClass("score_circle")
+			.css("float", "right")
+			.css("margin", "10px 0px")
+			.css("background", color)
+			.text(parseFloat(jsonResp[i][1]['score']).toFixed(1))
 			)
 		.append($("<br><br><br>")
 			)

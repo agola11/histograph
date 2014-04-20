@@ -63,6 +63,17 @@ div.explore_div
     padding-top: 8px;
 }
 
+.score_circle {
+    width: 50px;
+    height: 50px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px; 
+    color: #fff;
+    font-size: 16px;
+    padding-top: 14px;
+}
+
 .alignleft {
 	float: left;
 }
