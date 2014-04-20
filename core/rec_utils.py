@@ -31,14 +31,14 @@ def split_url(hn):
 def rec_insert(top_root, hn, level, curr_root):
 	if len(hn['url']) < level:
 		return top_root
-	url_snip = url[level-1]
+	url_snip = hn['url'][level-1]
 	if curr_root.children == None:
 		curr_root.children = {}
 		child = graph_node(url_snip, 1, level)
 		curr_root.children[url_snip] = child
 		rec_insert(top_root, hn, level+1, child)
 	else:
-		if url_snip in root.children:
+		if url_snip not in curr_root.children:
 			child = graph_node(url_snip, 1, level)
 			curr_root.children[url_snip] = child
 			rec_insert(top_root, hn, level+1, child)
@@ -65,7 +65,7 @@ class url_graph:
 	def insert(self, root, hn):
 		hn = clean_url(hn)
 		hn = split_url(hn)
-		root = rec_insert(root, hn, 1, None)
+		root = rec_insert(root, hn, 1, root)
 		return root
 
 def filter_http(hn):
