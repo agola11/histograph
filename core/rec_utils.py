@@ -36,16 +36,19 @@ def rec_insert(top_root, hn, level, curr_root):
 		curr_root.children = {}
 		child = graph_node(url_snip, 1, level)
 		curr_root.children[url_snip] = child
-		rec_insert(top_root, hn, level+1, child)
 	else:
 		if url_snip not in curr_root.children:
 			child = graph_node(url_snip, 1, level)
 			curr_root.children[url_snip] = child
-			rec_insert(top_root, hn, level+1, child)
 		else:
 			child = curr_root.children[url_snip]
 			child.node_count += 1
-			rec_insert(top_root, hn, level+1, child)
+	
+	if level not in self.levels:
+		self.levels[level] = 1
+	else:
+		self.levels[level] += 1
+	rec_insert(top_root, hn, level+1, child)
 
 class graph_node:
 	def __init__(self, name, node_count, level):
@@ -58,8 +61,10 @@ class graph_node:
 class url_graph:
 	def __init__(self):
 		self.root = None
+		self.levels = {}
 
 	def create(self):
+		self.levels[0] = 1
 		return graph_node("root", 0, 0)
 
 	def insert(self, root, hn):
