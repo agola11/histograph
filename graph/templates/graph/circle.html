@@ -95,7 +95,7 @@ d3.json("http://{{ domain }}/graph/bubble/5", function(data) {
     .attr("class", function(d) { return d.depth <= depth ? "parent" : "child"; });
 
   console.log(node);
-  
+
   node.filter(function (d) {return d.depth == depth;})
       .append("title")
       .text(function(d) { return d.name; });
@@ -188,11 +188,11 @@ function zoom(d, i) {
 
   vis.selectAll(".node").filter(function (d) {return d.depth <= depth; }).on("click", click);
   
-  vis.selectAll(".node").filter(function (d) {return d.depth != depth;})
+  t.selectAll("circle").filter(function (d) {return d.depth != depth;})
       .append("title")
       .text("");
 
-  vis.selectAll(".node").filter(function (d) {return d.depth == depth;})
+  t.selectAll("circle").filter(function (d) {return d.depth == depth;})
       .append("title")
       .text(function(d) { return d.name; });
 
