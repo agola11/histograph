@@ -41,16 +41,25 @@
 
 <script type="text/javascript">
 // load graphs on click
+
+var graph_state = 'sunburst';
+
 function loadSunburst() {
   $("#load").load("../graph/sunburst");
+  graph_state = 'sunburst';
+  $('.dateslider').on('slideStop', loadSunburst);
 }
 
 function loadDigraph() {
   $("#load").load("../graph/digraph");
+  graph_state = 'digraph';
+  $('.dateslider').on('slideStop', loadDigraph);
 }
 
 function loadLineplot() {
   $("#load").load("../graph/lineplot");
+  graph_state = 'lineplot';
+  $('.dateslider').on('slideStop', loadLineplot);
 }
 
 </script>
