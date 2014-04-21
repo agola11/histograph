@@ -143,6 +143,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 
 def recommend_urls(user):
 	hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
+	user_hn_list = filter(lambda hn: hn['user__id']==user, hn_list)
 	ug = construct_graph(user_hn_list)
 	user_ids = set(map(lambda hn: hn['user__id'], hn_list))
 	rank_table = {}
