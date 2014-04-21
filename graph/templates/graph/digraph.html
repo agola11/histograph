@@ -37,7 +37,7 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("http://{{ domain }}/graph/digraphdata/7/0", function(error, graph) {
+d3.json("http://{{ domain }}/graph/digraphdata/2/0", function(error, graph) {
   force
       .nodes(graph.nodes)
       .links(graph.links)
@@ -47,7 +47,9 @@ d3.json("http://{{ domain }}/graph/digraphdata/7/0", function(error, graph) {
       .data(graph.links)
     .enter().append("line")
       .attr("class", "link")
-      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+      .style("stroke-width", function(d) { return Math.sqrt(d.value); })
+      .attr("data-toggle", "tooltip")
+      .attr("title", function(d) { return d.type; });
 
   var node = svg.selectAll(".node")
       .data(graph.nodes)
@@ -60,6 +62,7 @@ d3.json("http://{{ domain }}/graph/digraphdata/7/0", function(error, graph) {
       .attr("title", function(d) { return d.name; });
 
   $(".node").tooltip({'container': 'body', 'placement': 'top'});
+  $(".link").tooltip({'container': 'body', 'placement': 'top'});
 
 
   // node.append("title")

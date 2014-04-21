@@ -30,9 +30,8 @@ def send_most_recent_history_time(request, extension_id):
 
 def send_blocked_sites(request):
   if request.user.is_authenticated():
-    sites = BlockedSite.objects.filter(user=request.user)
-    urls = map(lambda x: x.url, sites)
-    return HttpResponse(simplejson.dumps(urls), content_type="application/json")
+    sites = BlockedSite.objects.filter(user=request.user).values('url', 'block_links')
+    return HttpResponse(simplejson.dumps(list(sites)), content_type="application/json")
   else:
     resp = HttpResponse()
     resp.status_code = 401

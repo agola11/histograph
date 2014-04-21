@@ -62,6 +62,31 @@ class BlockedSite(models.Model):
   user = models.ForeignKey(HistographUser)
   block_links = models.BooleanField()
 
+def get_link_type_name(value):
+  if value == 0:
+    return 'link'
+  if value == 1:
+    return 'typed'
+  if value == 2:
+    return 'auto_bookmark'
+  if value == 3:
+    return 'auto_subframe'
+  if value == 4:
+    return 'manual_subframe'
+  if value == 5:
+    return 'generated'
+  if value == 6:
+    return 'auto_toplevel'
+  if value == 7:
+    return 'form_submit'
+  if value == 8:
+    return 'reload'
+  if value == 9:
+    return 'keyword'
+  if value == 10:
+    return 'keyword_generated'
+
+
 def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
   logger.info("test1")
