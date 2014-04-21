@@ -12,6 +12,7 @@ import json
 from django.http import Http404
 from urlparse import urlparse
 import graph_utils
+from django.db.models import Q, Count
 
 def circle(request):
   domain = get_current_site(request).domain
@@ -89,8 +90,8 @@ def send_digraph(request, starttime, endtime):
   now = time.mktime(datetime.now().timetuple()) * 1000
   startstamp = now - int(starttime) * 24 * 3600 * 1000
   endstamp = now - int(endtime) * 24 * 3600 * 1000
-  hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp), referrer__isnull=False)
-  hn_list = list(hn_objs.values('url','referrer','id'))
+  hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
+  hn_list = list(hn_objs.values('url','referrer','id','transition_type'))
   digraph_data = graph_utils.send_digraph(hn_list)
   return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
 

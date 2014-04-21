@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from core.models import HistoryNode
+from core.models import HistoryNode, get_link_type_name
 from django.core import serializers
 from django.http import HttpResponse
 from string import split
@@ -122,17 +122,19 @@ def send_digraph(hn_list):
 
 	nodes = []
 	id_dict = {}
+	trans_dict = {}
 	i=0
 
 	for hn in hn_list:
 		nodes.append({'name':'/'.join(hn['url']), 'group':domains.index(hn['url'][0])})
 		id_dict[hn['id']] = i
+		trans_dict[hn['id']] = hn['transition_type']
 		i+=1
 
 	links = []
 	for hn in hn_list:
 		if hn['referrer'] != None and (hn['referrer'] in id_dict and hn['id'] in id_dict):
-			links.append({'source':id_dict[hn['referrer']], 'target':id_dict[hn['id']], 'value': 1})
+			links.append({'source':id_dict[hn['referrer']], 'target':id_dict[hn['id']], 'value': 5, 'type':get_link_type_name(trans_dict[hn['referrer']])})
 
 	return {'nodes':nodes, 'links':links}
 
