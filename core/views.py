@@ -193,6 +193,6 @@ def send_ranked_urls(request):
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 
 def send_ranked_urls_u(request, user_id):
-  hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
-  graph = rec_utils.construct_graph(hn_list)
-  return HttpResponse(jsonpickle.encode(graph), content_type="application/json")
+  #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
+  ranks = rec_utils.recommend_urls(user_id)
+  return HttpResponse(jsonpickle.encode(ranks), content_type="application/json")
