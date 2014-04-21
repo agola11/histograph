@@ -135,14 +135,14 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		if bd >= 0.4:
 			for key in g.children.keys():
 				if key not in ug:
-					ug_child = None:
+					ug_child = None
 				else:
 					ug_child = ug.children[key]
 				g_child = g.children[key]
 				_update_rank_table(ug_child, g_child, level_dict, level+1, bd, bd, rank_table)
 
 def recommend_urls(user):
-	user_hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
+	hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
 	ug = construct_graph(user_hn_list)
 	user_ids = set(map(lambda hn: hn['user__id'], hn_list))
 	rank_table = {}
