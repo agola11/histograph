@@ -117,8 +117,8 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 	# if user's root/childrens is null
 	if ug == None or ug.children == None:
 		if prev_bd > 0.7:
-			for child in g.children.values()
-			_update_rank_table(None, child, level+1, prev_bd-0.02, prev_score+prev_bd, rank_table)
+			for child in g.children.values():
+				_update_rank_table(None, child, level+1, prev_bd-0.02, prev_score+prev_bd, rank_table)
 		else:
 			return
 	else:
