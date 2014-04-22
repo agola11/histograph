@@ -91,7 +91,7 @@
       var seriesData_all;
       var data;
 
-      d3.json("http://{{ domain }}/graph/line/5", function (error, json) {
+      d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function (error, json) {
         var labelVar = 'date';
         data = d3.entries(json['line_dict']);
         var domain_array = json['sorted_domains'];

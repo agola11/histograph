@@ -81,7 +81,7 @@ var blocked_links = ["www.amazon.com", "piazza.com"];
   console.log(data[1]);
 });*/
 
-d3.json("http://{{ domain }}/graph/bubble/{{user_id}}", function(data) {
+d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
   node = root = data;
 
   addPlaceholders(root);
