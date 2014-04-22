@@ -74,12 +74,19 @@ var vis = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + (w - r) / 2 + "," + (h - r) / 2 + ")");
 
-var blocked_urls = ["www.facebook.com", "mail.google.com"];
-var blocked_links = ["www.amazon.com", "piazza.com"];
-/*d3.csv("/static/data.csv", function (error, data) {
-  console.log(data[0]);
-  console.log(data[1]);
-});*/
+var blocked_urls = [];
+var blocked_links = [];
+d3.json("/static/blocked_sites.json", function (error, data) {
+  console.log(data);
+  data.forEach(function(d) {
+    if(d['block_links'] == true)
+      blocked_links.push(d.full_url);
+    else
+      blocked_urls.push(d.full_url);
+  });
+  console.log(blocked_urls);
+  console.log(blocked_Links);
+});
 
 d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
   node = root = data;
