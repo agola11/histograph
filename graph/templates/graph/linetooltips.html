@@ -57,7 +57,7 @@
           .orient("left");
 
       var line = d3.svg.line()
-          .interpolate("cardinal")
+          .interpolate("linear")
           .x(function (d) { return x(d.label); })
           .y(function (d) { return y(d.value); });
 
