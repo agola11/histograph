@@ -8,6 +8,7 @@ try:
 except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
+import tldextract
 
 def clean_url(hn):
 	url = hn['url']
@@ -119,6 +120,8 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		return
 	# if other's root's children is null, put the url in the rank_table
 	if g.children == None:
+		if tldextract.extract(g.full_url).domain == 'reddit':
+			prev_score = prev_score*30
 		if g.full_url in rank_table:
 			rank_table[g.full_url]+=prev_score
 		else:
@@ -126,9 +129,9 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		return
 	# if user's root/childrens is null
 	if ug == None or ug.children == None:
-		if prev_bd > 0.2:
+		if prev_bd > 0.001:
 			for child in g.children.values():
-				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.02, prev_score+prev_bd, rank_table)
+				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.001, prev_score+prev_bd, rank_table)
 		else:
 			return
 	else:
@@ -142,7 +145,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		for key in g.children:
 			d2[key] = (g.children[key].node_count)/level_dict[level]
 		bd = bhatta_dist(d1, d2)
-		if bd >= 0.1:
+		if bd >= 0.001:
 			for key in g.children:
 				if key not in ug.children:
 					ug_child = None
