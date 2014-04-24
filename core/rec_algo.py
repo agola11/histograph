@@ -2,7 +2,7 @@ from __future__ import division
 from core.models import HistoryNode
 from urlparse import urlparse
 from django.http import Http404
-from math import log1p, sqrt
+from math import log, sqrt
 try:
     from collections import OrderedDict
 except ImportError:
@@ -40,7 +40,7 @@ def bhatta_dist(d1, d2):
 			cumul += 0
 		else:
 			cumul += sqrt(d1[url]*d2[url])
-	return log1p(cumul)
+	return log(1+cumul,2)
 
 def split_url(hn):
 	url = hn['url']
