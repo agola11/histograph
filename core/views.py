@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser
+from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -54,13 +54,29 @@ def store_blocked_sites(request):
     resp.status_code = 401
     return resp
   
+def send_ext_locked(request):
+  if request.user.is_authenticated():
+    payload = json.loads(request.body)
+    extid = Extension.objects.get(extension_id=payload['extension_id'])
 
+    data = {}
+    data['lock'] = extid.lock
+    return HttpResponse(simplejson.dumps(data), content_type="application/json")
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def send_new_extension_id(request):
   extid = ExtensionID.objects.get(pk=1)
-  data = {'extension_id': extid.next_id}
+  extid_next = extid.next_id
+  data = {'extension_id': extid_next}
   extid.next_id = extid.next_id + 1
   extid.save()
+
+  ext_obj = Extension(extension_id=extid_next, lock=False)
+  ext_obj.save()
+
   return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 def send_user_id(request):
@@ -74,8 +90,24 @@ def send_user_id(request):
 def store_history(request):
   if request.user.is_authenticated():
     payload = json.loads(request.body)
-    create_history_nodes_from_json(payload, request.user)
-  
+
+    if len(payload) > 0:
+      ext = Extension.objects.get(extension_id=payload[0]['extension_id'])
+      
+      if ext.lock:
+        resp = HttpResponse()
+        resp.status_code = 409
+        return resp
+
+      else:
+        ext.lock = True
+        ext.save()
+
+        create_history_nodes_from_json(payload, request.user)
+
+        ext.lock = False
+        ext.save()
+
     resp = HttpResponse()
     resp.status_code = 200
     return resp

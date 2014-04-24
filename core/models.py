@@ -57,6 +57,10 @@ class HistoryNode(models.Model):
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
 
+class Extension(models.Model):
+  extension_id = models.IntegerField()
+  lock = models.BooleanField()
+
 class BlockedSite(models.Model):
   url = models.URLField(max_length=2048)
   user = models.ForeignKey(HistographUser)

@@ -22,4 +22,5 @@ urlpatterns = patterns('',
     url(r'^rank$', views.send_ranked_urls, name='send_ranked_urls'),
     url(r'^rank/(?P<user_id>\d+)$', views.send_ranked_urls_u, name='send_ranked_urls_u'),
     url(r'^explore$', views.explore, name='explore'),
+    url(r'^ext_lock$', views.send_ext_locked, name='send_ext_locked')
 )
