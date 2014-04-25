@@ -130,15 +130,11 @@ function createVisualization(root) {
       .attr("r", radius)
       .style("opacity", 0);
 
-  console.log(root);
-
   // For efficiency, filter nodes to keep only those large enough to see.
   var nodes = partition.nodes(root)
       .filter(function(d) {
       return (d.dx > 0.01); // 0.005 radians = 0.29 degrees
       });
-
-  console.log(nodes);
 
   var innerr = Math.sqrt(nodes[1].y);
 
