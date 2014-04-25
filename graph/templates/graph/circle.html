@@ -80,21 +80,22 @@ d3.json("/static/blocked_sites.json", function (error, data) {
   console.log(data);
   data.forEach(function(d) {
     if(d['block_links'] == true)
-      blocked_links.push(d.full_url);
+      blocked_links.push(d.url);
     else
-      blocked_urls.push(d.full_url);
+      blocked_urls.push(d.url);
   });
   console.log(blocked_urls);
-  console.log(blocked_Links);
+  console.log(blocked_links);
 });
 
 d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
+  
   node = root = data;
 
   addPlaceholders(root);
 
   var nodes = pack.nodes(root)
-      .filter(function(d) {return d.r > 1; });
+      .filter(function(d) {return d.r > 0.5; });
 
   removePlaceholders(nodes);
 
@@ -108,7 +109,8 @@ d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
     .append("g")
     .on("click", click);
 
-  node.append("circle")
+  node.filter(function (d) {return d.depth == depth; })
+    .append("circle")
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .attr("r", function(d) {return d.r; })
@@ -125,8 +127,6 @@ d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
   node.filter(function (d) {return d.depth == depth;})
       .append("title")
       .text(function(d) { return d.name; });
-
-  //$(".node").tooltip({'container': 'body', 'placement': 'top'});
 
   node.append("text")
     .attr("x", function(d) { return d.x; })

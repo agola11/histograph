@@ -16,9 +16,10 @@ from django.db.models import Q, Count
 
 def circle(request):
   domain = get_current_site(request).domain
-  template = loader.get_template('graph/circle.html')
+  template = loader.get_template('graph/bubble.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
+        'user_id': request.user.id,
         })
   return HttpResponse(template.render(context))
 
