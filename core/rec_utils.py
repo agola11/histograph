@@ -10,15 +10,6 @@ except ImportError:
     from ordereddict import OrderedDict
 import tldextract
 
-def clean_url(hn):
-	url = hn['url']
-	if url.startswith('http://'):
-		url = url[7:]
-	if url.startswith('https://'):
-		url = url[8:]
-	hn['url'] = url
-	return hn
-
 def remove_trail(hn):
 	url = hn['url']
 	if url[-1] == '/':
@@ -87,7 +78,7 @@ class url_graph:
 		self.rec_insert(top_root, hn, level+1, child)
 
 	def insert(self, root, hn):
-		hn = clean_url(hn)
+		hn['url'] = strip_scheme(hn['url'])
 		hn = split_url(hn)
 		root = self.rec_insert(root, hn, 1, root)
 		return root
