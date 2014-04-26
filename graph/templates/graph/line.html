@@ -1,8 +1,14 @@
 <!DOCTYPE html>
-<html>
-<head>
 <meta charset="utf-8">
 <style>
+
+svg {
+  font: 10px sans-serif;
+}
+
+.line, .point {
+  clip-path: url(#clip);
+}
 
 .axis path,
 .axis line {
@@ -11,65 +17,59 @@
   shape-rendering: crispEdges;
 }
 
-.x.axis path {
-  display: none;
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
 }
 
-.line {
-  fill: none;
-  stroke: steelblue;
-  stroke-width: 2.5px;
+body {
+  overflow: hidden;
 }
 
 </style>
-</head>
 <body>
-<script type="text/javascipt" src="/static/jquery.tipsy.js"></script>
-<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<script>
-//http://bl.ocks.org/Matthew-Weber/5645518
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="/static/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script> 
 
-var margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+<script>
+
+//$(window).load(
+var margin = {top: 10, right: 40, bottom: 300, left: 20},
+    margin2 = {top: 430, right: 40, bottom: 60, left: 20},
+    width = $(window).width() - margin.left - margin.right,
+    height = $(window).height() - margin.top - margin.bottom,
+    height2 = $(window).height() - margin2.top - margin2.bottom;
+//    );
 
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 
-var x = d3.time.scale()
-    .range([0, width]);
+var x = d3.time.scale().range([0, width]),
+    x2 = d3.time.scale().range([0, width]),
+    y = d3.scale.linear().rangeRound([height, 0]),
+    y2 = d3.scale.linear().rangeRound([height2, 0]);
 
-var y = d3.scale.linear()
-    .range([height, 0]);
+var xAxis = d3.svg.axis().scale(x).orient("bottom"),
+    xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
+    yAxis = d3.svg.axis().scale(y).orient("left");
+
+var brush = d3.svg.brush()
+    .x(x2)
+    .on("brush", brushed);
+
+var line = d3.svg.line()
+          .interpolate("linear")
+          .x(function (d) { return x(d.label); })
+          .y(function (d) { return y(d.value); });
 
 var color = d3.scale.category10();
 
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-
-var line = d3.svg.line()
-    .interpolate("basis")
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.visits); });
-
-var formatDate = d3.time.format("%b %d, '%y");
-
-//defines a function to be used to append the title to the tooltip.  you can set how you want it to display here.
-var maketip = function (d) {                     
-         var tip = '<p class="tip3">' + d.name + '<p class="tip1">' + d.value + '</p> <p class="tip3">'+  formatDate(d.date)+'</p>';
-             return tip;}
-
-var tip = d3.tip()
-     .attr('class', 'd3-tip')
-     .offset([-10, 0])
-     .html(function (d) {
-     return '<p class="tip3">' + d.name + '<p class="tip1">' + d.value + '</p> <p class="tip3">'+  formatDate(d.date)+'</p>';
- });
+var line2 = d3.svg.line()
+    .interpolate("linear")
+    .x(function(d) { return x2(d.label); })
+    .y(function(d) { return y2(d.value); });
 
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
@@ -77,104 +77,162 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("http://{{ domain }}/graph/line/7/0", function(error, data) {
+svg.append("defs").append("clipPath")
+    .attr("id", "clip")
+  .append("rect")
+    .attr("width", width)
+    .attr("height", height);
 
-  d3.csv("/static/sampleline.csv", function(error, data) {
-    color.domain(d3.keys(data[0]).filter(function(key) { return key !== "date"; }));
+var focus = svg.append("g")
+    .attr("class", "focus")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  data.forEach(function(d) {
-    d.date = parseDate(d.date);
+var context = svg.append("g")
+    .attr("class", "context")
+    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+var formatDate = d3.time.format("%b %d, '%y");
+
+d3.json("http://{{ domain }}/graph/line/{{ user_id }}", function (error, json) {  
+  var labelVar = 'date';
+  data = d3.entries(json['line_dict']);
+
+  data = data.sort(function(a, b) {
+    return d3.ascending(a.key, b.key);  
   });
 
-  var sites = color.domain().map(function(name) {
+  var varNames = d3.keys(data[0]['value']);
+  color.domain(varNames);
+
+  data.forEach(function(d) {
+    d.date = parseDate(d.key);
+  });
+
+  seriesData = varNames.map(function (name) {
     return {
       name: name,
-      values: data.map(function(d) {
-        return {date: d.date, visits: +d[name]};
+      values: data.map(function (d) {
+        return {name: name, label: d.date, value: +d['value'][name]};
       })
     };
   });
-  counts = data;
- 
-  x.domain(d3.extent(counts, function(d) { return d.date; }));
 
+  x.domain(d3.extent(data.map(function(d) { return d.date; })));
   y.domain([
-    d3.min(sites, function(c) { return d3.min(c.values, function(v) { return v.visits; }); }),
-    d3.max(sites, function(c) { return d3.max(c.values, function(v) { return v.visits; }); })
+    d3.min(seriesData, function (c) { 
+      return d3.min(c.values, function (d) { return d.value; });
+    }),
+    d3.max(seriesData, function (c) { 
+      return d3.max(c.values, function (d) { return d.value; });
+    })*1.1
   ]);
+  x2.domain(x.domain());
+  y2.domain(y.domain());
 
-  svg.append("g")
+  focus.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+  focus.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+  .append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .text("Visits");
+
+  context.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .attr("transform", "translate(0," + height2 + ")")
+      .call(xAxis2);
 
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Visits");
+  var series = focus.selectAll(".series")
+    .data(seriesData)
+  .enter().append("g")
+    .attr("class", "series")
+    .on("mouseover", function (d) {                             
+      d3.select(this)                          //on mouseover of each line, give it a nice thick stroke
+      .style("stroke-width",'6px');          
+      var selectthegraphs = $('.series').not(this);     //select all the rest of the lines, except the one you are hovering on and drop their opacity
+      d3.selectAll(selectthegraphs)
+        .style("opacity",0.2);      
+    })
+    .on("mouseout", function(d) {        //undo everything on the mouseout
+        d3.select(this)
+          .style("stroke-width",'2.5px');          
+        var selectthegraphs = $('.series').not(this);
+        d3.selectAll(selectthegraphs)
+          .style("opacity",1);         
+    });
 
-  var site = svg.selectAll(".site")
-      .data(sites)
+  series.append("path")
+    .attr("class", "line")
+    .attr("d", function (d) { return line(d.values); })
+    .style("stroke", function (d) { return color(d.name); })
+    .style("stroke-width", "4px")
+    .style("fill", "none");
+
+  series.selectAll(".point")
+    .data(function (d) { return d.values; })
+    .enter().append("circle")
+     .attr("class", "point")
+     .attr("cx", function (d) { return x(d.label); })
+     .attr("cy", function (d) { return y(d.value); })
+     .attr("r", "3px")
+     .style("fill", function (d) { return color(d.name); })
+     .style("stroke", function (d) { return color(d.name); })
+     .style("stroke-width", "2px")
+     .attr("data-html", "true")
+     .attr("title", function (d) { return String.format("{0}<br/>{1} visits<br/>{2}", d.name, d.value, formatDate(d.label)); });
+     /*.on("mouseover", tip.show)
+     .on("mouseout",   tip.hide); */
+
+  $(".point").tooltip({
+    'container': 'body', 
+    'placement': 'top'});
+
+  var series2 = context.selectAll(".series")
+      .data(seriesData)
     .enter().append("g")
-      .attr("class", "site")
-      .on("mouseover", function (d) {                             
-          d3.select(this)                          //on mouseover of each line, give it a nice thick stroke
-          .style("stroke-width",'6px');          
-          var selectthegraphs = $('.site').not(this);     //select all the rest of the lines, except the one you are hovering on and drop their opacity
-          d3.selectAll(selectthegraphs)
-            .style("opacity",0.2);      
-      })
-      .on("mouseout", function(d) {        //undo everything on the mouseout
-          d3.select(this)
-            .style("stroke-width",'2.5px');          
-          var selectthegraphs = $('.site').not(this);
-          d3.selectAll(selectthegraphs)
-            .style("opacity",1);         
-      });
+      .attr("class", "city");
 
-  site.append("path")
-      .attr("class", "line")
-      .attr("d", function(d) { return line(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
-    
-  site.selectAll(".point")
-          .data(series)
-          .enter().append("circle")
-           .attr("class", "point")
-           .attr("cx", function (d) { return x(d.date); })
-           .attr("cy", function (d) { return y(d.visits); })
-           .attr("r", "5px")
-           .style("fill", function (d) { return color(d.name); })
-           .style("stroke", "grey")
-           .style("stroke-width", "2px")
-           .on("mouseover", function (d) { showPopover.call(this, d); })
-           .on("mouseout",  function (d) { removePopovers(); })
-    
-    function removePopovers () {
-          $('.popover').each(function() {
-            $(this).remove();
-          }); 
-        }
+  series2.append("path")
+    .attr("class", "line")
+    .attr("d", function(d) { return line2(d.values); })
+    .style("stroke", function(d) { return color(d.name); })
+    .style("fill", "none");
 
-        function showPopover (d) {
-          $(this).popover({
-            title: d.name,
-            placement: 'auto top',
-            container: 'body',
-            trigger: 'manual',
-            html : true,
-            content: function() { 
-              return maketip(); }
-          });
-          $(this).popover('show')
-        }
+  context.append("g")
+      .attr("class", "x brush")
+      .call(brush)
+    .selectAll("rect")
+      .attr("y", -6)
+      .attr("height", height2 + 7);
 });
 
+function brushed() {
+  x.domain(brush.empty() ? x2.domain() : brush.extent());
+  focus.selectAll(".series")
+    .selectAll("path")
+    .attr("d", function(d) { return line(d.values); });
+  focus.selectAll(".series")
+    .selectAll(".point")
+    .attr("cx", function (d) { return x(d.label); })
+    .attr("cy", function (d) { return y(d.value); });
+  focus.select(".x.axis").call(xAxis);
+}
+
+
+String.format = function() {
+  var s = arguments[0];
+  for (var i = 0; i < arguments.length - 1; i++) {       
+    var reg = new RegExp("\\{" + i + "\\}", "gm");             
+    s = s.replace(reg, arguments[i + 1]);
+  }
+
+  return s;
+}
 </script>
-</body>
-</html>

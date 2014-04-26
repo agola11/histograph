@@ -16,7 +16,16 @@ from django.db.models import Q, Count
 
 def circle(request):
   domain = get_current_site(request).domain
-  template = loader.get_template('graph/circle.html')
+  template = loader.get_template('graph/bubble.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        'user_id': request.user.id,
+        })
+  return HttpResponse(template.render(context))
+
+def friends(request): 
+  domain = get_current_site(request).domain
+  template = loader.get_template('graph/friends.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         })
@@ -32,7 +41,7 @@ def pie(request):
 
 def line_plot(request): 
   domain = get_current_site(request).domain
-  template = loader.get_template('graph/linetooltips.html')
+  template = loader.get_template('graph/line.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'user_id': request.user.id,

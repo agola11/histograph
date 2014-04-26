@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     url(r'^circle$', views.circle, name='circle'), 
     url(r'^digraphdata/(?P<starttime>\d+)/(?P<endtime>\d+)$', views.send_digraph, name='send_digraph'),
     url(r'^digraph$', views.digraph, name='digraph'),
+    url(r'^friends$', views.friends, name='friends'),
 )
