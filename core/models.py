@@ -11,10 +11,8 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
-  '''
   url_graph = PickledObjectField(default=None, compress=True)
   rank_table = PickledObjectField(default=None, compress=True)
-  '''
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -129,7 +127,7 @@ def create_history_nodes_from_json(payload, user):
         HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
       except HistoryNode.DoesNotExist:
         continue
-  '''
+  
   # Insert into url_graph
   if user.url_graph == None:
     url_graph = url_graph()
@@ -145,7 +143,7 @@ def create_history_nodes_from_json(payload, user):
       url_graph.insert(root, node)
     # save
     user.save()
-  '''
+  
 
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
@@ -170,3 +168,7 @@ def recommend_urls(user):
   ranked_urls = list(rank_table.items())
   ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
   return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
+
+def get_user_graph(user):
+  r_user = HistographUser.objects.get(pk=user)
+  return r_user.url_graph
