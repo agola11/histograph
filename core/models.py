@@ -11,8 +11,8 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
-  url_graph = PickledObjectField(default=None, compress=True)
-  rank_table = PickledObjectField(default=None, compress=True)
+  url_graph = PickledObjectField(default=None, compress=True, null=True)
+  rank_table = PickledObjectField(default=None, compress=True, null=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -130,12 +130,13 @@ def create_history_nodes_from_json(payload, user):
   
   # Insert into url_graph
   if user.url_graph == None:
-    url_graph = url_graph()
+    url_graph = UrlGraph()
     root = url_graph.create()
     for node in payload:
       if filter_http(node):
         url_graph.insert(root, node)
     # save
+    user.url_graph = url_graph
     user.save()
   else:
     url_graph = user.url_graph
@@ -144,6 +145,7 @@ def create_history_nodes_from_json(payload, user):
       if filter_http(node):
         url_graph.insert(root, node)
     # save
+    user.url_graph = url_graph
     user.save()
   
 

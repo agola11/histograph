@@ -34,7 +34,7 @@ def bhatta_dist(d1, d2):
 			cumul += sqrt(d1[url]*d2[url])
 	return log(1+cumul,2)
 
-class graph_node:
+class GraphNode:
 	def __init__(self, name, node_count, level, full_url):
 		self.name = name
 		self.children = None
@@ -42,14 +42,14 @@ class graph_node:
 		self.level = level
 		self.full_url = full_url
 
-class url_graph:
+class UrlGraph:
 	def __init__(self):
 		self.root = None
 		self.levels = {}
 
 	def create(self):
 		self.levels[0] = 1
-		root = graph_node('root', 0, 0, '')
+		root = GraphNode('root', 0, 0, '')
 		self.root = root
 		return root
 
@@ -60,11 +60,11 @@ class url_graph:
 		url_snip = hn['url'][level-1]
 		if curr_root.children == None:
 			curr_root.children = {}
-			child = graph_node(url_snip, 1, level, '/'.join(hn['url'][:level]))
+			child = GraphNode(url_snip, 1, level, '/'.join(hn['url'][:level]))
 			curr_root.children[url_snip] = child
 		else:
 			if url_snip not in curr_root.children:
-				child = graph_node(url_snip, 1, level, '/'.join(hn['url'][:level]))
+				child = GraphNode(url_snip, 1, level, '/'.join(hn['url'][:level]))
 				curr_root.children[url_snip] = child
 			else:
 				child = curr_root.children[url_snip]
@@ -93,7 +93,7 @@ def strip_scheme(url):
 
 def construct_graph(hn_list):
 	hn_list = filter(filter_http, hn_list)
-	graph = url_graph()
+	graph = UrlGraph()
 	root = graph.create()
 	for hn in hn_list:
 		graph.insert(root, hn)
