@@ -30,7 +30,6 @@ def pie(request):
         })
   return HttpResponse(template.render(context))
 
-
 def line_plot(request): 
   domain = get_current_site(request).domain
   template = loader.get_template('graph/linetooltips.html')
