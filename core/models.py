@@ -133,14 +133,16 @@ def create_history_nodes_from_json(payload, user):
     url_graph = url_graph()
     root = url_graph.create()
     for node in payload:
-      url_graph.insert(root, node)
+      if filter_http(node):
+        url_graph.insert(root, node)
     # save
     user.save()
   else:
     url_graph = user.url_graph
     root = url_graph.root
     for node in payload:
-      url_graph.insert(root, node)
+      if filter_http(node):
+        url_graph.insert(root, node)
     # save
     user.save()
   
