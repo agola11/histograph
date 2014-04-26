@@ -3,7 +3,7 @@ from django_facebook.models import FacebookModel
 from django.contrib.auth.models import AbstractUser, UserManager
 from picklefield.fields import PickledObjectField
 from open_facebook import OpenFacebook
-from rec_utils import graph_node, url_graph
+#import rec_utils
 import logging
 import time
 
