@@ -1,5 +1,4 @@
 from __future__ import division
-from core.models import HistoryNode
 from urlparse import urlparse
 from django.http import Http404
 from math import log, sqrt
@@ -144,25 +143,3 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 					ug_child = ug.children[key]
 				g_child = g.children[key]
 				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table)
-
-def recommend_urls(user):
-	hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
-	hn_list = map(remove_trail, hn_list)
-	user_hn_list = filter(lambda hn: hn['user__id']==user, hn_list)
-	user_urls = map(lambda hn: strip_scheme(hn['url']), user_hn_list)
-	user_urls = set(user_urls)
-	ug = construct_graph(user_hn_list)
-	user_ids = set(map(lambda hn: hn['user__id'], hn_list))
-	rank_table = {}
-	#l = {}
-	user_ids.remove(user)
-	for user_id in user_ids:
-		filtered_hns = filter(lambda hn: hn['user__id']==user_id, hn_list)
-		g = construct_graph(filtered_hns)
-		#l['user_id' + str(user_id)] = g
-		update_rank_table(ug, g, rank_table)
-
-	ranked_urls = list(rank_table.items())
-	ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
-	return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
-
