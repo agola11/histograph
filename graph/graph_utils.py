@@ -104,14 +104,20 @@ def send_line_plot(hn_list):
 	line_dict = OrderedDict.fromkeys(dates)
 	
 	for hn in hn_list:
-		if line_dict[hn['visit_time']] == None:
-			line_dict[hn['visit_time']] = OrderedDict.fromkeys(domains, 0)
-		line_dict[hn['visit_time']][hn['url'][0]] += 1
 		all_domains[hn['url'][0]] += 1
 
 	ranked_domains = list(all_domains.items())
 	ranked_domains  = list(reversed(sorted(ranked_domains, key=lambda (x,y): y)))
-	return({'sorted_domains':ranked_domains, 'line_dict':line_dict})
+	filtered_domains_list = map(lambda (x,y): x, ranked_domains[:10])
+	filtered_domains = set(filtered_domains_list)
+
+	for hn in hn_list:
+		if line_dict[hn['visit_time']] == None:
+			line_dict[hn['visit_time']] = OrderedDict.fromkeys(filtered_domains, 0)
+		if hn['url'][0] in filtered_domains:
+			line_dict[hn['visit_time']][hn['url'][0]] += 1
+
+	return({'sorted_domains':filtered_domains_list, 'line_dict':line_dict})
 
 def send_digraph(hn_list):
 	hn_list = filter(filter_http, hn_list)

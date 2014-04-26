@@ -85,11 +85,8 @@ def send_user_line_plot(request, user_id):
   line_data = graph_utils.send_line_plot(hn_list)
   return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
 
-def send_line_plot(request, starttime, endtime):
-  now = time.mktime(datetime.now().timetuple()) * 1000
-  startstamp = now - int(starttime) * 24 * 3600 * 1000
-  endstamp = now - int(endtime) * 24 * 3600 * 1000
-  hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp))
+def send_line_plot(request):
+  hn_objs = HistoryNode.objects.filter(user=request.user)
   hn_list = list(hn_objs.values('url','visit_time'))
   line_data = graph_utils.send_line_plot(hn_list)
   return HttpResponse(simplejson.dumps(line_data), content_type='application/json')

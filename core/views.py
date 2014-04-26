@@ -107,6 +107,7 @@ def store_history(request):
 
         create_history_nodes_from_json(payload, request.user)
 
+        ext = Extension.objects.get(extension_id=payload[0]['extension_id'])
         ext.lock = False
         ext.save()
 
