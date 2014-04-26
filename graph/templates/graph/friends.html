@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+.node {
+  stroke: black;     
+  stroke-width: 0.5;
+  fill: transparent;
+}
+
+.link {
+  stroke: #999;
+  stroke-opacity: .6;
+}
+
+.unselected {
+  fill: transparent;
+  stroke: black;     
+  stroke-width: 0.5;
+  pointer-events: all;
+
+}
+
+.selected {
+  fill: red;
+  fill-opacity: 0.1;
+  stroke: red;
+  stroke-width: 0.5;
+  pointer-events: all;
+}
+
+</style>
+</head>
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="/static/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script> 
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<script>
+
+var width = $(window).width();
+var height = $(window).height() - 100;
+var maxLinkLength = 200;
+var minLinkLength = 10
+var color = d3.scale.category20();
+
+var force = d3.layout.force()
+    .charge(-20)
+    .linkDistance(function (d) {return d.value * maxLinkLength + minLinkLength; })
+    .size([width, height]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var root;
+
+d3.json("/static/data.json", function(error, graph) {
+    console.log(graph);
+    
+    graph.nodes[0].fixed = true;
+    graph.nodes[0].x = width / 2;
+    graph.nodes[0].y = height / 2; 
+
+    root = graph.nodes[0];
+    force
+        .nodes(graph.nodes)
+        .links(graph.links)
+        .gravity(0)
+        .start();
+
+    var link = svg.selectAll(".link")
+        .data(graph.links)
+      .enter().append("line")
+        .attr("class", "link")
+        .style("stroke-width", "3px");
+
+    var picSize = 30;
+
+    var node = svg.selectAll(".node")
+        .data(graph.nodes)
+      .enter().append("g")
+        .call(force.drag)
+        .on("click", click);
+
+    console.log(node);
+
+    node.append("image")
+      .attr("class", "pic")
+      .attr("xlink:href", function (d) { return "https://graph.facebook.com/"+d.id+"/picture?type=square"; })
+      .attr("x", -picSize / 2)
+      .attr("y", -picSize / 2)
+      .attr("width", picSize)
+      .attr("height", picSize);
+
+     node.append("circle")
+        .attr("class", function (d) {return (d.id == root.id) ? "node": "unselected";})
+        .attr("r", picSize / 2 * 1.41)
+        .attr("data-toggle", "tooltip")
+        .attr("title", function(d) { return d.name; });
+              
+    $(".unselected").tooltip({'container': 'body', 'placement': 'top'});
+    $(".selected").tooltip({'container': 'body', 'placement': 'top'});
+    //$(".link").tooltip({'container': 'body', 'placement': 'top'});
+
+    force.on("tick", function() {
+      link.attr("x1", function(d) { return d.source.x; })
+          .attr("y1", function(d) { return d.source.y; })
+          .attr("x2", function(d) { return d.target.x; })
+          .attr("y2", function(d) { return d.target.y; });
+
+      node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+    });
+});
+
+function click(d) {
+  
+  if (d3.select(this) != root) {
+    if(d3.select(this).select("circle").attr("class") == "unselected")
+      d3.select(this).select("circle").attr("class", "selected");  
+    else if (d3.select(this).select("circle").attr("class") == "selected")
+      d3.select(this).select("circle").attr("class", "unselected");
+  }
+}
+
+</script>
+</body>
+</html>
