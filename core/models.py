@@ -1,6 +1,7 @@
 from django.db import models, transaction
 from django_facebook.models import FacebookModel
 from django.contrib.auth.models import AbstractUser, UserManager
+from picklefield.fields import PickledObjectField
 from open_facebook import OpenFacebook
 import logging
 import time
@@ -9,6 +10,7 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
+  url_graph = PickledObjectField(default=None, compress=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -56,10 +58,6 @@ class HistoryNode(models.Model):
 
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
-
-class Extension(models.Model):
-  extension_id = models.IntegerField()
-  lock = models.BooleanField()
 
 class BlockedSite(models.Model):
   url = models.URLField(max_length=2048)
