@@ -3,6 +3,7 @@ from django_facebook.models import FacebookModel
 from django.contrib.auth.models import AbstractUser, UserManager
 from picklefield.fields import PickledObjectField
 from open_facebook import OpenFacebook
+from rec_utils import graph_node, url_graph
 import logging
 import time
 
@@ -10,7 +11,10 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
+  '''
   url_graph = PickledObjectField(default=None, compress=True)
+  rank_table = PickledObjectField(default=None, compress=True)
+  '''
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -121,6 +125,24 @@ def create_history_nodes_from_json(payload, user):
         HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
       except HistoryNode.DoesNotExist:
         continue
+
+  '''
+  # Insert into url_graph
+  if user.url_graph == None:
+    url_graph = url_graph()
+    root = url_graph.create()
+    for node in payload:
+      url_graph.insert(root, node)
+    # save
+    user.save()
+  else:
+    url_graph = user.url_graph
+    root = url_graph.root
+    for node in payload:
+      url_graph.insert(root, node)
+    # save
+    user.save()
+  '''
 
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
