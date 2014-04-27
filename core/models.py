@@ -2,6 +2,8 @@ from django.db import models, transaction
 from django_facebook.models import FacebookModel
 from django.contrib.auth.models import AbstractUser, UserManager
 from open_facebook import OpenFacebook
+from picklefield.fields import PickledObjectField
+from rec_utils import *
 import logging
 import time
 
@@ -9,6 +11,15 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
+
+  # Graphs
+  year_graph_http = PickledObjectField(default=None, compress=False, null=True)
+  year_graph = PickledObjectField(default=None, compress=False, null=True)
+  six_graph = PickledObjectField(default=None, compress=False, null=True)
+  three_graph = PickledObjectField(default=None, compress=False, null=True)
+  one_graph = PickledObjectField(default=None, compress=False, null=True)
+  week_graph = PickledObjectField(default=None, compress=False, null=True)
+  rank_table = PickledObjectField(default=None, compress=False, null=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -53,6 +64,15 @@ class HistoryNode(models.Model):
   extension_id = models.IntegerField()
   referrer = models.ForeignKey('HistoryNode', blank=True, null=True)
   user = models.ForeignKey(HistographUser)
+
+  # field for graph
+  in_year_http = models.BooleanField(default=False)
+  in_year = models.BooleanField(default=False)
+  in_six = models.BooleanField(default=False)
+  in_three = models.BooleanField(default=False)
+  in_one = models.BooleanField(default=False)
+  in_week = models.BooleanField(default=False)
+
 
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
@@ -122,6 +142,66 @@ def create_history_nodes_from_json(payload, user):
         HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
       except HistoryNode.DoesNotExist:
         continue
+  
+  # Insert into url_graph
+  if user.url_graph == None:
+    url_graph = UrlGraph()
+    root = url_graph.create()
+    for node in payload:
+      if filter_http(node):
+        url_graph.insert(root, node)
+    # save
+    user.url_graph = url_graph
+    user.save()
+  else:
+    url_graph = user.url_graph
+    root = url_graph.root
+    for node in payload:
+      if filter_http(node):
+        url_graph.insert(root, node)
+    # save
+    user.url_graph = url_graph
+    user.save()
+  
 
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
+
+def recommend_urls(user):
+  hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
+  hn_list = map(remove_trail, hn_list)
+  user_hn_list = filter(lambda hn: hn['user__id']==user, hn_list)
+  user_urls = map(lambda hn: strip_scheme(hn['url']), user_hn_list)
+  user_urls = set(user_urls)
+  ug = construct_graph(user_hn_list)
+  user_ids = set(map(lambda hn: hn['user__id'], hn_list))
+  rank_table = {}
+  #l = {}
+  user_ids.remove(user)
+  for user_id in user_ids:
+    filtered_hns = filter(lambda hn: hn['user__id']==user_id, hn_list)
+    g = construct_graph(filtered_hns)
+    #l['user_id' + str(user_id)] = g
+    update_rank_table(ug, g, rank_table)
+
+  ranked_urls = list(rank_table.items())
+  ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
+  return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
+
+def _get_value_graph(root):
+  if root.gchildren == None:
+    return
+  root.gchildren = root.gchildren.values()
+  for child in root.gchildren:
+    _get_value_graph(child)
+
+def get_value_graph(user):
+  r_user = HistographUser.objects.get(pk=user)
+  graph = r_user.url_graph
+  _get_value_graph(graph.root)
+  return graph.root
+
+def get_dict_graph(user):
+  r_user = HistographUser.objects.get(pk=user)
+  return r_user.url_graph
+

@@ -37,12 +37,14 @@ body {
 <script>
 
 //$(window).load(
-var width = $(window).width() - 200,
-    height = $(window).height() - 300,
-    height2 = 200,
-    margin = {top: 10, right: 100, bottom: 300, left: 100},
-    margin2 = {top: height - 300, right: 100, bottom: 20, left: 100};
+var width = $(window).width() - 300,
+    height = $(window).height() * (4/8),
+    height2 = $(window).height() * (1/8),
+    margin = {top: width * (1/100), right: width * (2/100), bottom: height2 * 1.8, left: width * (1.5/100)},
+    margin2 = {top: height + 3*margin.top, right: margin.right, bottom: margin.top, left: margin.left};
 //    );
+console.log($(window).width());
+console.log($(window).height());
 
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 
