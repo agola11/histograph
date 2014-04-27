@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, recommend_urls, get_user_graph
+from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, recommend_urls, get_dict_graph, get_value_graph
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -233,6 +233,6 @@ def send_ranked_urls(request):
 
 def send_ranked_urls_u(request, user_id):
   #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
-  ranks = get_user_graph(int(user_id))
+  ranks = get_value_graph(int(user_id))
   #graph = rec_utils.construct_graph(hn_list)
-  return HttpResponse(jsonpickle.encode(ranks), content_type="application/json")
+  return HttpResponse(jsonpickle.encode(ranks, unpicklable=False), content_type="application/json")

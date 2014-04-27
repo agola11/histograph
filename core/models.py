@@ -11,8 +11,15 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
-  url_graph = PickledObjectField(default=None, compress=True, null=True)
-  rank_table = PickledObjectField(default=None, compress=True, null=True)
+
+  # Graphs
+  year_graph_http = PickledObjectField(default=None, compress=False, null=True)
+  year_graph = PickledObjectField(default=None, compress=False, null=True)
+  six_graph = PickledObjectField(default=None, compress=False, null=True)
+  three_graph = PickledObjectField(default=None, compress=False, null=True)
+  one_graph = PickledObjectField(default=None, compress=False, null=True)
+  week_graph = PickledObjectField(default=None, compress=False, null=True)
+  rank_table = PickledObjectField(default=None, compress=False, null=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -57,6 +64,15 @@ class HistoryNode(models.Model):
   extension_id = models.IntegerField()
   referrer = models.ForeignKey('HistoryNode', blank=True, null=True)
   user = models.ForeignKey(HistographUser)
+
+  # field for graph
+  in_year_http = models.BooleanField(default=False)
+  in_year = models.BooleanField(default=False)
+  in_six = models.BooleanField(default=False)
+  in_three = models.BooleanField(default=False)
+  in_one = models.BooleanField(default=False)
+  in_week = models.BooleanField(default=False)
+
 
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
@@ -173,6 +189,20 @@ def recommend_urls(user):
   ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
   return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
 
-def get_user_graph(user):
+def _get_value_graph(root):
+  if root.gchildren == None:
+    return
+  root.gchildren = root.gchildren.values()
+  for child in root.gchildren:
+    _get_value_graph(child)
+
+def get_value_graph(user):
+  r_user = HistographUser.objects.get(pk=user)
+  graph = r_user.url_graph
+  _get_value_graph(graph.root)
+  return graph.root
+
+def get_dict_graph(user):
   r_user = HistographUser.objects.get(pk=user)
   return r_user.url_graph
+
