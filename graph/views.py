@@ -13,6 +13,7 @@ from django.http import Http404
 from urlparse import urlparse
 import graph_utils
 from django.db.models import Q, Count
+import jsonpickle
 
 def circle(request):
   domain = get_current_site(request).domain
@@ -78,12 +79,12 @@ def send_user_bubble(request, user_id):
     return resp
 '''
 
-def send_bubble(request, starttime, endtime):
+def send_bubble(request):
   if request.user.is_authenticated():
-    now = time.mktime(datetime.now().timetuple()) * 1000
-    startstamp = now - int(starttime) * 24 * 3600 * 1000
-    endstamp = now - int(endtime) * 24 * 3600 * 1000
-    hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp))
+    # now = time.mktime(datetime.now().timetuple()) * 1000
+    # startstamp = now - int(starttime) * 24 * 3600 * 1000
+    # endstamp = now - int(endtime) * 24 * 3600 * 1000
+    hn_objs = HistoryNode.objects.filter(user=request.user) #, visit_time__range=(startstamp, endstamp))
     bubble_tree = graph_utils.send_bubble(request.user)
     return HttpResponse(jsonpickle.encode(bubble_tree, unpicklable=False), content_type="application/json")
   else:

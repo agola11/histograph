@@ -82,7 +82,7 @@ class UrlGraph:
 		pass
 
 	def insert(self, root, hn):
-		hn = split_url(hn)
+		#hn = split_url(hn)
 		root = self.rec_insert(root, hn, 1, root)
 		return root
 

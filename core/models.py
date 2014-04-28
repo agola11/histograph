@@ -133,11 +133,19 @@ def strip_scheme(hn):
   hn['url'] = parsed.geturl().replace(scheme, '', 1)
   return hn
 
+def split_url(hn):
+  url = hn['url']
+  url = url.split('/')
+  if url[-1] == '':
+    del(url[-1])
+  hn['url'] = url
+  return hn 
+
 def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
   logger.info("test1")
   start_time = time.time()
-
+ 
   # strip non-http(s) urls and remove trailing '/'
   payload = filter(filter_http_s, payload)
   payload = map(remove_trail, payload)
@@ -170,85 +178,91 @@ def create_history_nodes_from_json(payload, user):
       except HistoryNode.DoesNotExist:
         continue
   
+  http_payload = filter(filter_http, payload)
+
+  payload = map(strip_scheme, payload)
+  http_payload = map(strip_scheme, http_payload)
+
+  payload = map(split_url, payload)
+  # http_payload = map(split_url, http_payload)
+
   # Insert into url_graphs
   if user.year_graph_http == None:
     graph = UrlGraph()
     root = graph.create()
-    for node in payload:
-      if filter_http(node):
-        graph.insert(root, strip_scheme(node))
+    for node in http_payload:
+      graph.insert(root, node)
     user.year_graph_http = graph
   else:
     graph = user.year_graph_http
     root = graph.root
-    for node in payload:
-      if filter_http(node):
-        graph.insert(root, strip_scheme(node))
+    for node in http_payload:
+      graph.insert(root, node)
     user.year_graph_http = graph
 
   if user.year_graph == None:
     graph = UrlGraph()
     root = graph.create()
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.year_graph = graph
   else:
     graph = user.year_graph
     root = graph.root
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.year_graph = graph
 
   if user.six_graph == None:
     graph = UrlGraph()
     root = graph.create()
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.six_graph = graph
   else:
     graph = user.six_graph
     root = graph.root
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.six_graph = graph
 
   if user.three_graph == None:
     graph = UrlGraph()
     root = graph.create()
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.three_graph = graph
   else:
     graph = user.three_graph
     root = graph.root
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.three_graph = graph
 
   if user.one_graph == None:
     graph = UrlGraph()
     root = graph.create()
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.one_graph = graph
   else:
     graph = user.one_graph
     root = graph.root
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.one_graph = graph
 
   if user.week_graph == None:
     graph = UrlGraph()
     root = graph.create()
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.week_graph = graph
   else:
     graph = user.week_graph
     root = graph.root
     for node in payload:
-      graph.insert(root, strip_scheme(node))
+      graph.insert(root, node)
     user.week_graph = graph
 
   user.save()
