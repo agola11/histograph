@@ -67,40 +67,70 @@ def sunburst(request):
   return HttpResponse(template.render(context))
 
 def send_user_bubble(request, user_id):
-  hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url'))
-  bubble_tree = graph_utils.send_bubble(hn_list)
-  return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
+  if request.user.is_authenticated():
+    hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url'))
+    bubble_tree = graph_utils.send_bubble(hn_list)
+    return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def send_bubble(request, starttime, endtime):
-  now = time.mktime(datetime.now().timetuple()) * 1000
-  startstamp = now - int(starttime) * 24 * 3600 * 1000
-  endstamp = now - int(endtime) * 24 * 3600 * 1000
-  hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp))
-  bubble_tree = graph_utils.send_bubble(hn_objs)
-  return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
+  if request.user.is_authenticated():
+    now = time.mktime(datetime.now().timetuple()) * 1000
+    startstamp = now - int(starttime) * 24 * 3600 * 1000
+    endstamp = now - int(endtime) * 24 * 3600 * 1000
+    hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp))
+    bubble_tree = graph_utils.send_bubble(hn_objs)
+    return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def send_user_line_plot(request, user_id):
-  hn_objs = HistoryNode.objects.filter(user__id=int(user_id)).values('url','visit_time')
-  line_data = graph_utils.send_line_plot(hn_objs)
-  return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
+  if request.user.is_authenticated():
+    hn_objs = HistoryNode.objects.filter(user__id=int(user_id)).values('url','visit_time')
+    line_data = graph_utils.send_line_plot(hn_objs)
+    return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def send_line_plot(request):
-  hn_objs = HistoryNode.objects.filter(user=request.user)
-  line_data = graph_utils.send_line_plot(hn_objs)
-  return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
+  if request.user.is_authenticated():
+    hn_objs = HistoryNode.objects.filter(user=request.user)
+    line_data = graph_utils.send_line_plot(hn_objs)
+    return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def send_digraph(request, starttime, endtime):
-  now = time.mktime(datetime.now().timetuple()) * 1000
-  startstamp = now - int(starttime) * 24 * 3600 * 1000
-  endstamp = now - int(endtime) * 24 * 3600 * 1000
-  hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
-  digraph_data = graph_utils.send_digraph(hn_objs)
-  return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
+  if request.user.is_authenticated():
+    now = time.mktime(datetime.now().timetuple()) * 1000
+    startstamp = now - int(starttime) * 24 * 3600 * 1000
+    endstamp = now - int(endtime) * 24 * 3600 * 1000
+    hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
+    digraph_data = graph_utils.send_digraph(hn_objs)
+    return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def digraph(request):
-  domain = get_current_site(request).domain
-  template = loader.get_template('graph/digraph.html')
-  context = RequestContext(request, {
-        'domain': get_current_site(request).domain,
-        })
-  return HttpResponse(template.render(context))  
+  if request.user.is_authenticated():
+    domain = get_current_site(request).domain
+    template = loader.get_template('graph/digraph.html')
+    context = RequestContext(request, {
+          'domain': get_current_site(request).domain,
+          })
+    return HttpResponse(template.render(context))  
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp

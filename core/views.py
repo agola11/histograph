@@ -10,6 +10,7 @@ from django.utils import simplejson
 from django.db.models import Max
 from django.contrib.auth import logout as django_logout
 from itertools import islice
+from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
 import django_facebook
 import rec_utils
 import json
@@ -17,19 +18,28 @@ import rec_algo
 import jsonpickle
 
 # TODO: change to simplejson?
-def send_history(request, user_id):
-  resp = HttpResponse()
-  serializers.serialize('json', HistoryNode.objects.filter(user__id=int(user_id)), stream=resp)
-  return HttpResponse(resp, content_type="application/json")
+# def send_history(request, user_id):
+#   resp = HttpResponse()
+#   serializers.serialize('json', HistoryNode.objects.filter(user__id=int(user_id)), stream=resp)
+#   return HttpResponse(resp, content_type="application/json")
 
+@csrf_exempt
+@requires_csrf_token
 def send_most_recent_history_time(request, extension_id):
-  hn = HistoryNode.objects.filter(extension_id=extension_id, user=request.user)
-  if len(hn) == 0:
-    t = {'visit_time__max': 0}
+  if request.user.is_authenticated():
+    hn = HistoryNode.objects.filter(extension_id=extension_id, user=request.user)
+    if len(hn) == 0:
+      t = {'visit_time__max': 0}
+    else:
+      t = hn.aggregate(Max('visit_time'))
+    return HttpResponse(simplejson.dumps(t), content_type="application/json")
   else:
-    t = hn.aggregate(Max('visit_time'))
-  return HttpResponse(simplejson.dumps(t), content_type="application/json")
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
+@csrf_exempt
+@requires_csrf_token
 def send_blocked_sites(request):
   if request.user.is_authenticated():
     sites = BlockedSite.objects.filter(user=request.user).values('url', 'block_links')
@@ -46,6 +56,9 @@ def store_blocked_sites(request):
     bs.url = payload['url']
     bs.block_links = payload['block_links']
     bs.user = request.user
+
+    hn = HistoryNode.objects.filter(url__regexp='^https?://')
+
     bs.save()
   
     resp = HttpResponse()
@@ -55,7 +68,9 @@ def store_blocked_sites(request):
     resp = HttpResponse()
     resp.status_code = 401
     return resp
-  
+
+@csrf_exempt
+@requires_csrf_token
 def send_ext_locked(request):
   if request.user.is_authenticated():
     payload = json.loads(request.body)
@@ -69,26 +84,35 @@ def send_ext_locked(request):
     resp.status_code = 401
     return resp
 
+@csrf_exempt
+@requires_csrf_token
 def send_new_extension_id(request):
-  extid = ExtensionID.objects.get(pk=1)
-  extid_next = extid.next_id
-  data = {'extension_id': extid_next}
-  extid.next_id = extid.next_id + 1
-  extid.save()
-
-  ext_obj = Extension(extension_id=extid_next, lock=False)
-  ext_obj.save()
-
-  return HttpResponse(simplejson.dumps(data), content_type="application/json")
-
-def send_user_id(request):
   if request.user.is_authenticated():
-    data = {'user_id': request.user.id, 'is_auth': 1}
+    extid = ExtensionID.objects.get(pk=1)
+    extid_next = extid.next_id
+    data = {'extension_id': extid_next}
+    extid.next_id = extid.next_id + 1
+    extid.save()
+
+    ext_obj = Extension(extension_id=extid_next, lock=False)
+    ext_obj.save()
+
     return HttpResponse(simplejson.dumps(data), content_type="application/json")
   else:
-    data = {'user_id': 0, 'is_auth': 0}
-    return HttpResponse(simplejson.dumps(data), content_type="application/json")
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
+# def send_user_id(request):
+#   if request.user.is_authenticated():
+#     data = {'user_id': request.user.id, 'is_auth': 1}
+#     return HttpResponse(simplejson.dumps(data), content_type="application/json")
+#   else:
+#     data = {'user_id': 0, 'is_auth': 0}
+#     return HttpResponse(simplejson.dumps(data), content_type="application/json")
+
+@csrf_exempt
+@requires_csrf_token
 def store_history(request):
   if request.user.is_authenticated():
     payload = json.loads(request.body)
@@ -139,14 +163,6 @@ def home(request):
   })
   return HttpResponse(template.render(context))
 
-def testLoad(request):
-  domain = get_current_site(request).domain
-  template = loader.get_template('core/testLoad.html')
-  context = RequestContext(request, {
-        'domain': get_current_site(request).domain,
-  })
-  return HttpResponse(template.render(context))
-
 def login(request):
   if request.user.is_authenticated():
     return redirect(home)
@@ -155,8 +171,8 @@ def login(request):
   return HttpResponse(template.render(context))
 
 def logout(request):
-    django_logout(request)
-    return redirect(login)
+  django_logout(request)
+  return redirect(login)
 
 def team(request):
   if (request.user.is_authenticated() == False):
@@ -192,13 +208,18 @@ def install(request):
   })
   return HttpResponse(template.render(context))
 
-def setextension(request):
-  domain = get_current_site(request).domain
-  request.user.ext_downloaded = True
-  request.user.save()
-  if (request.user.is_authenticated() == True):
-    return redirect(home)
-  else: return redirect(login)
+def set_extension_downloaded(request):
+  if request.user.is_authenticated():
+    domain = get_current_site(request).domain
+    request.user.ext_downloaded = True
+    request.user.save()
+    if (request.user.is_authenticated() == True):
+      return redirect(home)
+    else: return redirect(login)
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
 def explore(request):
   if (request.user.is_authenticated() == False):
@@ -227,15 +248,6 @@ def settings(request):
     })
   return HttpResponse(template.render(context))
 
-def manage(request):
-  domain = get_current_site(request).domain
-  template = loader.get_template('core/manage.html')
-  context = RequestContext(request, {
-        'domain': get_current_site(request).domain,
-        'user_id' : request.user.id,
-  })
-  return HttpResponse(template.render(context))
-
 def send_frequencies(request, user_id):
   freq_dict = rec_algo.get_frequencies(int(user_id))
   return HttpResponse(simplejson.dumps(freq_dict), content_type='application/json')
@@ -243,6 +255,11 @@ def send_frequencies(request, user_id):
 def send_ranked_urls(request):
   url_dict = rec_algo.rank_urls(request.user.id)
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
+
+def temp_rank(request):
+  dict = [{'Ankush Wall Street Oasis': {'last_title': 'dat street', 'score': '100'}}]
+  return HttpResponse(simplejson.dumps(dict), content_type='application/json')
+
 
 def send_ranked_urls_u(request, user_id):
   #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
