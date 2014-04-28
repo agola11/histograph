@@ -139,7 +139,7 @@ def create_history_nodes_from_json(payload, user):
   start_time = time.time()
 
   # strip non-http(s) urls and remove trailing '/'
-  payload = map(filter_http_s, payload)
+  payload = filter(filter_http_s, payload)
   payload = map(remove_trail, payload)
 
   with transaction.atomic():
