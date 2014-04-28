@@ -51,7 +51,7 @@ def _get_value_graph(root):
     _get_value_graph(child)
 
 def send_bubble(user):
-  graph = user.url_graph
+  graph = user.six_graph
   _get_value_graph(graph.root)
   return graph.root
 

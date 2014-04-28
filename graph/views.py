@@ -66,6 +66,7 @@ def sunburst(request):
         })
   return HttpResponse(template.render(context))
 
+'''
 def send_user_bubble(request, user_id):
   if request.user.is_authenticated():
     hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url'))
@@ -75,6 +76,7 @@ def send_user_bubble(request, user_id):
     resp = HttpResponse()
     resp.status_code = 401
     return resp
+'''
 
 def send_bubble(request, starttime, endtime):
   if request.user.is_authenticated():
@@ -82,8 +84,8 @@ def send_bubble(request, starttime, endtime):
     startstamp = now - int(starttime) * 24 * 3600 * 1000
     endstamp = now - int(endtime) * 24 * 3600 * 1000
     hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp))
-    bubble_tree = graph_utils.send_bubble(hn_objs)
-    return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
+    bubble_tree = graph_utils.send_bubble(request.user)
+    return HttpResponse(jsonpickle.encode(bubble_tree, unpicklable=False), content_type="application/json")
   else:
     resp = HttpResponse()
     resp.status_code = 401
