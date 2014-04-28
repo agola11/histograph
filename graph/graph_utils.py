@@ -112,7 +112,3 @@ def send_digraph(hn_list):
         links.append({'source':id_dict[full_url], 'target':id_dict[referrer_url], 'value': 5, 'type':get_link_type_name(hn.transition_type)})
 
     return {'nodes':nodes, 'links':links}
-
-
-
-

@@ -76,15 +76,12 @@ class UrlGraph:
 		self.rec_insert(top_root, hn, level+1, child)
 
 	def _contains(self, root, hn, level):
-		if root.gchildren:
-			pass
-
+		pass
 
 	def rec_delete(self, top_root, hn, level, curr_root):
 		pass
 
 	def insert(self, root, hn):
-		hn['url'] = strip_scheme(hn['url'])
 		hn = split_url(hn)
 		root = self.rec_insert(root, hn, 1, root)
 		return root
@@ -96,10 +93,6 @@ class UrlGraph:
 		root = self.rec_delete(root, hn, 1, root)
 		return root
 	'''
-
-def filter_http(hn):
-	l = urlparse(hn['url'])
-	return(l.scheme == 'http')
 
 def strip_scheme(url):
 	parsed = urlparse(url)
