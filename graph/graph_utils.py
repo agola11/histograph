@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from core.models import HistoryNode, get_link_type_name
+from core.models import *
 from django.core import serializers
 from django.http import HttpResponse
 from string import split
@@ -43,55 +43,17 @@ def format_date(hn):
     hn.visit_time = date
     return hn
 
-def reduce_bubble_tree(child, level):
-    templist = []
-    children = []
-    urls = child['urls']
-    count = 1
-    removed = 0
+def _get_value_graph(root):
+  if root.gchildren == None:
+    return
+  root.gchildren = root.gchildren.values()
+  for child in root.gchildren:
+    _get_value_graph(child)
 
-    for i in range(len(urls)):
-        if len(urls[i]) < level:
-            removed += 1
-            continue
-        if i+1 >= len(urls) or urls[i][level-1] != urls[i+1][level-1]:
-            templist.append(urls[i])
-            children.append({'node_count':count,'name':urls[i][level-1],'urls':templist, 'full_url':('/'.join(urls[i][:level]))})
-            templist = []
-            count = 1
-        else:
-            templist.append(urls[i])
-            count+=1
-    return children
-
-def update_bubble_tree(children, level):
-    for child in children:
-        child['gdepth'] = level - 1
-        children = reduce_bubble_tree(child, level)
-        if children:
-            child['gchildren'] = children
-        update_bubble_tree(children, level+1)
-
-def remove_urls(bubble_root):
-    del(bubble_root['urls'])
-    if 'gchildren' in bubble_root:
-        for child in bubble_root['gchildren']:
-            remove_urls(child)
-
-def send_bubble(hn_list):
-    bubble_root = {}
-    hn_list = filter(filter_http, hn_list)
-    hn_list = map(chop_protocol, hn_list)
-    hn_list = sorted(hn_list, key=lambda hn: hn.url)
-    hn_list = map(split_url, hn_list)
-
-    bubble_root['node_count'] = 0
-    bubble_root['name'] = 'top_level'
-    bubble_root['urls'] = map(lambda hn: hn.url, hn_list)
-
-    update_bubble_tree([bubble_root], 1)
-    remove_urls(bubble_root)
-    return bubble_root
+def send_bubble(user):
+  graph = user.url_graph
+  _get_value_graph(graph.root)
+  return graph.root
 
 def send_line_plot(hn_list):
     hn_list = filter(filter_http, hn_list)
@@ -150,7 +112,3 @@ def send_digraph(hn_list):
         links.append({'source':id_dict[full_url], 'target':id_dict[referrer_url], 'value': 5, 'type':get_link_type_name(hn.transition_type)})
 
     return {'nodes':nodes, 'links':links}
-
-
-
-

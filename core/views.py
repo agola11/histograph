@@ -248,12 +248,8 @@ def settings(request):
     })
   return HttpResponse(template.render(context))
 
-def send_frequencies(request, user_id):
-  freq_dict = rec_algo.get_frequencies(int(user_id))
-  return HttpResponse(simplejson.dumps(freq_dict), content_type='application/json')
-
 def send_ranked_urls(request):
-  url_dict = rec_algo.rank_urls(request.user.id)
+  url_dict = request.user.rank_table
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 
 def temp_rank(request):
