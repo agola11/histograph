@@ -76,19 +76,17 @@ def send_bubble(request, starttime, endtime):
   startstamp = now - int(starttime) * 24 * 3600 * 1000
   endstamp = now - int(endtime) * 24 * 3600 * 1000
   hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp))
-  hn_list = list(hn_objs.values('url'))
-  bubble_tree = graph_utils.send_bubble(hn_list)
+  bubble_tree = graph_utils.send_bubble(hn_objs)
   return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
 
 def send_user_line_plot(request, user_id):
-  hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','visit_time'))
-  line_data = graph_utils.send_line_plot(hn_list)
+  hn_objs = HistoryNode.objects.filter(user__id=int(user_id)).values('url','visit_time')
+  line_data = graph_utils.send_line_plot(hn_objs)
   return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
 
 def send_line_plot(request):
   hn_objs = HistoryNode.objects.filter(user=request.user)
-  hn_list = list(hn_objs.values('url','visit_time'))
-  line_data = graph_utils.send_line_plot(hn_list)
+  line_data = graph_utils.send_line_plot(hn_objs)
   return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
 
 def send_digraph(request, starttime, endtime):
@@ -96,8 +94,7 @@ def send_digraph(request, starttime, endtime):
   startstamp = now - int(starttime) * 24 * 3600 * 1000
   endstamp = now - int(endtime) * 24 * 3600 * 1000
   hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
-  hn_list = list(hn_objs.values('url','referrer','id','transition_type'))
-  digraph_data = graph_utils.send_digraph(hn_list)
+  digraph_data = graph_utils.send_digraph(hn_objs)
   return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
 
 def digraph(request):

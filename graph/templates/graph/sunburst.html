@@ -112,7 +112,7 @@ var val = $('.dateslider').slider('getValue');
 loadData(val[1], val[0]);
 
 function loadData(starttime, endtime) {
-  d3.json("http://{{ domain }}/graph/bubble/" + starttime + "/" + endtime, function(error, data) {
+  d3.json("https://{{ domain }}/graph/bubble/" + starttime + "/" + endtime, function(error, data) {
       rootd = data;
       createVisualization(data);
   });
