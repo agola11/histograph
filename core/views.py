@@ -200,12 +200,24 @@ def setextension(request):
     return redirect(home)
   else: return redirect(login)
 
-
 def explore(request):
   if (request.user.is_authenticated() == False):
     return redirect(login)
   template = loader.get_template('core/explore.html')
   # url_dict = rec_algo.rank_urls(request.user.id)
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        'authenticated': request.user.is_authenticated(),
+        'user_fullname' : request.user.get_full_name(),
+        'downloaded' : request.user.ext_downloaded,
+        'id': request.user.id,
+    })
+  return HttpResponse(template.render(context))
+
+def settings(request):
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
+  template = loader.get_template('core/settings.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'authenticated': request.user.is_authenticated(),

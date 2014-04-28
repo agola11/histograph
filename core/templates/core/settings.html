@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+
+{% block settings-nav %}class="active"{% endblock %}
+
+{% block content %}
+
+<div id="load" class="col-sm-12" align="center"></div>
+
+<script type="text/javascript">
+
+  $("#load").load("../graph/circle");
+
+</script>
+{% endblock %}
