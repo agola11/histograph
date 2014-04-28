@@ -232,6 +232,11 @@ def send_ranked_urls(request):
   url_dict = rec_algo.rank_urls(request.user.id)
   return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
 
+def temp_rank(request):
+  dict = [{'Ankush Wall Street Oasis': {'last_title': 'dat street', 'score': '100'}}]
+  return HttpResponse(simplejson.dumps(dict), content_type='application/json')
+
+
 def send_ranked_urls_u(request, user_id):
   #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
   ranks = rec_utils.recommend_urls(int(user_id))
