@@ -3,6 +3,7 @@ from django_facebook.models import FacebookModel
 from django.contrib.auth.models import AbstractUser, UserManager
 from open_facebook import OpenFacebook
 from picklefield.fields import PickledObjectField
+from urlparse import urlparse
 from rec_utils import *
 import logging
 import time
@@ -110,11 +111,29 @@ def get_link_type_name(value):
   if value == 10:
     return 'keyword_generated'
 
+def filter_http_s(hn):
+  l = urlparse(hn['url'])
+  return(l.scheme == 'http' or l.scheme == 'https')
+
+def filter_http(hn):
+  l = urlparse(hn['url'])
+  return(l.scheme == 'http')
+
+def remove_trail(hn):
+  url = hn['url']
+  if url[-1] == '/':
+    url = url[:-1]
+  hn['url'] = url
+  return hn
 
 def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
   logger.info("test1")
   start_time = time.time()
+
+  # strip non-http(s) urls and remove trailing '/'
+  payload = map(filter_http_s, payload)
+  payload = map(remove_trail, payload)
 
   with transaction.atomic():
     for node in payload:
@@ -143,13 +162,13 @@ def create_history_nodes_from_json(payload, user):
       except HistoryNode.DoesNotExist:
         continue
   
-  # Insert into url_graph
-  if user.url_graph == None:
-    url_graph = UrlGraph()
-    root = url_graph.create()
+  # Insert into url_graphs
+  if user.year_graph_http == None:
+    graph = UrlGraph()
+    root = graph.create()
     for node in payload:
       if filter_http(node):
-        url_graph.insert(root, node)
+        graph.insert(root, node)
     # save
     user.url_graph = url_graph
     user.save()
@@ -167,7 +186,8 @@ def create_history_nodes_from_json(payload, user):
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
 
-def recommend_urls(user):
+# AUTOMATE WITH CELERY
+def update_rank_tables():
   hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
   hn_list = map(remove_trail, hn_list)
   user_hn_list = filter(lambda hn: hn['user__id']==user, hn_list)
@@ -200,8 +220,3 @@ def get_value_graph(user):
   graph = r_user.url_graph
   _get_value_graph(graph.root)
   return graph.root
-
-def get_dict_graph(user):
-  r_user = HistographUser.objects.get(pk=user)
-  return r_user.url_graph
-
