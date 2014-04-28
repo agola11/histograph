@@ -15,6 +15,7 @@
       <button type="button" class="btn btn-default btn-lg" onClick="loadSunburst()">Sunburst</button>
       <button type="button" class="btn btn-default btn-lg" onClick="loadDigraph()">Digraph</button>
       <button type="button" class="btn btn-default btn-lg" onClick="loadLineplot()">Line Plot</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadFriends()">Friends</button>
     </div>
   </div>
 
@@ -60,6 +61,11 @@ function loadLineplot() {
   $("#load").load("../graph/lineplot");
   graph_state = 'lineplot';
   $('.dateslider').on('slideStop', loadLineplot);
+}
+
+function loadFriends() {
+  $("#load").load("../graph/friends");
+  graph_state = 'friends';  
 }
 
 </script>
