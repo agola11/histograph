@@ -124,7 +124,7 @@ def send_digraph(hn_list):
     hn_list = filter(filter_http, hn_list)
     hn_list = map(chop_protocol, hn_list)
     hn_list = map(split_url, hn_list)
-    domains = map(lambda url: tldextract.extract(url).domain, hn_list.values('url'))
+    domains = map(lambda hn: tldextract.extract(hn.url).domain, hn_list)
     domains = list(OrderedDict.fromkeys(domains, 0))
 
     nodes = []
