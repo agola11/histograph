@@ -1,5 +1,4 @@
 from __future__ import division
-from core.models import HistoryNode
 from urlparse import urlparse
 from django.http import Http404
 from math import log, sqrt
@@ -9,15 +8,6 @@ except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
 import tldextract
-
-def clean_url(hn):
-	url = hn['url']
-	if url.startswith('http://'):
-		url = url[7:]
-	if url.startswith('https://'):
-		url = url[8:]
-	hn['url'] = url
-	return hn
 
 def remove_trail(hn):
 	url = hn['url']
@@ -44,40 +34,39 @@ def bhatta_dist(d1, d2):
 			cumul += sqrt(d1[url]*d2[url])
 	return log(1+cumul,2)
 
-class graph_node:
+class GraphNode:
 	def __init__(self, name, node_count, level, full_url):
 		self.name = name
-		self.children = None
+		self.gchildren = None
 		self.node_count = node_count
-		self.level = level
+		self.gdepth= level
 		self.full_url = full_url
 
-class url_graph:
+class UrlGraph:
 	def __init__(self):
 		self.root = None
 		self.levels = {}
 
 	def create(self):
 		self.levels[0] = 1
-		root = graph_node('root', 0, 0, '')
+		root = GraphNode('root', 0, 0, '')
 		self.root = root
 		return root
 
-	# TODO: put a full URl field using '/'.join()
 	def rec_insert(self,top_root, hn, level, curr_root):
 		if len(hn['url']) < level:
 			return top_root
 		url_snip = hn['url'][level-1]
-		if curr_root.children == None:
-			curr_root.children = {}
-			child = graph_node(url_snip, 1, level, '/'.join(hn['url'][:level]))
-			curr_root.children[url_snip] = child
+		if curr_root.gchildren == None:
+			curr_root.gchildren = {}
+			child = GraphNode(url_snip, 1, level, '/'.join(hn['url'][:level]))
+			curr_root.gchildren[url_snip] = child
 		else:
-			if url_snip not in curr_root.children:
-				child = graph_node(url_snip, 1, level, '/'.join(hn['url'][:level]))
-				curr_root.children[url_snip] = child
+			if url_snip not in curr_root.gchildren:
+				child = GraphNode(url_snip, 1, level, '/'.join(hn['url'][:level]))
+				curr_root.gchildren[url_snip] = child
 			else:
-				child = curr_root.children[url_snip]
+				child = curr_root.gchildren[url_snip]
 				child.node_count += 1
 	
 		if level not in self.levels:
@@ -86,11 +75,27 @@ class url_graph:
 			self.levels[level] += 1
 		self.rec_insert(top_root, hn, level+1, child)
 
+	def _contains(self, root, hn, level):
+		if root.gchildren:
+			pass
+
+
+	def rec_delete(self, top_root, hn, level, curr_root):
+		pass
+
 	def insert(self, root, hn):
-		hn = clean_url(hn)
+		hn['url'] = strip_scheme(hn['url'])
 		hn = split_url(hn)
 		root = self.rec_insert(root, hn, 1, root)
 		return root
+
+	'''
+	def delete(self, root, hn):
+		hn['url'] = strip_scheme(hn['url'])
+		hn = split_url(hn)
+		root = self.rec_delete(root, hn, 1, root)
+		return root
+	'''
 
 def filter_http(hn):
 	l = urlparse(hn['url'])
@@ -103,7 +108,7 @@ def strip_scheme(url):
 
 def construct_graph(hn_list):
 	hn_list = filter(filter_http, hn_list)
-	graph = url_graph()
+	graph = UrlGraph()
 	root = graph.create()
 	for hn in hn_list:
 		graph.insert(root, hn)
@@ -119,7 +124,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 	if g == None:
 		return
 	# if other's root's children is null, put the url in the rank_table
-	if g.children == None:
+	if g.gchildren == None:
 		if tldextract.extract(g.full_url).domain == 'reddit':
 			prev_score = prev_score*30
 		if g.full_url in rank_table:
@@ -128,9 +133,9 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 			rank_table[g.full_url]=prev_score
 		return
 	# if user's root/childrens is null
-	if ug == None or ug.children == None:
+	if ug == None or ug.gchildren == None:
 		if prev_bd > 0.001:
-			for child in g.children.values():
+			for child in g.gchildren.values():
 				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.001, prev_score+prev_bd, rank_table)
 		else:
 			return
@@ -140,38 +145,16 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		# if bd is over 0.4, iterate over keys of other's graph (g), filling in the blanks with None
 		d1 = {}
 		d2 = {}
-		for key in ug.children:
-			d1[key] = (ug.children[key].node_count)/ulevel_dict[level]
-		for key in g.children:
-			d2[key] = (g.children[key].node_count)/level_dict[level]
+		for key in ug.gchildren:
+			d1[key] = (ug.gchildren[key].node_count)/ulevel_dict[level]
+		for key in g.gchildren:
+			d2[key] = (g.gchildren[key].node_count)/level_dict[level]
 		bd = bhatta_dist(d1, d2)
 		if bd >= 0.001:
-			for key in g.children:
-				if key not in ug.children:
+			for key in g.gchildren:
+				if key not in ug.gchildren:
 					ug_child = None
 				else:
-					ug_child = ug.children[key]
-				g_child = g.children[key]
+					ug_child = ug.gchildren[key]
+				g_child = g.gchildren[key]
 				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table)
-
-def recommend_urls(user):
-	hn_list = list(HistoryNode.objects.values('url', 'last_title', 'user__id'))
-	hn_list = map(remove_trail, hn_list)
-	user_hn_list = filter(lambda hn: hn['user__id']==user, hn_list)
-	user_urls = map(lambda hn: strip_scheme(hn['url']), user_hn_list)
-	user_urls = set(user_urls)
-	ug = construct_graph(user_hn_list)
-	user_ids = set(map(lambda hn: hn['user__id'], hn_list))
-	rank_table = {}
-	#l = {}
-	user_ids.remove(user)
-	for user_id in user_ids:
-		filtered_hns = filter(lambda hn: hn['user__id']==user_id, hn_list)
-		g = construct_graph(filtered_hns)
-		#l['user_id' + str(user_id)] = g
-		update_rank_table(ug, g, rank_table)
-
-	ranked_urls = list(rank_table.items())
-	ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
-	return list(reversed(sorted(ranked_urls, key=lambda (x,y): y)))
-

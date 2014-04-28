@@ -11,6 +11,7 @@ import os, sys
 
 sys.path.append('/var/www/histograph')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "histograph.settings")
+os.environ['HTTPS'] = "on"
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()

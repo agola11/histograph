@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser
+from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, recommend_urls, get_dict_graph, get_value_graph
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -200,12 +200,24 @@ def setextension(request):
     return redirect(home)
   else: return redirect(login)
 
-
 def explore(request):
   if (request.user.is_authenticated() == False):
     return redirect(login)
   template = loader.get_template('core/explore.html')
   # url_dict = rec_algo.rank_urls(request.user.id)
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        'authenticated': request.user.is_authenticated(),
+        'user_fullname' : request.user.get_full_name(),
+        'downloaded' : request.user.ext_downloaded,
+        'id': request.user.id,
+    })
+  return HttpResponse(template.render(context))
+
+def settings(request):
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
+  template = loader.get_template('core/settings.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'authenticated': request.user.is_authenticated(),
@@ -239,6 +251,6 @@ def temp_rank(request):
 
 def send_ranked_urls_u(request, user_id):
   #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
-  ranks = rec_utils.recommend_urls(int(user_id))
+  ranks = get_value_graph(int(user_id))
   #graph = rec_utils.construct_graph(hn_list)
-  return HttpResponse(jsonpickle.encode(ranks), content_type="application/json")
+  return HttpResponse(jsonpickle.encode(ranks, unpicklable=False), content_type="application/json")
