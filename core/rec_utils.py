@@ -82,24 +82,29 @@ class UrlGraph:
 			self.levels[level] += 1
 		self.rec_insert(top_root, hn, level+1, child)
 
-	def _contains(self, root, hn, level):
-		pass
-
 	def rec_delete(self, top_root, hn, level, curr_root):
-		pass
+		if curr_root == None:
+			return top_root
+		if curr_root.gchildren == None or len(hn['url']) < level:
+			return top_root
+		url_snip = hn['url'][level-1]
+		if url_snip not in curr_root.gchildren:
+			return top_root
+		else:
+			child = curr_root.gchildren[url_snip]
+			child.node_count -= 1
+			self.levels[level] -= 1
+			self.rec_delete(top_root, hn, level+1, child)
+
 
 	def insert(self, root, hn):
 		#hn = split_url(hn)
 		root = self.rec_insert(root, hn, 1, root)
 		return root
 
-	'''
 	def delete(self, root, hn):
-		hn['url'] = strip_scheme(hn['url'])
-		hn = split_url(hn)
 		root = self.rec_delete(root, hn, 1, root)
 		return root
-	'''
 
 def strip_scheme(url):
 	parsed = urlparse(url)

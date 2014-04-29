@@ -9,6 +9,8 @@ except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
 
+##------------ DEPRECATED -----------------##
+
 # TODO: implement caching
 # TODO: add linked websites (using referrers?)
 # TODO: fiddle with constants
