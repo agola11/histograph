@@ -57,7 +57,7 @@ var svg = d3.select("body").append("svg")
 
 var root;
 
-d3.json("/static/data.json", function(error, graph) {
+d3.json("https://{{ domain }}/graph/friendsdata", function(error, graph) {
     console.log(graph);
     
     graph.nodes[0].fixed = true;

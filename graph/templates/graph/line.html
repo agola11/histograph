@@ -95,7 +95,7 @@ var context = svg.append("g")
 
 var formatDate = d3.time.format("%b %d, '%y");
 
-d3.json("http://{{ domain }}/graph/line", function (error, json) {  
+d3.json("https://{{ domain }}/graph/line", function (error, json) {  
   var labelVar = 'date';
   data = d3.entries(json['line_dict']);
 

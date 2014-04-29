@@ -29,8 +29,8 @@ var height = $(window).height() - 100;
 var color = d3.scale.category20();
 
 var force = d3.layout.force()
-    .charge(-20)
-    .linkDistance(15)
+    .charge(-30)
+    .linkDistance( function(d) { return 10 * Math.pow(d.value, 0.3); } )
     .size([width, height]);
 
 var svg = d3.select("#load").append("svg")
@@ -51,7 +51,7 @@ function loadData(starttime, endtime) {
         .data(graph.links)
       .enter().append("line")
         .attr("class", "link")
-        .style("stroke-width", function(d) { return Math.sqrt(d.value); })
+        .style("stroke-width", function(d) { return Math.pow(d.value, 0.4); })
         .attr("data-toggle", "tooltip")
         .attr("title", function(d) { return d.type; });
 

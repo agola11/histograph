@@ -14,4 +14,5 @@ urlpatterns = patterns('',
     url(r'^digraphdata$', views.send_digraph, name='send_digraph'),
     url(r'^digraph$', views.digraph, name='digraph'),
     url(r'^friends$', views.friends, name='friends'),
+    url(r'^friendsdata$', views.send_friends, name='send_friends'),
 )

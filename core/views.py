@@ -57,7 +57,12 @@ def store_blocked_sites(request):
     bs.block_links = payload['block_links']
     bs.user = request.user
 
-    hn = HistoryNode.objects.filter(url__regexp='^https?://')
+    re = '^https?://' + bs.url
+    hn = HistoryNode.objects.filter(url__regex=re)
+
+    for node in hn:
+      # REMOVE FROM GRAPHS
+      node.delete()
 
     bs.save()
   

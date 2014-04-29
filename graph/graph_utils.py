@@ -127,11 +127,12 @@ def send_digraph(hn_list):
             else:
                 if not full_url in link_dict:
                     link_dict[full_url] = {}
-                link_dict[full_url][referrer_url] = {'source':id_dict[full_url], 'target':id_dict[referrer_url], 'value': 5, 'type':set(get_link_type_name(hn.transition_type))}
+                link_dict[full_url][referrer_url] = {'source':id_dict[full_url], 'target':id_dict[referrer_url], 'value': 5, 'type':set([get_link_type_name(hn.transition_type)])}
 
     for a in link_dict:
-        for link in a:
-            link['type'] = ' | '.join(link['type'])
+        for b in link_dict[a]:
+            link = link_dict[a][b]
+            link['type'] = ' | '.join(list(link['type']))
             links.append(link)
 
     return {'nodes':nodes, 'links':links}

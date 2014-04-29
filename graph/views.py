@@ -154,3 +154,26 @@ def digraph(request):
     resp = HttpResponse()
     resp.status_code = 401
     return resp
+
+def send_friends(request):
+  if request.user.is_authenticated():
+    me = request.user
+    friends = me.get_friends()
+
+    nodes = []
+    links = []
+
+    nodes.append({'name':me.first_name + ' ' + me.last_name, 'id':me.facebook_id})
+    i = 0
+    for f in friends:
+      nodes.append({'name':f.first_name + ' ' + f.last_name, 'id':f.facebook_id})
+      links.append({'source':0, 'target':i, 'value': 1})
+      i += 1
+
+    friend_data = {'nodes':nodes, 'links':links}
+
+    return HttpResponse(simplejson.dumps(friend_data), content_type='application/json')
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
