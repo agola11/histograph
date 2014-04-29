@@ -69,12 +69,12 @@ class HistoryNode(models.Model):
   user = models.ForeignKey(HistographUser)
 
   # field for graph
-  deleted_year_http = models.BooleanField(default=False)
-  deleted_year = models.BooleanField(default=False)
-  deleted_six = models.BooleanField(default=False)
-  deleted_three = models.BooleanField(default=False)
-  deleted_one = models.BooleanField(default=False)
-  deleted_week = models.BooleanField(default=False)
+  in_year_http = models.BooleanField(default=False)
+  in_year = models.BooleanField(default=False)
+  in_six = models.BooleanField(default=False)
+  in_three = models.BooleanField(default=False)
+  in_one = models.BooleanField(default=False)
+  in_week = models.BooleanField(default=False)
 
 
 class ExtensionID(models.Model):
@@ -152,6 +152,7 @@ def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
   logger.info("test1")
   start_time = time.time()
+  now = datetime.now()
  
   # strip non-http(s) urls and remove trailing '/'
   payload = filter(filter_http_s, payload)
@@ -175,6 +176,14 @@ def create_history_nodes_from_json(payload, user):
       # get rid of anchors
       url = node['url'].split('#')[0]
       hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+      if date_in_range(now, 365, node):
+        if filter_http(node):
+          hn.in_year_http = True
+        hn.in_year = True
+      hn.in_six = True if date_in_range(now, (6*30), node) else False
+      hn.in_three = True if date_in_range(now, (3*30), node) else False
+      hn.in_one = True if date_in_range(now, 30, node) else False
+      hn.in_week = True if date_in_range(now, 7, node) else False
       hn.save()
 
   # connect referrers
@@ -193,8 +202,6 @@ def create_history_nodes_from_json(payload, user):
 
   payload = map(split_url, payload)
   # http_payload = map(split_url, http_payload)
-
-  now = datetime.now()
 
   payload = filter(functools.partial(date_in_range, now, 365), payload)
   http_payload = filter(functools.partial(date_in_range, now, 365), http_payload)
