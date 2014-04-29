@@ -5,6 +5,8 @@ from open_facebook import OpenFacebook
 from picklefield.fields import PickledObjectField
 from urlparse import urlparse
 from rec_utils import *
+from datetime import datetime, timedelta
+import functools
 import logging
 import time
 
@@ -141,6 +143,11 @@ def split_url(hn):
   hn['url'] = url
   return hn 
 
+def date_in_range(now, bound, hn):
+  ms = hn['visit_time']
+  then = datetime.fromtimestamp(ms/1000.0)
+  return ((now-then).days <= bound)
+
 def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
   logger.info("test1")
@@ -187,6 +194,11 @@ def create_history_nodes_from_json(payload, user):
   payload = map(split_url, payload)
   # http_payload = map(split_url, http_payload)
 
+  now = datetime.now()
+
+  payload = filter(functools.partial(date_in_range, now, 365), payload)
+  http_payload = filter(functools.partial(date_in_range, now, 365), http_payload)
+
   # Insert into url_graphs
   if user.year_graph_http == None:
     graph = UrlGraph()
@@ -214,6 +226,8 @@ def create_history_nodes_from_json(payload, user):
       graph.insert(root, node)
     user.year_graph = graph
 
+  payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
+
   if user.six_graph == None:
     graph = UrlGraph()
     root = graph.create()
@@ -226,6 +240,8 @@ def create_history_nodes_from_json(payload, user):
     for node in payload:
       graph.insert(root, node)
     user.six_graph = graph
+
+  payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
 
   if user.three_graph == None:
     graph = UrlGraph()
@@ -240,6 +256,8 @@ def create_history_nodes_from_json(payload, user):
       graph.insert(root, node)
     user.three_graph = graph
 
+  payload = filter(functools.partial(date_in_range, now, (30)), payload)
+
   if user.one_graph == None:
     graph = UrlGraph()
     root = graph.create()
@@ -252,6 +270,8 @@ def create_history_nodes_from_json(payload, user):
     for node in payload:
       graph.insert(root, node)
     user.one_graph = graph
+
+  payload = filter(functools.partial(date_in_range, now, 7), payload)
 
   if user.week_graph == None:
     graph = UrlGraph()
