@@ -160,6 +160,7 @@ def create_history_nodes_from_json(payload, user):
         continue
 
   with transaction.atomic():
+    for node in payload:
       trunc_title = node['last_title']
       if len(trunc_title) > 256:
         trunc_title = trunc_title[:253] + '...'

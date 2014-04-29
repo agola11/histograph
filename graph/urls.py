@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     url(r'^sunburst/(?P<user_id>\d+)$', views.user_sunburst, name='user_sunburst'),
     url(r'^sunburst$', views.sunburst, name='sunburst'),
     url(r'^circle$', views.circle, name='circle'), 
-    url(r'^digraphdata/(?P<starttime>\d+)/(?P<endtime>\d+)$', views.send_digraph, name='send_digraph'),
+    url(r'^digraphdata$', views.send_digraph, name='send_digraph'),
     url(r'^digraph$', views.digraph, name='digraph'),
     url(r'^friends$', views.friends, name='friends'),
 )
