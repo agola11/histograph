@@ -315,6 +315,7 @@ def update_rank_tables():
 
     ranked_urls = list(rank_table.items())
     ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
+    ranked_urls = list(reversed(sorted(ranked_urls, key=lambda (x,y): y['score'])))
     user.rank_table = ranked_urls
     user.save()
 
