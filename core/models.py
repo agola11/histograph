@@ -5,6 +5,8 @@ from open_facebook import OpenFacebook
 from picklefield.fields import PickledObjectField
 from urlparse import urlparse
 from rec_utils import *
+from datetime import datetime, timedelta
+import functools
 import logging
 import time
 
@@ -67,12 +69,12 @@ class HistoryNode(models.Model):
   user = models.ForeignKey(HistographUser)
 
   # field for graph
-  deleted_year_http = models.BooleanField(default=False)
-  deleted_year = models.BooleanField(default=False)
-  deleted_six = models.BooleanField(default=False)
-  deleted_three = models.BooleanField(default=False)
-  deleted_one = models.BooleanField(default=False)
-  deleted_week = models.BooleanField(default=False)
+  in_year_http = models.BooleanField(default=False)
+  in_year = models.BooleanField(default=False)
+  in_six = models.BooleanField(default=False)
+  in_three = models.BooleanField(default=False)
+  in_one = models.BooleanField(default=False)
+  in_week = models.BooleanField(default=False)
 
 
 class ExtensionID(models.Model):
@@ -141,10 +143,16 @@ def split_url(hn):
   hn['url'] = url
   return hn 
 
+def date_in_range(now, bound, hn):
+  ms = hn['visit_time']
+  then = datetime.fromtimestamp(ms/1000.0)
+  return ((now-then).days <= bound)
+
 def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
   logger.info("test1")
   start_time = time.time()
+  now = datetime.now()
  
   # strip non-http(s) urls and remove trailing '/'
   payload = filter(filter_http_s, payload)
@@ -168,6 +176,14 @@ def create_history_nodes_from_json(payload, user):
       # get rid of anchors
       url = node['url'].split('#')[0]
       hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+      if date_in_range(now, 365, node):
+        if filter_http(node):
+          hn.in_year_http = True
+        hn.in_year = True
+      hn.in_six = True if date_in_range(now, (6*30), node) else False
+      hn.in_three = True if date_in_range(now, (3*30), node) else False
+      hn.in_one = True if date_in_range(now, 30, node) else False
+      hn.in_week = True if date_in_range(now, 7, node) else False
       hn.save()
 
   # connect referrers
@@ -186,6 +202,9 @@ def create_history_nodes_from_json(payload, user):
 
   payload = map(split_url, payload)
   # http_payload = map(split_url, http_payload)
+
+  payload = filter(functools.partial(date_in_range, now, 365), payload)
+  http_payload = filter(functools.partial(date_in_range, now, 365), http_payload)
 
   # Insert into url_graphs
   if user.year_graph_http == None:
@@ -214,6 +233,8 @@ def create_history_nodes_from_json(payload, user):
       graph.insert(root, node)
     user.year_graph = graph
 
+  payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
+
   if user.six_graph == None:
     graph = UrlGraph()
     root = graph.create()
@@ -226,6 +247,8 @@ def create_history_nodes_from_json(payload, user):
     for node in payload:
       graph.insert(root, node)
     user.six_graph = graph
+
+  payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
 
   if user.three_graph == None:
     graph = UrlGraph()
@@ -240,6 +263,8 @@ def create_history_nodes_from_json(payload, user):
       graph.insert(root, node)
     user.three_graph = graph
 
+  payload = filter(functools.partial(date_in_range, now, (30)), payload)
+
   if user.one_graph == None:
     graph = UrlGraph()
     root = graph.create()
@@ -252,6 +277,8 @@ def create_history_nodes_from_json(payload, user):
     for node in payload:
       graph.insert(root, node)
     user.one_graph = graph
+
+  payload = filter(functools.partial(date_in_range, now, 7), payload)
 
   if user.week_graph == None:
     graph = UrlGraph()
@@ -288,6 +315,7 @@ def update_rank_tables():
 
     ranked_urls = list(rank_table.items())
     ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
+    ranked_urls = list(reversed(sorted(ranked_urls, key=lambda (x,y): y['score'])))
     user.rank_table = ranked_urls
     user.save()
 

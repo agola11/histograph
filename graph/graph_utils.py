@@ -1,3 +1,4 @@
+from __future__ import division
 from django.shortcuts import render
 from core.models import *
 from django.core import serializers
@@ -8,11 +9,22 @@ from django.http import Http404
 from datetime import datetime
 from urlparse import urlparse
 import tldextract
+from core.rec_utils import bhatta_dist
 try:
     from collections import OrderedDict
 except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
+
+def compare_to_friend(user, o_user):
+    u_graph = user.year_graph
+    o_graph = o_user.year_graph
+    d1, d2 = {}, {}
+    for key in u_graph.root.gchildren:
+        d1[key] = (u_graph.root.gchildren[key].node_count)/(u_graph.levels[1])
+    for key in o_graph.root.gchildren:
+        d2[key] = (o_graph.root.gchildren[key].node_count)/(o_graph.levels[1])
+    return bhatta_dist(d1, d2)
 
 def filter_http(hn):
     l = urlparse(hn.url)
