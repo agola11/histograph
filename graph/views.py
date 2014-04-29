@@ -16,6 +16,8 @@ from django.db.models import Q, Count
 import jsonpickle
 
 def circle(request):
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('graph/bubble.html')
   context = RequestContext(request, {
@@ -25,6 +27,8 @@ def circle(request):
   return HttpResponse(template.render(context))
 
 def friends(request): 
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('graph/friends.html')
   context = RequestContext(request, {
@@ -33,6 +37,8 @@ def friends(request):
   return HttpResponse(template.render(context))
 
 def pie(request): 
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('graph/pie.html')
   context = RequestContext(request, {
@@ -41,6 +47,8 @@ def pie(request):
   return HttpResponse(template.render(context))
 
 def line_plot(request): 
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('graph/line.html')
   context = RequestContext(request, {
@@ -50,6 +58,8 @@ def line_plot(request):
   return HttpResponse(template.render(context))
 
 def user_sunburst(request, user_id): 
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
   domain = get_current_site(request).domain
   template = loader.get_template('graph/sunburst-user.html')
   context = RequestContext(request, {
@@ -59,12 +69,19 @@ def user_sunburst(request, user_id):
   return HttpResponse(template.render(context))
 
 def sunburst(request): 
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
+
   domain = get_current_site(request).domain
-  template = loader.get_template('graph/sunburst.html')
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
-        #'user_id': request.user.id,
         })
+
+  if HistoryNode.objects.filter(user=request.user).count() == 0:
+    template = loader.get_template('graph/nodata.html')
+    return HttpResponse(template.render(context))
+  
+  template = loader.get_template('graph/sunburst.html')
   return HttpResponse(template.render(context))
 
 '''

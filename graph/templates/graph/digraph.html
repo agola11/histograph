@@ -41,7 +41,7 @@ var svg = d3.select("#load").append("svg")
 loadData();
 
 function loadData(starttime, endtime) {
-  d3.json("http://{{ domain }}/graph/digraphdata", function(error, graph) {
+  d3.json("https://{{ domain }}/graph/digraphdata", function(error, graph) {
     force
         .nodes(graph.nodes)
         .links(graph.links)
