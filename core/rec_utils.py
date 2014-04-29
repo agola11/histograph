@@ -41,6 +41,7 @@ class GraphNode:
 		self.node_count = node_count
 		self.gdepth= level
 		self.full_url = full_url
+		self.last_title = None
 
 class UrlGraph:
 	def __init__(self):
@@ -60,14 +61,20 @@ class UrlGraph:
 		if curr_root.gchildren == None:
 			curr_root.gchildren = {}
 			child = GraphNode(url_snip, 1, level, '/'.join(hn['url'][:level]))
+			if len(hn['url']) == level:
+				child.last_title = hn['last_title']
 			curr_root.gchildren[url_snip] = child
 		else:
 			if url_snip not in curr_root.gchildren:
 				child = GraphNode(url_snip, 1, level, '/'.join(hn['url'][:level]))
+				if len(hn['url']) == level:
+					child.last_title = hn['last_title']
 				curr_root.gchildren[url_snip] = child
 			else:
 				child = curr_root.gchildren[url_snip]
 				child.node_count += 1
+				if len(hn['url']) == level:
+					child.last_title = hn['last_title']
 	
 		if level not in self.levels:
 			self.levels[level] = 1
@@ -116,14 +123,17 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 	# if other's root is null, return
 	if g == None:
 		return
-	# if other's root's children is null, put the url in the rank_table
-	if g.gchildren == None:
+	# if other's root has a last_title (meaning full_url), put the url in the rank_table
+	if g.gchildren.last_title != None:
 		if tldextract.extract(g.full_url).domain == 'reddit':
 			prev_score = prev_score*30
-		if g.full_url in rank_table:
-			rank_table[g.full_url]+=prev_score
+		if g.full_url not in rank_table:
+			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title}
 		else:
-			rank_table[g.full_url]=prev_score
+			score = rank_table[g.full_url]['score']
+			score += prev_score
+			rank_table[g.full_url]['score'] = score
+	if g.gchildren == None:
 		return
 	# if user's root/childrens is null
 	if ug == None or ug.gchildren == None:

@@ -276,10 +276,16 @@ def update_rank_tables():
   user_set = HistographUser.objects.all()
   # update rank tables and save user
   for user in user_set:
+    # get a list of previously seen urls
+    user_urls = HistoryNode.objects.filter('user__id'=user.id).values('url')
+    user_urls = set(map(strip_scheme, map(lambda hn: hn['url'], user_urls)))
+    # intialize a table
     rank_table = {}
+
     for o_user in user_set:
-      if o_user != user:
+      if o_user != user:  # <-DOES THIS WORK?!
         update_rank_table(user.year_graph_http, o_user.year_graph_http, rank_table)
+
     ranked_urls = list(rank_table.items())
     ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)
     user.rank_table = ranked_urls
