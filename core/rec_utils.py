@@ -102,6 +102,8 @@ class UrlGraph:
 		root = self.rec_insert(root, hn, 1, root)
 		return root
 
+	# Same format as insert.  Expects a HistoryNode object with a split url and stripped scheme
+	# in dictionary form, not object form.
 	def delete(self, root, hn):
 		root = self.rec_delete(root, hn, 1, root)
 		return root
