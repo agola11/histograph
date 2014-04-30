@@ -131,10 +131,10 @@ def send_line_plot(request):
 
 def send_digraph(request):
   if request.user.is_authenticated():
-    # now = time.mktime(datetime.now().timetuple()) * 1000
-    # startstamp = now - int(starttime) * 24 * 3600 * 1000
-    # endstamp = now - int(endtime) * 24 * 3600 * 1000
-    hn_objs = HistoryNode.objects.filter(user=request.user).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
+    now = time.mktime(datetime.now().timetuple()) * 1000
+    startstamp = now - 7 * 24 * 3600 * 1000
+    endstamp = now - 0 * 24 * 3600 * 1000
+    hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
     digraph_data = graph_utils.send_digraph(hn_objs)
     return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
   else:

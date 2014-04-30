@@ -9,6 +9,8 @@ from datetime import datetime, timedelta
 import functools
 import logging
 import time
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
 class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
@@ -76,6 +78,8 @@ class HistoryNode(models.Model):
   in_one = models.BooleanField(default=False)
   in_week = models.BooleanField(default=False)
 
+  class Meta:
+    unique_together = ('user', 'extension_id', 'browser_id')
 
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
@@ -88,6 +92,17 @@ class BlockedSite(models.Model):
   url = models.URLField(max_length=2048)
   user = models.ForeignKey(HistographUser)
   block_links = models.BooleanField()
+
+@receiver(post_save, sender=HistoryNode, dispatch_uid="insert_node_receiver")
+def insert_node(sender, **kwargs):
+  if kwargs['created']:
+    node = kwargs['instance']
+    # INSERT
+
+@receiver(post_delete, sender=HistoryNode, dispatch_uid="remove_node_receiver")
+def remove_node(sender, **kwargs):
+  node = kwargs['instance']
+  # REMOVE
 
 def get_link_type_name(value):
   if value == 0:
