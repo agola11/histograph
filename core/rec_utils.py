@@ -26,6 +26,8 @@ def split_url(hn):
 
 # Compute Bhattacharya Distance between two distributions
 def bhatta_dist(d1, d2):
+	if d1 == None or d2 == None:
+		return 0
 	cumul = 0
 	for url in d1:
 		if url not in d2:
@@ -94,6 +96,9 @@ class UrlGraph:
 			child = curr_root.gchildren[url_snip]
 			child.node_count -= 1
 			self.levels[level] -= 1
+			if child.node_count <= 0:
+				del(curr_root.gchildren[url_snip])
+				return top_root
 			self.rec_delete(top_root, hn, level+1, child)
 
 
