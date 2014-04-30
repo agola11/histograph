@@ -26,6 +26,8 @@ def split_url(hn):
 
 # Compute Bhattacharya Distance between two distributions
 def bhatta_dist(d1, d2):
+	if d1 == None or d2 == None:
+		return 0
 	cumul = 0
 	for url in d1:
 		if url not in d2:
