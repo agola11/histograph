@@ -94,6 +94,9 @@ class UrlGraph:
 			child = curr_root.gchildren[url_snip]
 			child.node_count -= 1
 			self.levels[level] -= 1
+			if child.node_count <= 0:
+				del(curr_root.gchildren[url_snip])
+				return top_root
 			self.rec_delete(top_root, hn, level+1, child)
 
 
