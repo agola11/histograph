@@ -164,10 +164,10 @@ def send_friends(request):
     links = []
 
     nodes.append({'name':me.first_name + ' ' + me.last_name, 'id':me.facebook_id})
-    i = 0
+    i = 1
     for f in friends:
       nodes.append({'name':f.first_name + ' ' + f.last_name, 'id':f.facebook_id})
-      links.append({'source':0, 'target':i, 'value': 1})
+      links.append({'source':0, 'target':i, 'value': 0.5 / graph_utils.compare_to_friend(me, f)})
       i += 1
 
     friend_data = {'nodes':nodes, 'links':links}

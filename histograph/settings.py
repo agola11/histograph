@@ -46,9 +46,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_facebook',
-    'djcelery',
     'core',
     'graph',
+)
+
+CELERY_APPS = (
+    'core',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -142,10 +145,6 @@ STATIC_URL = '/static/'
 
 FACEBOOK_APP_ID = '243320595870291'
 FACEBOOK_APP_SECRET = '50a0c2365fd8561c866bf133a15f798a'
-
-
-import djcelery
-djcelery.setup_loader()
 
 try:
     from local_settings import *

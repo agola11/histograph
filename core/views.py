@@ -61,7 +61,7 @@ def store_blocked_sites(request):
     hn = HistoryNode.objects.filter(url__regex=re)
 
     for node in hn:
-      # REMOVE FROM GRAPHS
+      # DELETE FROM GRAPHS
       node.delete()
 
     bs.save()
