@@ -69,6 +69,13 @@ function updateJSON() {
 		var new_div = $("<div>")
 		.addClass("explore_div")
 		.addClass("row")
+		// .append($("<div>")
+		// 	.css("float", "left")
+		// 	.css("margin", "20px 0px")
+		// 	.append($("<button>")
+		// 		.addClass("btn btn-default btn-lg")
+		// 		)
+		// 	)
 		.append($("<div>")
 			.addClass("circle")
 			.css("float", "left")
@@ -97,16 +104,30 @@ function updateJSON() {
 
 		var url_div = $("<div>")
 		.addClass("row")
+			.css("width", "80%")
+		.append($("<span>")
+			.addClass("glyphicon glyphicon-thumbs-up")
+			.attr("onClick", "tempAlert(" + i + ")")
+			.css("float", "left")
+			.css("margin", "-25px 0px 0px 10px")
+			.css("cursor", "pointer")
+			)
+		.append($("<span>")
+			.addClass("glyphicon glyphicon-thumbs-down")
+			.css("float", "left")
+			.attr("onClick", "tempAlert(" + i + ")")
+			.css("margin", "5px 0px 0px 10px")
+			.css("cursor", "pointer")
+			)
 		.append($("<h6>")
 			.css("float", "left")
-			.css("margin", "0px 0px 0px 160px")
+			.css("margin", "0px 0px 0px 36px")
 			.text(truncate(jsonResp[i][0].split("/")[0]))
 			)
 		.append($("<br>")
-			)
-		.append($("<hr>")
 			);
 		$("#all").append(url_div);
+		$("#all").append("<hr>");
 
 
 			// $("#all").append("div:rnd");
@@ -150,6 +171,12 @@ $(document).ready(function(){
 		updateJSON();
 	});
 });
+</script>
+
+<script type="text/javascript">
+function tempAlert(i) {
+	alert("thumbs working" + i);
+}
 </script>
 {% endblock %}
 
