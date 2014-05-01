@@ -109,7 +109,7 @@ function updateJSON() {
 			.css("width", "80%")
 		.append($("<span>")
 			.addClass("glyphicon glyphicon-thumbs-up")
-			.attr("onClick", "tempAlert(" + i + ")")
+			.attr("onClick", "thumbs_up(" + i + ")")
 			.css("float", "left")
 			.css("margin", "-25px 0px 0px 10px")
 			.css("cursor", "pointer")
@@ -117,7 +117,7 @@ function updateJSON() {
 		.append($("<span>")
 			.addClass("glyphicon glyphicon-thumbs-down")
 			.css("float", "left")
-			.attr("onClick", "tempAlert(" + i + ")")
+			.attr("onClick", "thumbs_down(" + i + ")")
 			.css("margin", "5px 0px 0px 10px")
 			.css("cursor", "pointer")
 			)
@@ -176,8 +176,19 @@ $(document).ready(function(){
 </script>
 
 <script type="text/javascript">
-function tempAlert(i) {
-	alert("thumbs working" + i);
+function thumbs_up(i) {
+	$.ajax({
+	 type: 'POST',
+	 url: '/up_vote',
+	 data: {'id': i, 'url':  jsonResp[i][0]},
+	});
+}
+function thumbs_down(i) {
+	$.ajax({
+	 type: 'POST',
+	 url: '/down_vote',
+	 data: {'id': i, 'url':  jsonResp[i][0]},
+	});
 }
 </script>
 {% endblock %}

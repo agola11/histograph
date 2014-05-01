@@ -263,6 +263,20 @@ def run_rank(request):
   resp.status_code = 200
   return resp
 
+@csrf_exempt
+@requires_csrf_token
+def up_vote(request):
+  if request.is_ajax():
+      print request.POST
+  return HttpResponse()
+
+@csrf_exempt
+@requires_csrf_token
+def down_vote(request):
+  if request.is_ajax():
+      print request.POST
+  return HttpResponse()
+
 def send_ranked_urls_u(request, user_id):
   #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
   bitch = HistographUser.objects.get(pk = user_id)
