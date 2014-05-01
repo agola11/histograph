@@ -56,16 +56,18 @@ function updateJSON() {
 		if (i == 89) {
 			console.log(truncate(title));
 		}
-		if (parseFloat(jsonResp[i][1]['score']) > 150) {
-			color = '#f11b38';
-		}
-		else if (parseFloat(jsonResp[i][1]['score']) > 75) {
-			color = '#fd751c';
-		}
+		color = "rgb(" + (241 - i) + "," + (27 + i) + "," + (56 + i) + ")";
+		// if (parseFloat(jsonResp[i][1]['score']) > 150) {
+		// 	color = '#f11b38';
+		// }
+		// else if (parseFloat(jsonResp[i][1]['score']) > 75) {
+		// 	color = '#fd751c';
+		// }
 
-		else {
-			color = '#12a286';
-		}
+		// else {
+		// 	color = '#12a286';
+		// }
+
 		var new_div = $("<div>")
 		.addClass("explore_div")
 		.addClass("row")
