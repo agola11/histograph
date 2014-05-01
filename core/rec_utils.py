@@ -127,6 +127,8 @@ def construct_graph(hn_list):
 	return graph
 
 def update_rank_table(ug, g, rank_table):
+	if g == None or ug == None:
+		return
 	ulevel_dict = ug.levels
 	level_dict = g.levels
 	_update_rank_table(ug.root, g.root, ulevel_dict, level_dict, 1, 0, 0, rank_table)
@@ -136,9 +138,11 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 	if g == None:
 		return
 	# if other's root has a last_title (meaning full_url), put the url in the rank_table
-	if g.gchildren.last_title != None:
+	if g.last_title != None:
+		'''
 		if tldextract.extract(g.full_url).domain == 'reddit':
 			prev_score = prev_score*30
+		'''
 		if g.full_url not in rank_table:
 			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title}
 		else:

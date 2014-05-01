@@ -340,8 +340,10 @@ def update_rank_tables():
   # update rank tables and save user
   for user in user_set:
     # get a list of previously seen urls
-    user_urls = HistoryNode.objects.filter(user__id=user.id).values('url')
-    user_urls = set(map(strip_scheme, map(lambda hn: hn['url'], user_urls)))
+    user_urls = HistoryNode.objects.filter(user__id=user.id)
+    user_urls = map(strip_scheme, user_urls)
+    user_urls = map(lambda hn: hn.url, user_urls)
+    user_urls = set(user_urls)
     # intialize a table
     rank_table = {}
 
