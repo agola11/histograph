@@ -261,7 +261,6 @@ def temp_rank(request):
   dict = [{'Ankush Wall Street Oasis': {'last_title': 'dat street', 'score': '100'}}]
   return HttpResponse(simplejson.dumps(dict), content_type='application/json')
 
-
 def send_ranked_urls_u(request, user_id):
   #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
   ranks = get_value_graph(int(user_id))

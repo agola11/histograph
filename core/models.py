@@ -171,6 +171,8 @@ def insert_node(sender, **kwargs):
         node.user.week_graph = graph
       node.in_week = True
 
+    node.user.save()
+
 @receiver(post_delete, sender=HistoryNode, dispatch_uid="remove_node_receiver")
 def remove_node(sender, **kwargs):
   node = kwargs['instance']
@@ -226,6 +228,8 @@ def remove_node(sender, **kwargs):
       graph.delete(root, node)
       node.user.week_graph = graph
     graph.in_week = False
+
+  node.user.save()
 
 def get_link_type_name(value):
   if value == 0:
