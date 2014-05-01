@@ -97,12 +97,135 @@ class BlockedSite(models.Model):
 def insert_node(sender, **kwargs):
   if kwargs['created']:
     node = kwargs['instance']
-    # INSERT
+
+    # Format node
+    http = filter_http(node)
+    node = strip_scheme(node)
+    node = split_url(node)
+
+    # Insert into graphs
+    now = datetime.now()
+    if date_in_range(now, 365, node):
+      if http:
+        if node.user.year_graph_http == None:
+          graph = UrlGraph()
+          root = graph.create(); graph.insert(root, node);
+          node.user.year_graph_http = graph
+        else:
+          graph = node.user.year_graph_http
+          root = graph.root; graph.insert(root, node); 
+          node.user.year_graph_http = graph
+        node.in_year_http = True
+
+      if node.user.year_graph == None:
+        graph = UrlGraph()
+        root = graph.create(); graph.insert(root, node);
+        node.user.year_graph = graph
+      else:
+        graph = node.user.year_graph
+        root = graph.root; graph.insert(root, node);
+        node.user.year_graph = graph
+      node.in_year = True
+
+    if date_in_range(now, 180, node):
+      if node.user.six_graph == None:
+        graph = UrlGraph()
+        root = graph.create(); graph.insert(root, node);
+        node.user.six_graph = graph
+      else:
+        graph = node.user.six_graph
+        root = graph.root; graph.insert(root, node);
+        node.user.six_graph = graph
+      node.in_six = True
+    
+    if date_in_range(now, 90, node):
+      if node.user.three_graph == None:
+        graph = UrlGraph()
+        root = graph.create(); graph.insert(root, node);
+        node.user.three_graph = graph
+      else:
+        graph = node.user.three_graph
+        root = graph.root; graph.insert(root, node);
+        node.user.three_graph = graph
+      node.in_three = True
+    
+    if date_in_range(now, 30, node):
+      if node.user.one_graph == None:
+        graph = UrlGraph()
+        root = graph.create(); graph.insert(root, node);
+        node.user.one_graph = graph
+      else:
+        graph = node.user.one_graph
+        root = graph.root; graph.insert(root, node);
+        node.user.one_graph = graph
+      node.in_one = True
+    
+    if date_in_range(now, 7, node):
+      if node.user.week_graph == None:
+        graph = UrlGraph()
+        root = graph.create(); graph.insert(root, node);
+        node.user.week_graph = graph
+      else:
+        graph = node.user.week_graph
+        root = graph.root; graph.insert(root, node);
+        node.user.week_graph = graph
+      node.in_week = True
 
 @receiver(post_delete, sender=HistoryNode, dispatch_uid="remove_node_receiver")
 def remove_node(sender, **kwargs):
   node = kwargs['instance']
-  # REMOVE
+
+  # Format node for deletion
+  node = strip_scheme(node)
+  node = split_url(node)
+
+  if node.in_year_http:
+    graph = node.user.year_graph_http
+    if graph != None:
+      root = graph.root
+      graph.delete(root, node)
+      node.user.year_graph_http = graph
+    graph.in_year_http = False
+  
+  if node.in_year:
+    graph = node.user.year_graph
+    if graph != None:
+      root = graph.root
+      graph.delete(root, node)
+      node.user.year_graph = graph
+    graph.in_year = False
+
+  if node.in_six:
+    graph = node.user.six_graph
+    if graph != None:
+      root = graph.root
+      graph.delete(root, node)
+      node.user.six_graph = graph
+    graph.in_six = False
+
+  if node.in_three:
+    graph = node.user.three_graph
+    if graph != None:
+      root = graph.root
+      graph.delete(root, node)
+      node.user.three_graph = graph
+    graph.in_three = False
+
+  if node.in_one:
+    graph = node.user.one_graph
+    if graph != None:
+      root = graph.root
+      graph.delete(root, node)
+      node.user.one_graph = graph
+    graph.in_one = False
+
+  if node.in_week:
+    graph = node.user.week_graph
+    if graph != None:
+      root = graph.root
+      graph.delete(root, node)
+      node.user.week_graph = graph
+    graph.in_week = False
 
 def get_link_type_name(value):
   if value == 0:
@@ -128,13 +251,10 @@ def get_link_type_name(value):
   if value == 10:
     return 'keyword_generated'
 
+# Pre-insertion helper functions
 def filter_http_s(hn):
   l = urlparse(hn['url'])
   return(l.scheme == 'http' or l.scheme == 'https')
-
-def filter_http(hn):
-  l = urlparse(hn['url'])
-  return(l.scheme == 'http')
 
 def remove_trail(hn):
   url = hn['url']
@@ -143,23 +263,28 @@ def remove_trail(hn):
   hn['url'] = url
   return hn
 
+# Post-save, post-delete helper functions
+def filter_http(hn):
+  l = urlparse(hn.url)
+  return(l.scheme == 'http')
+
 def strip_scheme(hn):
-  url = hn['url']
+  url = hn.url
   parsed = urlparse(url)
   scheme = "%s://" % parsed.scheme
-  hn['url'] = parsed.geturl().replace(scheme, '', 1)
+  hn.url = parsed.geturl().replace(scheme, '', 1)
   return hn
 
 def split_url(hn):
-  url = hn['url']
+  url = hn.url
   url = url.split('/')
   if url[-1] == '':
     del(url[-1])
-  hn['url'] = url
+  hn.url = url
   return hn 
 
 def date_in_range(now, bound, hn):
-  ms = hn['visit_time']
+  ms = hn.visit_time
   then = datetime.fromtimestamp(ms/1000.0)
   return ((now-then).days <= bound)
 
@@ -191,14 +316,6 @@ def create_history_nodes_from_json(payload, user):
       # get rid of anchors
       url = node['url'].split('#')[0]
       hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-      if date_in_range(now, 365, node):
-        if filter_http(node):
-          hn.in_year_http = True
-        hn.in_year = True
-      hn.in_six = True if date_in_range(now, (6*30), node) else False
-      hn.in_three = True if date_in_range(now, (3*30), node) else False
-      hn.in_one = True if date_in_range(now, 30, node) else False
-      hn.in_week = True if date_in_range(now, 7, node) else False
       hn.save()
 
   # connect referrers
@@ -209,107 +326,7 @@ def create_history_nodes_from_json(payload, user):
         HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
       except HistoryNode.DoesNotExist:
         continue
-  
-  http_payload = filter(filter_http, payload)
 
-  payload = map(strip_scheme, payload)
-  http_payload = map(strip_scheme, http_payload)
-
-  payload = map(split_url, payload)
-  # http_payload = map(split_url, http_payload)
-
-  payload = filter(functools.partial(date_in_range, now, 365), payload)
-  http_payload = filter(functools.partial(date_in_range, now, 365), http_payload)
-
-  # Insert into url_graphs
-  if user.year_graph_http == None:
-    graph = UrlGraph()
-    root = graph.create()
-    for node in http_payload:
-      graph.insert(root, node)
-    user.year_graph_http = graph
-  else:
-    graph = user.year_graph_http
-    root = graph.root
-    for node in http_payload:
-      graph.insert(root, node)
-    user.year_graph_http = graph
-
-  if user.year_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-    user.year_graph = graph
-  else:
-    graph = user.year_graph
-    root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-    user.year_graph = graph
-
-  payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
-
-  if user.six_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-    user.six_graph = graph
-  else:
-    graph = user.six_graph
-    root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-    user.six_graph = graph
-
-  payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
-
-  if user.three_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-    user.three_graph = graph
-  else:
-    graph = user.three_graph
-    root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-    user.three_graph = graph
-
-  payload = filter(functools.partial(date_in_range, now, (30)), payload)
-
-  if user.one_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-    user.one_graph = graph
-  else:
-    graph = user.one_graph
-    root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-    user.one_graph = graph
-
-  payload = filter(functools.partial(date_in_range, now, 7), payload)
-
-  if user.week_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-    user.week_graph = graph
-  else:
-    graph = user.week_graph
-    root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-    user.week_graph = graph
-
-  user.save()
-  
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
 
