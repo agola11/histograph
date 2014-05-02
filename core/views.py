@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, get_value_graph
+from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, get_value_graph, update_rank_tables
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -255,15 +255,33 @@ def settings(request):
 
 def send_ranked_urls(request):
   url_dict = request.user.rank_table
-  return HttpResponse(simplejson.dumps(url_dict), content_type='application/json')
+  return HttpResponse(json.dumps(url_dict), content_type='application/json')
 
-def temp_rank(request):
-  dict = [{'Ankush Wall Street Oasis': {'last_title': 'dat street', 'score': '100'}}]
-  return HttpResponse(simplejson.dumps(dict), content_type='application/json')
+def run_rank(request):
+  update_rank_tables()
+  resp = HttpResponse()
+  resp.status_code = 200
+  return resp
 
+@csrf_exempt
+@requires_csrf_token
+def up_vote(request):
+  if request.is_ajax():
+      print request.POST
+  return HttpResponse()
+
+@csrf_exempt
+@requires_csrf_token
+def down_vote(request):
+  if request.is_ajax():
+      print request.POST
+  return HttpResponse()
 
 def send_ranked_urls_u(request, user_id):
   #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
-  ranks = get_value_graph(int(user_id))
+  bitch = HistographUser.objects.get(pk = user_id)
   #graph = rec_utils.construct_graph(hn_list)
-  return HttpResponse(jsonpickle.encode(ranks, unpicklable=False), content_type="application/json")
+  url_dict = bitch.rank_table
+  return HttpResponse(json.dumps(url_dict), content_type='application/json')
+
+

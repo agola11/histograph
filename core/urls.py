@@ -21,5 +21,8 @@ urlpatterns = patterns('',
     url(r'^rank/(?P<user_id>\d+)$', views.send_ranked_urls_u, name='send_ranked_urls_u'),
     url(r'^explore$', views.explore, name='explore'),
     url(r'^ext_lock$', views.send_ext_locked, name='send_ext_locked'),
-    url(r'^settings$', views.settings, name='settings')
+    url(r'^settings$', views.settings, name='settings'),
+    url(r'^up_vote$', views.up_vote, name='up_vote'),
+    url(r'^down_vote$', views.down_vote, name='down_vote'),
+    url(r'^run$', views.run_rank, name='run'),
 )

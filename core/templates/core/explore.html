@@ -56,19 +56,28 @@ function updateJSON() {
 		if (i == 89) {
 			console.log(truncate(title));
 		}
-		if (parseFloat(jsonResp[i][1]['score']) > 150) {
-			color = '#f11b38';
-		}
-		else if (parseFloat(jsonResp[i][1]['score']) > 75) {
-			color = '#fd751c';
-		}
+		color = "rgb(" + (241 - i) + "," + (27 + i) + "," + (56 + i) + ")";
+		// if (parseFloat(jsonResp[i][1]['score']) > 150) {
+		// 	color = '#f11b38';
+		// }
+		// else if (parseFloat(jsonResp[i][1]['score']) > 75) {
+		// 	color = '#fd751c';
+		// }
 
-		else {
-			color = '#12a286';
-		}
+		// else {
+		// 	color = '#12a286';
+		// }
+
 		var new_div = $("<div>")
 		.addClass("explore_div")
 		.addClass("row")
+		// .append($("<div>")
+		// 	.css("float", "left")
+		// 	.css("margin", "20px 0px")
+		// 	.append($("<button>")
+		// 		.addClass("btn btn-default btn-lg")
+		// 		)
+		// 	)
 		.append($("<div>")
 			.addClass("circle")
 			.css("float", "left")
@@ -97,16 +106,30 @@ function updateJSON() {
 
 		var url_div = $("<div>")
 		.addClass("row")
+			.css("width", "80%")
+		.append($("<span>")
+			.addClass("glyphicon glyphicon-thumbs-up")
+			.attr("onClick", "thumbs_up(" + i + ")")
+			.css("float", "left")
+			.css("margin", "-25px 0px 0px 10px")
+			.css("cursor", "pointer")
+			)
+		.append($("<span>")
+			.addClass("glyphicon glyphicon-thumbs-down")
+			.css("float", "left")
+			.attr("onClick", "thumbs_down(" + i + ")")
+			.css("margin", "5px 0px 0px 10px")
+			.css("cursor", "pointer")
+			)
 		.append($("<h6>")
 			.css("float", "left")
-			.css("margin", "0px 0px 0px 160px")
+			.css("margin", "0px 0px 0px 36px")
 			.text(truncate(jsonResp[i][0].split("/")[0]))
 			)
 		.append($("<br>")
-			)
-		.append($("<hr>")
 			);
 		$("#all").append(url_div);
+		$("#all").append("<hr>");
 
 
 			// $("#all").append("div:rnd");
@@ -150,6 +173,23 @@ $(document).ready(function(){
 		updateJSON();
 	});
 });
+</script>
+
+<script type="text/javascript">
+function thumbs_up(i) {
+	$.ajax({
+	 type: 'POST',
+	 url: '/up_vote',
+	 data: {'id': i, 'url':  jsonResp[i][0]},
+	});
+}
+function thumbs_down(i) {
+	$.ajax({
+	 type: 'POST',
+	 url: '/down_vote',
+	 data: {'id': i, 'url':  jsonResp[i][0]},
+	});
+}
 </script>
 {% endblock %}
 
