@@ -124,27 +124,29 @@ def send_digraph(hn_list):
         if (hn.referrer != None):
             referrer_url = chop_protocol(hn.referrer).url
 
-            if (full_url in link_dict and referrer_url in link_dict[full_url]):
-                link = link_dict[full_url][referrer_url]
-                link['value'] += 5
-                if not get_link_type_name(hn.transition_type) in link['type']:
-                    link['type'].add(get_link_type_name(hn.transition_type))
-                link_dict[full_url][referrer_url] = link
+            if (referrer_url in id_dict):
+                if (full_url in link_dict and referrer_url in link_dict[full_url]):
+                    link = link_dict[full_url][referrer_url]
+                    link['value'] += 5
+                    if not get_link_type_name(hn.transition_type) in link['type']:
+                        link['type'].add(get_link_type_name(hn.transition_type))
+                    link_dict[full_url][referrer_url] = link
 
-            elif (referrer_url in link_dict and full_url in link_dict[referrer_url]):
-                link = link_dict[referrer_url][full_url]
-                link['value'] += 5
-                if not get_link_type_name(hn.transition_type) in link['type']:
-                    link['type'].add(get_link_type_name(hn.transition_type))
-                link_dict[referrer_url][full_url] = link
+                elif (referrer_url in link_dict and full_url in link_dict[referrer_url]):
+                    link = link_dict[referrer_url][full_url]
+                    link['value'] += 5
+                    if not get_link_type_name(hn.transition_type) in link['type']:
+                        link['type'].add(get_link_type_name(hn.transition_type))
+                    link_dict[referrer_url][full_url] = link
 
-            else:
-                if not full_url in link_dict:
-                    link_dict[full_url] = {}
-                link_dict[full_url][referrer_url] = {'source':id_dict[full_url], 'target':id_dict[referrer_url], 'value': 5, 'type':set(get_link_type_name(hn.transition_type))}
+                else:
+                    if not full_url in link_dict:
+                        link_dict[full_url] = {}
+                    link_dict[full_url][referrer_url] = {'source':id_dict[full_url], 'target':id_dict[referrer_url], 'value': 5, 'type':set([get_link_type_name(hn.transition_type)])}
 
     for a in link_dict:
-        for link in a:
+        for b in link_dict[a]:
+            link = link_dict[a][b]
             link['type'] = ' | '.join(link['type'])
             links.append(link)
 
