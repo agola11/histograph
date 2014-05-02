@@ -14,6 +14,7 @@ from urlparse import urlparse
 import graph_utils
 from django.db.models import Q, Count
 import jsonpickle
+import math
 
 def circle(request):
   if (request.user.is_authenticated() == False):
@@ -167,7 +168,7 @@ def send_friends(request):
     i = 1
     for f in friends:
       nodes.append({'name':f.first_name + ' ' + f.last_name, 'id':f.facebook_id})
-      links.append({'source':0, 'target':i, 'value': 0.5 / graph_utils.compare_to_friend(me, f)})
+      links.append({'source':0, 'target':i, 'value': 3 / (1 + math.exp((graph_utils.compare_to_friend(me, f) - 0.7)*10))})
       i += 1
 
     friend_data = {'nodes':nodes, 'links':links}
