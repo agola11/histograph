@@ -43,7 +43,7 @@ class GraphNode:
 		self.node_count = node_count
 		self.gdepth= level
 		self.full_url = full_url
-		self.last_title = None
+		self.last_title = 'spagett'
 
 class UrlGraph:
 	def __init__(self):
@@ -57,26 +57,26 @@ class UrlGraph:
 		return root
 
 	def rec_insert(self,top_root, hn, level, curr_root):
-		if len(hn['url']) < level:
+		if len(hn.url) < level:
 			return top_root
-		url_snip = hn['url'][level-1]
+		url_snip = hn.url[level-1]
 		if curr_root.gchildren == None:
 			curr_root.gchildren = {}
-			child = GraphNode(url_snip, 1, level, '/'.join(hn['url'][:level]))
-			if len(hn['url']) == level:
-				child.last_title = hn['last_title']
+			child = GraphNode(url_snip, 1, level, '/'.join(hn.url[:level]))
+			if len(hn.url) == level:
+				child.last_title = hn.last_title
 			curr_root.gchildren[url_snip] = child
 		else:
 			if url_snip not in curr_root.gchildren:
-				child = GraphNode(url_snip, 1, level, '/'.join(hn['url'][:level]))
-				if len(hn['url']) == level:
-					child.last_title = hn['last_title']
+				child = GraphNode(url_snip, 1, level, '/'.join(hn.url[:level]))
+				if len(hn.url) == level:
+					child.last_title = hn.last_title
 				curr_root.gchildren[url_snip] = child
 			else:
 				child = curr_root.gchildren[url_snip]
 				child.node_count += 1
-				if len(hn['url']) == level:
-					child.last_title = hn['last_title']
+				if len(hn.url) == level:
+					child.last_title = hn.last_title
 	
 		if level not in self.levels:
 			self.levels[level] = 1
@@ -87,9 +87,9 @@ class UrlGraph:
 	def rec_delete(self, top_root, hn, level, curr_root):
 		if curr_root == None:
 			return top_root
-		if curr_root.gchildren == None or len(hn['url']) < level:
+		if curr_root.gchildren == None or len(hn.url) < level:
 			return top_root
-		url_snip = hn['url'][level-1]
+		url_snip = hn.url[level-1]
 		if url_snip not in curr_root.gchildren:
 			return top_root
 		else:
