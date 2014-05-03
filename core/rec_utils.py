@@ -2,6 +2,7 @@ from __future__ import division
 from urlparse import urlparse
 from django.http import Http404
 from math import log, sqrt
+import copy
 try:
     from collections import OrderedDict
 except ImportError:
@@ -96,35 +97,31 @@ class UrlGraph:
 			child = curr_root.gchildren[url_snip]
 			child.node_count -= 1
 			self.levels[level] -= 1
-			'''
-			if child.node_count <= 0:
-				del(curr_root.gchildren[url_snip])
-				return top_root
-			'''
 			self._rec_delete(top_root, hn, level+1, child)
 
 	# Remove nodes with node_count of 0
 	def _clean_graph(self, curr_root):
 		if curr_root == None or curr_root.gchildren == None:
 			return
-		for key in curr_root.gchildren:
+		copied = copy.deepcopy(curr_root.gchildren)
+		for key in copied:
 			child = curr_root.gchildren[key]
 			if child.node_count <= 0:
 				del(curr_root.gchildren[key])
-			else:
-				self._clean_graph(child)
+		for key in curr_root.gchildren:
+			self._clean_graph(curr_root.gchildren[key])
 
 	def insert(self, root, hn):
 		#hn = split_url(hn)
-		root = self._rec_insert(root, hn, 1, root)
-		return root
+		self._rec_insert(root, hn, 1, root)
+		return self.root
 
 	# Same format as insert.  Expects a HistoryNode object with a split url and stripped scheme
-	# in dictionary form, not object form.
+	# in object form.
 	def delete(self, root, hn):
-		root = self._rec_delete(root, hn, 1, root)
-		#root = self._clean_graph(root)
-		return root
+		root = self._rec_delete(self.root, hn, 1, root)
+		self._clean_graph(self.root)
+		return self.root
 
 def strip_scheme(url):
 	parsed = urlparse(url)
