@@ -109,65 +109,77 @@ def insert_node(sender, **kwargs):
       if http:
         if node.user.year_graph_http == None:
           graph = UrlGraph()
-          root = graph.create(); graph.insert(root, node);
+          root = graph.create()
+          graph.insert(root, node)
           node.user.year_graph_http = graph
         else:
           graph = node.user.year_graph_http
-          root = graph.root; graph.insert(root, node); 
+          root = graph.root 
+          graph.insert(root, node) 
           node.user.year_graph_http = graph
         node.in_year_http = True
 
       if node.user.year_graph == None:
         graph = UrlGraph()
-        root = graph.create(); graph.insert(root, node);
+        root = graph.create() 
+        graph.insert(root, node)
         node.user.year_graph = graph
       else:
         graph = node.user.year_graph
-        root = graph.root; graph.insert(root, node);
+        root = graph.root 
+        graph.insert(root, node)
         node.user.year_graph = graph
       node.in_year = True
 
     if date_in_range(now, 180, node):
       if node.user.six_graph == None:
         graph = UrlGraph()
-        root = graph.create(); graph.insert(root, node);
+        root = graph.create() 
+        graph.insert(root, node)
         node.user.six_graph = graph
       else:
         graph = node.user.six_graph
-        root = graph.root; graph.insert(root, node);
+        root = graph.root 
+        graph.insert(root, node)
         node.user.six_graph = graph
       node.in_six = True
     
     if date_in_range(now, 90, node):
       if node.user.three_graph == None:
         graph = UrlGraph()
-        root = graph.create(); graph.insert(root, node);
+        root = graph.create() 
+        graph.insert(root, node)
         node.user.three_graph = graph
       else:
         graph = node.user.three_graph
-        root = graph.root; graph.insert(root, node);
+        root = graph.root 
+        graph.insert(root, node)
         node.user.three_graph = graph
       node.in_three = True
     
     if date_in_range(now, 30, node):
       if node.user.one_graph == None:
         graph = UrlGraph()
-        root = graph.create(); graph.insert(root, node);
+        root = graph.create() 
+        graph.insert(root, node)
         node.user.one_graph = graph
       else:
         graph = node.user.one_graph
-        root = graph.root; graph.insert(root, node);
+        root = graph.root 
+        graph.insert(root, node)
         node.user.one_graph = graph
       node.in_one = True
     
     if date_in_range(now, 7, node):
       if node.user.week_graph == None:
         graph = UrlGraph()
-        root = graph.create(); graph.insert(root, node);
+        root = graph.create() 
+        graph.insert(root, node)
         node.user.week_graph = graph
       else:
         graph = node.user.week_graph
-        root = graph.root; graph.insert(root, node);
+        root = graph.root 
+        graph.insert(root, node)
         node.user.week_graph = graph
       node.in_week = True
 

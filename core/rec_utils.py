@@ -52,11 +52,11 @@ class UrlGraph:
 
 	def create(self):
 		self.levels[0] = 1
-		root = GraphNode('root', 0, 0, '')
+		root = GraphNode('root', 1, 0, '')
 		self.root = root
 		return root
 
-	def rec_insert(self,top_root, hn, level, curr_root):
+	def _rec_insert(self,top_root, hn, level, curr_root):
 		if len(hn.url) < level:
 			return top_root
 		url_snip = hn.url[level-1]
@@ -82,9 +82,9 @@ class UrlGraph:
 			self.levels[level] = 1
 		else:
 			self.levels[level] += 1
-		self.rec_insert(top_root, hn, level+1, child)
+		self._rec_insert(top_root, hn, level+1, child)
 
-	def rec_delete(self, top_root, hn, level, curr_root):
+	def _rec_delete(self, top_root, hn, level, curr_root):
 		if curr_root == None:
 			return top_root
 		if curr_root.gchildren == None or len(hn.url) < level:
@@ -96,21 +96,34 @@ class UrlGraph:
 			child = curr_root.gchildren[url_snip]
 			child.node_count -= 1
 			self.levels[level] -= 1
+			'''
 			if child.node_count <= 0:
 				del(curr_root.gchildren[url_snip])
 				return top_root
-			self.rec_delete(top_root, hn, level+1, child)
+			'''
+			self._rec_delete(top_root, hn, level+1, child)
 
+	# Remove nodes with node_count of 0
+	def _clean_graph(self, curr_root):
+		if curr_root == None or curr_root.gchildren == None:
+			return
+		for key in curr_root.gchildren:
+			child = curr_root.gchildren[key]
+			if child.node_count <= 0:
+				del(curr_root.gchildren[key])
+			else:
+				self._clean_graph(child)
 
 	def insert(self, root, hn):
 		#hn = split_url(hn)
-		root = self.rec_insert(root, hn, 1, root)
+		root = self._rec_insert(root, hn, 1, root)
 		return root
 
 	# Same format as insert.  Expects a HistoryNode object with a split url and stripped scheme
 	# in dictionary form, not object form.
 	def delete(self, root, hn):
-		root = self.rec_delete(root, hn, 1, root)
+		root = self._rec_delete(root, hn, 1, root)
+		#root = self._clean_graph(root)
 		return root
 
 def strip_scheme(url):
@@ -177,3 +190,14 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 					ug_child = ug.gchildren[key]
 				g_child = g.gchildren[key]
 				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table)
+
+def split(url):
+	url = url.split('/')
+	if url[-1] == '':
+		del(url[-1])
+	return url
+
+class HN:
+	def __init__(self, url, last_title):
+		self.url = url
+		self.last_title = last_title
