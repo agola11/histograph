@@ -32,6 +32,9 @@ class HistographUser(AbstractUser, FacebookModel):
   # weights for each user to be used in ranking
   weight_table = PickledObjectField(default={}, compress=False, null=True)
 
+  # blocked graph
+  blocked_graph = PickledObjectField(default=None, compress=False, null=True)
+
   def get_friends(self):
     graph = self.get_offline_graph()
     friends = graph.get('me/friends')
@@ -84,6 +87,7 @@ class HistoryNode(models.Model):
   in_three = models.BooleanField(default=False)
   in_one = models.BooleanField(default=False)
   in_week = models.BooleanField(default=False)
+  in_blocked_graph = models.BooleanField(default=False)
 
   class Meta:
     unique_together = ('user', 'extension_id', 'browser_id')
@@ -167,6 +171,9 @@ def insert_nodes(hn_list):
 
   hn_list = filter(lambda node: not node.is_blocked, hn_list)
 
+  if len(hn_list) == 0:
+    return
+
   http_payload = filter(filter_http, hn_list)
   user = hn_list[0].user
   
@@ -209,6 +216,21 @@ def insert_nodes(hn_list):
       graph.insert(root, node)
       HistoryNode.objects.filter(pk=node.id).update(in_year=True)
     user.year_graph = graph
+
+  if user.blocked_graph == None:
+    graph = UrlGraph()
+    root = graph.create()
+    for node in payload:
+      graph.insert(root, node)
+      HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
+    user.blocked_graph = graph
+  else:
+    graph = user.blocked_graph
+    root = graph.root
+    for node in payload:
+      graph.insert(root, node)
+      HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
+    user.blocked_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
 
@@ -281,7 +303,7 @@ def insert_nodes(hn_list):
   user.save()
 
 def delete_nodes(hn_list):
-  if hn_list == None:
+  if hn_list == None or len(hn_list) == 0:
     return
 
   user = hn_list[0].user

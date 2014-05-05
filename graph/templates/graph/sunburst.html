@@ -112,7 +112,7 @@ var rootd;
 loadData();
 
 function loadData() {
-  d3.json("https://{{ domain }}/graph/bubble", function(error, data) {
+  d3.json("https://{{ domain }}/graph/bubble/1y", function(error, data) {
       rootd = data;
       createVisualization(data);
   });
@@ -135,6 +135,8 @@ function createVisualization(root) {
       .filter(function(d) {
       return (d.dx > 0.01); // 0.005 radians = 0.29 degrees
       });
+
+  console.log(nodes)
 
   var innerr = Math.sqrt(nodes[1].y);
 
@@ -163,6 +165,8 @@ function createVisualization(root) {
     .attr("id", "center")
     .on("mouseover", mouseleave)
     .on("click", clickup);
+
+  console.log(nodes)
 
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave) ;
