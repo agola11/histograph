@@ -88,7 +88,7 @@ def sunburst(request):
         'domain': get_current_site(request).domain,
         })
 
-  if HistoryNode.objects.filter(user=request.user).count() == 0:
+  if HistoryNode.objects.filter(user=request.user, is_blocked=False).count() == 0:
     template = loader.get_template('graph/nodata.html')
     return HttpResponse(template.render(context))
   
@@ -112,7 +112,7 @@ def send_bubble(request):
     # now = time.mktime(datetime.now().timetuple()) * 1000
     # startstamp = now - int(starttime) * 24 * 3600 * 1000
     # endstamp = now - int(endtime) * 24 * 3600 * 1000
-    hn_objs = HistoryNode.objects.filter(user=request.user) #, visit_time__range=(startstamp, endstamp))
+    hn_objs = HistoryNode.objects.filter(user=request.user, is_blocked=False) #, visit_time__range=(startstamp, endstamp))
     bubble_tree = graph_utils.send_bubble(request.user)
     return HttpResponse(jsonpickle.encode(bubble_tree, unpicklable=False), content_type="application/json")
   else:
@@ -122,7 +122,7 @@ def send_bubble(request):
 
 def send_user_line_plot(request, user_id):
   if request.user.is_authenticated():
-    hn_objs = HistoryNode.objects.filter(user__id=int(user_id)).values('url','visit_time')
+    hn_objs = HistoryNode.objects.filter(user__id=int(user_id), is_blocked=False).values('url','visit_time')
     line_data = graph_utils.send_line_plot(hn_objs)
     return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
   else:
@@ -132,7 +132,7 @@ def send_user_line_plot(request, user_id):
 
 def send_line_plot(request):
   if request.user.is_authenticated():
-    hn_objs = HistoryNode.objects.filter(user=request.user)
+    hn_objs = HistoryNode.objects.filter(user=request.user, is_blocked=False)
     line_data = graph_utils.send_line_plot(hn_objs)
     return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
   else:
@@ -145,7 +145,7 @@ def send_digraph(request):
     now = time.mktime(datetime.now().timetuple()) * 1000
     startstamp = now - 7 * 24 * 3600 * 1000
     endstamp = now - 0 * 24 * 3600 * 1000
-    hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
+    hn_objs = HistoryNode.objects.filter(user=request.user, is_blocked=False, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
     digraph_data = graph_utils.send_digraph(hn_objs)
     return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
   else:
@@ -178,7 +178,7 @@ def send_friends(request):
     i = 1
     for f in friends:
       nodes.append({'name':f.first_name + ' ' + f.last_name, 'id':f.facebook_id})
-      links.append({'source':0, 'target':i, 'value': 3 / (1 + math.exp((graph_utils.compare_to_friend(me, f) - 0.7)*10))})
+      links.append({'source':0, 'target':i, 'value': 2 / (1 + math.exp((graph_utils.compare_to_friend(me, f) - 0.7)*10))})
       i += 1
 
     friend_data = {'nodes':nodes, 'links':links}

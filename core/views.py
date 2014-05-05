@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, get_value_graph, update_rank_tables
+from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, get_value_graph, update_rank_tables, insert_nodes, delete_nodes
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -57,12 +57,13 @@ def store_blocked_sites(request):
     bs.block_links = payload['block_links']
     bs.user = request.user
 
-    re = '^https?://' + bs.url
-    hn = HistoryNode.objects.filter(url__regex=re)
+    re = '^https?://' + bs.url + '.*'
+    hn = HistoryNode.objects.filter(url__regex=re).update(is_blocked=True)
+    delete_nodes(hn)
 
-    for node in hn:
-      # DELETE FROM GRAPHS
-      node.delete()
+    if bs.block_links:
+      hn = HistoryNode.objects.filter(referrer__url__regex=re).update(is_blocked=True)
+      delete_nodes(hn)
 
     bs.save()
   
@@ -263,18 +264,18 @@ def run_rank(request):
   resp.status_code = 200
   return resp
 
-@csrf_exempt
-@requires_csrf_token
 def up_vote(request):
-  if request.is_ajax():
-      print request.POST
+  # add logic to update user_weight_dict
   return HttpResponse()
 
-@csrf_exempt
-@requires_csrf_token
 def down_vote(request):
-  if request.is_ajax():
-      print request.POST
+  # add logic to update user_weight_dict
+  # I expect a list of indices
+  user = request.user
+  rank_table = user.rank_table
+  weight_table = user.weight_table
+  # for index in indices:
+    
   return HttpResponse()
 
 def send_ranked_urls_u(request, user_id):
