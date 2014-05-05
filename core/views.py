@@ -76,8 +76,8 @@ def store_blocked_sites(request):
       bs.save()
     else:
       try:
-        BlockedSite.objects.get(user=request.user, url=payload['url']).delete()
-        re = '^https?://' + bs.url + '.*'
+        bs = BlockedSite.objects.get(user=request.user, url=payload['url']).delete()
+        re = '^https?://' + payload['url'] + '.*'
         hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=True)
         insert_nodes(hn)
         hn.update(is_blocked=False)

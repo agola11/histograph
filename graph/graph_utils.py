@@ -79,6 +79,12 @@ def send_bubble(user, time):
   _get_value_graph(graph.root)
   return graph.root
 
+def send_bubble(user):
+  graph = user.blocked_graph
+
+  _get_value_graph(graph.root)
+  return graph.root
+
 def send_line_plot(hn_list):
     hn_list = filter(filter_http, hn_list)
     hn_list = map(chop_protocol, hn_list)

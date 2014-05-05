@@ -116,6 +116,15 @@ def send_bubble(request, time):
     resp.status_code = 401
     return resp
 
+def send_bubble_blocked(request):
+  if request.user.is_authenticated():
+    bubble_tree = graph_utils.send_bubble_blocked(request.user)
+    return HttpResponse(jsonpickle.encode(bubble_tree, unpicklable=False), content_type="application/json")
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
+
 def send_user_line_plot(request, user_id):
   if request.user.is_authenticated():
     hn_objs = HistoryNode.objects.filter(user__id=int(user_id), is_blocked=False).values('url','visit_time')

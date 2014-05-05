@@ -162,10 +162,13 @@ def date_in_range(now, bound, hn):
   return ((now-then).days <= bound)
 
 def insert_nodes(hn_list):
-  if hn_list == None or len(hn_list) == 0:
+  if hn_list == None:
     return
 
   hn_list = filter(lambda node: not node.is_blocked, hn_list)
+
+  if len(hn_list) == 0:
+    return
 
   http_payload = filter(filter_http, hn_list)
   user = hn_list[0].user
@@ -281,7 +284,7 @@ def insert_nodes(hn_list):
   user.save()
 
 def delete_nodes(hn_list):
-  if hn_list == None:
+  if hn_list == None or len(hn_list) == 0:
     return
 
   user = hn_list[0].user
