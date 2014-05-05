@@ -17,6 +17,7 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
+  # new_user = models.BooelanField(default=True)
 
   # Graphs
   year_graph_http = PickledObjectField(default=None, compress=False, null=True)

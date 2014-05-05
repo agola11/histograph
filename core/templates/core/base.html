@@ -189,8 +189,8 @@ body a {
     <div class="row">
       <div class="col-sm-12">
 	<ul class="nav nav-pills alignright" style="margin-right:10%;">
-	  <li {% block graphs-nav %}{% endblock %}><a href="/">Graphs</a></li>
-	  <li {% block explore-nav %}{% endblock %}><a href="explore">Explore</a></li>
+	  <li {% block graphs-nav %}{% endblock %}><a href="/" id="graphs" data-toggle="tooltip" data-container="body" data-placement="bottom" title="View graphs to analyze your browsing patterns">Graphs</a></li>
+	  <li {% block explore-nav %}{% endblock %}><a href="explore" id="explore" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Explore new sites to visit based on your previous browsing history">Explore</a></li>
 	  <li {% block install-nav %}{% endblock %}><a href="install">Download</a></li>
 	  <li {% block about-nav %}{% endblock %}><a href="about">About</a></li>
 	  <li {% block team-nav %}{% endblock %}><a href="team">Team</a></li>
