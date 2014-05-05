@@ -90,18 +90,16 @@ d3.json("https://{{ domain }}/graph/bubble_blocked", function(data) {
 });
 
 function visualize(root) {
-  d3.select("node").remove();
-  //d3.selectAll("circle").remove();
-  //d3.selectAll("text").remove();
+  d3.selectAll("circle").remove();
 
   depth = depth + 1;
   
-  addPlaceholders(root);
+  //addPlaceholders(root);
 
   var nodes = pack.nodes(root)
       .filter(function(d) {return (d.parent == root || d == root) && d.r > 0.75; });
 
-  removePlaceholders(nodes);
+  //removePlaceholders(nodes);
 
   centerNodes(nodes);
 
@@ -112,10 +110,12 @@ function visualize(root) {
     .enter()
     .append("g");
 
+  console.log(node);
+
   node.append("circle")
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
-    .attr("r", function(d) {return (d.r == d.parent.r) ? d.r - 10 : d.r; })
+    .attr("r", function(d) {return d.parent != null ? (d.parent.children.length == 1 ?  d.r - 10 : d.r) : d.r ; })
     .attr("class", function(d) { 
       if (blocked_urls.length > 0 && blocked_urls.indexOf(d.full_url) != -1)
         return "blocked";
