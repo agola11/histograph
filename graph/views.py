@@ -136,10 +136,11 @@ def send_line_plot(request):
     resp.status_code = 401
     return resp
 
-def send_digraph(request):
+def send_digraph(request, time):
+  time_dict = {'1y':365, '6m':180, '3m':90, '1m':30, '1w':7}
   if request.user.is_authenticated():
     now = time.mktime(datetime.now().timetuple()) * 1000
-    startstamp = now - 7 * 24 * 3600 * 1000
+    startstamp = now - time_dict[time] * 24 * 3600 * 1000
     endstamp = now - 0 * 24 * 3600 * 1000
     hn_objs = HistoryNode.objects.filter(user=request.user, is_blocked=False, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
     digraph_data = graph_utils.send_digraph(hn_objs)
