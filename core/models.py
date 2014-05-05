@@ -296,7 +296,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.year_graph_http = graph
-      graph.in_year_http = False
+      HistoryNode.objects.filter(pk=node.id).update(in_year_http=False)
     
     if node.in_year:
       graph = node.user.year_graph
@@ -304,7 +304,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.year_graph = graph
-      graph.in_year = False
+      HistoryNode.objects.filter(pk=node.id).update(in_year=False)
 
     if node.in_six:
       graph = node.user.six_graph
@@ -312,7 +312,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.six_graph = graph
-      graph.in_six = False
+      HistoryNode.objects.filter(pk=node.id).update(in_six=False)
 
     if node.in_three:
       graph = node.user.three_graph
@@ -320,7 +320,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.three_graph = graph
-      graph.in_three = False
+      HistoryNode.objects.filter(pk=node.id).update(in_three=False)
 
     if node.in_one:
       graph = node.user.one_graph
@@ -328,7 +328,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.one_graph = graph
-      graph.in_one = False
+      HistoryNode.objects.filter(pk=node.id).update(in_one=False)
 
     if node.in_week:
       graph = node.user.week_graph
@@ -336,7 +336,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.week_graph = graph
-      graph.in_week = False 
+      HistoryNode.objects.filter(pk=node.id).update(in_week=False)
   
   user.save()  
 
