@@ -274,7 +274,7 @@ def down_vote(request):
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
-  for index in indices:
+  # for index in indices:
     
   return HttpResponse()
 
