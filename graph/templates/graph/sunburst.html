@@ -136,6 +136,8 @@ function createVisualization(root) {
       return (d.dx > 0.01); // 0.005 radians = 0.29 degrees
       });
 
+  console.log(nodes)
+
   var innerr = Math.sqrt(nodes[1].y);
 
   d3.select("#explanation")

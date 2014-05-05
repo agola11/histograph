@@ -82,7 +82,7 @@ def send_bubble(user, time):
   _get_value_graph(graph.root)
   return graph.root
 
-def send_bubble(user):
+def send_bubble_blocked(user):
   graph = user.blocked_graph
 
   _get_value_graph(graph.root)

@@ -33,7 +33,7 @@ class HistographUser(AbstractUser, FacebookModel):
   weight_table = PickledObjectField(default={}, compress=False, null=True)
 
   # blocked graph
-  blocked_graph = PickledObjectField(default={}, compress=False, null=True)
+  blocked_graph = PickledObjectField(default=None, compress=False, null=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
