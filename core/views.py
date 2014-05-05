@@ -57,13 +57,13 @@ def store_blocked_sites(request):
     bs.block_links = payload['block_links']
     bs.user = request.user
 
-    re = '^https?://' + bs.url + '.*'
-    hn = HistoryNode.objects.filter(url__regex=re).update(is_blocked=True)
-    delete_nodes(hn)
+    # re = '^https?://' + bs.url + '.*'
+    # hn = HistoryNode.objects.filter(url__regex=re).update(is_blocked=True)
+    # delete_nodes(hn)
 
-    if bs.block_links:
-      hn = HistoryNode.objects.filter(referrer__url__regex=re).update(is_blocked=True)
-      delete_nodes(hn)
+    # if bs.block_links:
+    #   hn = HistoryNode.objects.filter(referrer__url__regex=re).update(is_blocked=True)
+    #   delete_nodes(hn)
 
     bs.save()
   
