@@ -269,13 +269,13 @@ def up_vote(request):
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
-  for index in indices:
-    user_dict = rank_table[index][1]['users']
-    for o_id in user_dict:
-      if o_id in weight_table:
-        weight_table[o_id] = user_dict[o_id]
-      else:
-        weight_table[o_id] += user_dict[o_id]
+
+  user_dict = rank_table[index][1]['users']
+  for o_id in user_dict:
+    if o_id in weight_table:
+      weight_table[o_id] = user_dict[o_id]
+    else:
+      weight_table[o_id] += user_dict[o_id]
 
   user.weight_table = weight_table
   user.save()
@@ -287,13 +287,13 @@ def down_vote(request):
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
-  for index in indices:
-    user_dict = rank_table[index][1]['users']
-    for o_id in user_dict:
-      if o_id in weight_table:
-        weight_table[o_id] = (-1) * user_dict[o_id]
-      else:
-        weight_table[o_id] -= user_dict[o_id]
+  
+  user_dict = rank_table[index][1]['users']
+  for o_id in user_dict:
+    if o_id in weight_table:
+      weight_table[o_id] = user_dict[o_id]
+    else:
+      weight_table[o_id] += user_dict[o_id]
 
   user.weight_table = weight_table
   user.save()

@@ -76,6 +76,9 @@ def send_bubble(user, time):
   elif time == '1w':
     graph = user.week_graph
 
+  if graph == None:
+    return
+    
   _get_value_graph(graph.root)
   return graph.root
 
