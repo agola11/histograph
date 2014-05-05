@@ -188,7 +188,8 @@ if (shiftPressed || ctrlPressed) {
       visualize(d.parent);
     }
     else if (d.depth != 0) {
-      visualize(d);
+      if (d3.select(this).select("circle").attr("class") == "child")
+        visualize(d);
     }
   }
 
