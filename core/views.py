@@ -267,6 +267,19 @@ def run_rank(request):
 
 def up_vote(request):
   # add logic to update user_weight_dict
+  user = request.user
+  rank_table = user.rank_table
+  weight_table = user.weight_table
+  for index in indices:
+    user_dict = rank_table[index][1]['users']
+    for o_id in user_dict:
+      if o_id in weight_table:
+        weight_table[o_id] = user_dict[o_id]
+      else:
+        weight_table[o_id] += user_dict[o_id]
+
+  user.weight_table = weight_table
+  user.save()
   return HttpResponse()
 
 def down_vote(request):
@@ -276,7 +289,15 @@ def down_vote(request):
   rank_table = user.rank_table
   weight_table = user.weight_table
   for index in indices:
-    
+    user_dict = rank_table[index][1]['users']
+    for o_id in user_dict:
+      if o_id in weight_table:
+        weight_table[o_id] = (-1) * user_dict[o_id]
+      else:
+        weight_table[o_id] -= user_dict[o_id]
+
+  user.weight_table = weight_table
+  user.save()
   return HttpResponse()
 
 def send_ranked_urls_u(request, user_id):
