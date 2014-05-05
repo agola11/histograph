@@ -32,6 +32,9 @@ class HistographUser(AbstractUser, FacebookModel):
   # weights for each user to be used in ranking
   weight_table = PickledObjectField(default={}, compress=False, null=True)
 
+  # blocked graph
+  blocked_graph = PickledObjectField(default={}, compress=False, null=True)
+
   def get_friends(self):
     graph = self.get_offline_graph()
     friends = graph.get('me/friends')
@@ -84,6 +87,7 @@ class HistoryNode(models.Model):
   in_three = models.BooleanField(default=False)
   in_one = models.BooleanField(default=False)
   in_week = models.BooleanField(default=False)
+  in_blocked_graph = models.BooleanField(default=False)
 
   class Meta:
     unique_together = ('user', 'extension_id', 'browser_id')
@@ -213,6 +217,21 @@ def insert_nodes(hn_list):
       HistoryNode.objects.filter(pk=node.id).update(in_year=True)
     user.year_graph = graph
 
+  if user.blocked_graph == None:
+    graph = UrlGraph()
+    root = graph.create()
+    for node in payload:
+      graph.insert(root, node)
+      HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
+    user.blocked_graph = graph
+  else:
+    graph = user.blocked_graph
+    root = graph.root
+    for node in payload:
+      graph.insert(root, node)
+      HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
+    user.blocked_graph = graph
+
   payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
 
   if user.six_graph == None:
@@ -299,7 +318,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.year_graph_http = graph
-      graph.in_year_http = False
+      HistoryNode.objects.filter(pk=node.id).update(in_year_http=False)
     
     if node.in_year:
       graph = node.user.year_graph
@@ -307,7 +326,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.year_graph = graph
-      graph.in_year = False
+      HistoryNode.objects.filter(pk=node.id).update(in_year=False)
 
     if node.in_six:
       graph = node.user.six_graph
@@ -315,7 +334,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.six_graph = graph
-      graph.in_six = False
+      HistoryNode.objects.filter(pk=node.id).update(in_six=False)
 
     if node.in_three:
       graph = node.user.three_graph
@@ -323,7 +342,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.three_graph = graph
-      graph.in_three = False
+      HistoryNode.objects.filter(pk=node.id).update(in_three=False)
 
     if node.in_one:
       graph = node.user.one_graph
@@ -331,7 +350,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.one_graph = graph
-      graph.in_one = False
+      HistoryNode.objects.filter(pk=node.id).update(in_one=False)
 
     if node.in_week:
       graph = node.user.week_graph
@@ -339,7 +358,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.week_graph = graph
-      graph.in_week = False 
+      HistoryNode.objects.filter(pk=node.id).update(in_week=False)
   
   user.save()  
 

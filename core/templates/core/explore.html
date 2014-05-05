@@ -180,14 +180,14 @@ function thumbs_up(i) {
 	$.ajax({
 	 type: 'POST',
 	 url: '/up_vote',
-	 data: {'id': i, 'url':  jsonResp[i][0]},
+	 data: {'index': i},
 	});
 }
 function thumbs_down(i) {
 	$.ajax({
 	 type: 'POST',
 	 url: '/down_vote',
-	 data: {'id': i, 'url':  jsonResp[i][0]},
+	 data: {'index': i},
 	});
 }
 </script>
