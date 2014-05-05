@@ -97,13 +97,9 @@ def send_user_bubble(request, user_id):
     return resp
 '''
 
-def send_bubble(request):
+def send_bubble(request, time):
   if request.user.is_authenticated():
-    # now = time.mktime(datetime.now().timetuple()) * 1000
-    # startstamp = now - int(starttime) * 24 * 3600 * 1000
-    # endstamp = now - int(endtime) * 24 * 3600 * 1000
-    hn_objs = HistoryNode.objects.filter(user=request.user) #, visit_time__range=(startstamp, endstamp))
-    bubble_tree = graph_utils.send_bubble(request.user)
+    bubble_tree = graph_utils.send_bubble(request.user, time)
     return HttpResponse(jsonpickle.encode(bubble_tree, unpicklable=False), content_type="application/json")
   else:
     resp = HttpResponse()

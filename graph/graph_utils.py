@@ -64,8 +64,18 @@ def _get_value_graph(root):
   for child in root.gchildren:
     _get_value_graph(child)
 
-def send_bubble(user):
-  graph = user.week_graph
+def send_bubble(user, time):
+  if time =='1y':
+    graph = user.year_graph
+  elif time == '6m':
+    graph = user.six_graph
+  elif time == '3m':
+    graph = user.three_graph
+  elif time == '1m':
+    graph = user.one_graph
+  elif time == '1w':
+    graph = user.week_graph
+
   _get_value_graph(graph.root)
   return graph.root
 
