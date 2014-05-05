@@ -11,6 +11,7 @@ import logging
 import time
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+import re
 
 class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
@@ -74,6 +75,7 @@ class HistoryNode(models.Model):
   extension_id = models.IntegerField()
   referrer = models.ForeignKey('HistoryNode', blank=True, null=True)
   user = models.ForeignKey(HistographUser)
+  is_blocked = models.BooleanField(default=False)
 
   # field for graph
   in_year_http = models.BooleanField(default=False)
@@ -97,156 +99,6 @@ class BlockedSite(models.Model):
   url = models.URLField(max_length=2048)
   user = models.ForeignKey(HistographUser)
   block_links = models.BooleanField()
-
-@receiver(post_save, sender=HistoryNode, dispatch_uid="insert_node_receiver")
-def insert_node(sender, **kwargs):
-  if kwargs['created']:
-    node = kwargs['instance']
-
-    # Format node
-    http = filter_http(node)
-    node = strip_scheme(node)
-    node = split_url(node)
-
-    # Insert into graphs
-    now = datetime.now()
-    if date_in_range(now, 365, node):
-      if http:
-        if node.user.year_graph_http == None:
-          graph = UrlGraph()
-          root = graph.create()
-          graph.insert(root, node)
-          node.user.year_graph_http = graph
-        else:
-          graph = node.user.year_graph_http
-          root = graph.root 
-          graph.insert(root, node) 
-          node.user.year_graph_http = graph
-        node.in_year_http = True
-
-      if node.user.year_graph == None:
-        graph = UrlGraph()
-        root = graph.create() 
-        graph.insert(root, node)
-        node.user.year_graph = graph
-      else:
-        graph = node.user.year_graph
-        root = graph.root 
-        graph.insert(root, node)
-        node.user.year_graph = graph
-      node.in_year = True
-
-    if date_in_range(now, 180, node):
-      if node.user.six_graph == None:
-        graph = UrlGraph()
-        root = graph.create() 
-        graph.insert(root, node)
-        node.user.six_graph = graph
-      else:
-        graph = node.user.six_graph
-        root = graph.root 
-        graph.insert(root, node)
-        node.user.six_graph = graph
-      node.in_six = True
-    
-    if date_in_range(now, 90, node):
-      if node.user.three_graph == None:
-        graph = UrlGraph()
-        root = graph.create() 
-        graph.insert(root, node)
-        node.user.three_graph = graph
-      else:
-        graph = node.user.three_graph
-        root = graph.root 
-        graph.insert(root, node)
-        node.user.three_graph = graph
-      node.in_three = True
-    
-    if date_in_range(now, 30, node):
-      if node.user.one_graph == None:
-        graph = UrlGraph()
-        root = graph.create() 
-        graph.insert(root, node)
-        node.user.one_graph = graph
-      else:
-        graph = node.user.one_graph
-        root = graph.root 
-        graph.insert(root, node)
-        node.user.one_graph = graph
-      node.in_one = True
-    
-    if date_in_range(now, 7, node):
-      if node.user.week_graph == None:
-        graph = UrlGraph()
-        root = graph.create() 
-        graph.insert(root, node)
-        node.user.week_graph = graph
-      else:
-        graph = node.user.week_graph
-        root = graph.root 
-        graph.insert(root, node)
-        node.user.week_graph = graph
-      node.in_week = True
-
-    node.user.save()
-
-@receiver(post_delete, sender=HistoryNode, dispatch_uid="remove_node_receiver")
-def remove_node(sender, **kwargs):
-  node = kwargs['instance']
-
-  # Format node for deletion
-  node = strip_scheme(node)
-  node = split_url(node)
-
-  if node.in_year_http:
-    graph = node.user.year_graph_http
-    if graph != None:
-      root = graph.root
-      graph.delete(root, node)
-      node.user.year_graph_http = graph
-    graph.in_year_http = False
-  
-  if node.in_year:
-    graph = node.user.year_graph
-    if graph != None:
-      root = graph.root
-      graph.delete(root, node)
-      node.user.year_graph = graph
-    graph.in_year = False
-
-  if node.in_six:
-    graph = node.user.six_graph
-    if graph != None:
-      root = graph.root
-      graph.delete(root, node)
-      node.user.six_graph = graph
-    graph.in_six = False
-
-  if node.in_three:
-    graph = node.user.three_graph
-    if graph != None:
-      root = graph.root
-      graph.delete(root, node)
-      node.user.three_graph = graph
-    graph.in_three = False
-
-  if node.in_one:
-    graph = node.user.one_graph
-    if graph != None:
-      root = graph.root
-      graph.delete(root, node)
-      node.user.one_graph = graph
-    graph.in_one = False
-
-  if node.in_week:
-    graph = node.user.week_graph
-    if graph != None:
-      root = graph.root
-      graph.delete(root, node)
-      node.user.week_graph = graph
-    graph.in_week = False
-
-  node.user.save()
 
 def get_link_type_name(value):
   if value == 0:
@@ -362,12 +214,12 @@ def insert_nodes(hn_list):
      for node in payload:
        graph.insert(root, node)
      user.six_graph = graph
-   else:
-     graph = user.six_graph
-     root = graph.root
-     for node in payload:
-       graph.insert(root, node)
-     user.six_graph = graph
+  else:
+    graph = user.six_graph
+    root = graph.root
+    for node in payload:
+      graph.insert(root, node)
+    user.six_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
 
@@ -486,34 +338,54 @@ def create_history_nodes_from_json(payload, user):
   payload = filter(filter_http_s, payload)
   payload = map(remove_trail, payload)
 
-  # with transaction.atomic():
-  for node in payload:
-    # if node is already in the database, replace it with the newer one
-    try:
-      existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-      existing_hn.delete()
-    except HistoryNode.DoesNotExist:
-      continue
+  new_nodes = []
 
-  # with transaction.atomic():
-  for node in payload:
-    trunc_title = node['last_title']
-    if len(trunc_title) > 256:
-      trunc_title = trunc_title[:253] + '...'
+  with transaction.atomic():
+    for node in payload:
+      # if node is already in the database, replace it with the newer one
+      try:
+        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+        existing_hn.delete()
+      except HistoryNode.DoesNotExist:
+        continue
 
-    # get rid of anchors
-    url = node['url'].split('#')[0]
-    hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-    hn.save()
+  # compile blocked sites regexs
+  blocked_sites = BlockedSite.objects.filter(user=user)
+  blocked_res = []
+  for bs in blocked_sites:
+    blocked_res.append(re.compile('https?://' + bs.url + '.*'))
+
+  # add new nodes
+  with transaction.atomic():
+    for node in payload:
+      trunc_title = node['last_title']
+      if len(trunc_title) > 256:
+        trunc_title = trunc_title[:253] + '...'
+
+      # get rid of anchors
+      url = node['url'].split('#')[0]
+
+      hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+      
+      # check if in blocked lists
+      for regex in blocked_res:
+        if regex.match(hn.url):
+          hn.is_blocked = True
+          break
+
+      hn.save()
+      new_nodes.append(hn)
 
   # connect referrers
-  # with transaction.atomic():
-  for node in payload:
-    try:
-      referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'], user=user)
-      HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
-    except HistoryNode.DoesNotExist:
-      continue
+  with transaction.atomic():
+    for node in payload:
+      try:
+        referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'], user=user)
+        HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
+      except HistoryNode.DoesNotExist:
+        continue
+
+  insert_nodes(new_nodes)
 
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')

@@ -37,6 +37,16 @@ def friends(request):
         })
   return HttpResponse(template.render(context))
 
+def area(request): 
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
+  domain = get_current_site(request).domain
+  template = loader.get_template('graph/area.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        })
+  return HttpResponse(template.render(context))
+
 def pie(request): 
   if (request.user.is_authenticated() == False):
     return redirect(login)
@@ -78,7 +88,7 @@ def sunburst(request):
         'domain': get_current_site(request).domain,
         })
 
-  if HistoryNode.objects.filter(user=request.user).count() == 0:
+  if HistoryNode.objects.filter(user=request.user, is_blocked=False).count() == 0:
     template = loader.get_template('graph/nodata.html')
     return HttpResponse(template.render(context))
   
@@ -108,7 +118,7 @@ def send_bubble(request, time):
 
 def send_user_line_plot(request, user_id):
   if request.user.is_authenticated():
-    hn_objs = HistoryNode.objects.filter(user__id=int(user_id)).values('url','visit_time')
+    hn_objs = HistoryNode.objects.filter(user__id=int(user_id), is_blocked=False).values('url','visit_time')
     line_data = graph_utils.send_line_plot(hn_objs)
     return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
   else:
@@ -118,7 +128,7 @@ def send_user_line_plot(request, user_id):
 
 def send_line_plot(request):
   if request.user.is_authenticated():
-    hn_objs = HistoryNode.objects.filter(user=request.user)
+    hn_objs = HistoryNode.objects.filter(user=request.user, is_blocked=False)
     line_data = graph_utils.send_line_plot(hn_objs)
     return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
   else:
@@ -131,7 +141,7 @@ def send_digraph(request):
     now = time.mktime(datetime.now().timetuple()) * 1000
     startstamp = now - 7 * 24 * 3600 * 1000
     endstamp = now - 0 * 24 * 3600 * 1000
-    hn_objs = HistoryNode.objects.filter(user=request.user, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
+    hn_objs = HistoryNode.objects.filter(user=request.user, is_blocked=False, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
     digraph_data = graph_utils.send_digraph(hn_objs)
     return HttpResponse(simplejson.dumps(digraph_data), content_type='application/json')
   else:
