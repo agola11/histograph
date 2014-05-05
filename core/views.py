@@ -57,12 +57,14 @@ def store_blocked_sites(request):
     bs.block_links = payload['block_links']
     bs.user = request.user
 
-    re = '^https?://' + bs.url
+    re = '^https?://' + bs.url + '.*'
     hn = HistoryNode.objects.filter(url__regex=re)
+    # DELETE FROM GRAPHS
 
-    for node in hn:
+    if bs.block_links:
+      hn = HistoryNode.objects.filter(referrer__url__regex=re)
       # DELETE FROM GRAPHS
-      node.delete()
+
 
     bs.save()
   
@@ -263,15 +265,11 @@ def run_rank(request):
   resp.status_code = 200
   return resp
 
-@csrf_exempt
-@requires_csrf_token
 def up_vote(request):
   if request.is_ajax():
       print request.POST
   return HttpResponse()
 
-@csrf_exempt
-@requires_csrf_token
 def down_vote(request):
   if request.is_ajax():
       print request.POST
