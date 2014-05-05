@@ -85,7 +85,7 @@ d3.json("https://{{ domain }}/blocked_sites", function (error, data) {
   }
 });
 
-d3.json("https://{{ domain }}/graph/bubble", function(data) {
+d3.json("https://{{ domain }}/graph/bubble/1y", function(data) {
   
   node = root = data;
   visualize(root);
