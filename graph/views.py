@@ -37,6 +37,16 @@ def friends(request):
         })
   return HttpResponse(template.render(context))
 
+def area(request): 
+  if (request.user.is_authenticated() == False):
+    return redirect(login)
+  domain = get_current_site(request).domain
+  template = loader.get_template('graph/area.html')
+  context = RequestContext(request, {
+        'domain': get_current_site(request).domain,
+        })
+  return HttpResponse(template.render(context))
+
 def pie(request): 
   if (request.user.is_authenticated() == False):
     return redirect(login)
