@@ -166,6 +166,8 @@ function createVisualization(root) {
     .on("mouseover", mouseleave)
     .on("click", clickup);
 
+  console.log(nodes)
+
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave) ;
 
