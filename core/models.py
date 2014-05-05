@@ -162,7 +162,7 @@ def date_in_range(now, bound, hn):
   return ((now-then).days <= bound)
 
 def insert_nodes(hn_list):
-  if hn_list == None:
+  if hn_list == None or len(hn_list) == 0:
     return
 
   hn_list = filter(lambda node: not node.is_blocked, hn_list)

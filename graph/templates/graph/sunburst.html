@@ -112,7 +112,7 @@ var rootd;
 loadData();
 
 function loadData() {
-  d3.json("https://{{ domain }}/graph/bubble", function(error, data) {
+  d3.json("https://{{ domain }}/graph/bubble/1y", function(error, data) {
       rootd = data;
       createVisualization(data);
   });

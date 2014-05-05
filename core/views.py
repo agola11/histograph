@@ -63,20 +63,26 @@ def store_blocked_sites(request):
       bs.block_links = payload['block_links']
       bs.user = request.user
 
-      # re = '^https?://' + bs.url + '.*'
-      # hn = HistoryNode.objects.filter(url__regex=re).update(is_blocked=True)
-      # delete_nodes(hn)
+      re = '^https?://' + bs.url + '.*'
+      hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=False)
+      delete_nodes(hn)
+      hn.update(is_blocked=True)
 
-      # if bs.block_links:
-      #   hn = HistoryNode.objects.filter(referrer__url__regex=re).update(is_blocked=True)
-      #   delete_nodes(hn)
+      if bs.block_links:
+        hn = HistoryNode.objects.filter(user=request.user, referrer__url__regex=re, is_blocked=False)
+        delete_nodes(hn)
+        hn.update(is_blocked=True)
 
       bs.save()
     else:
       try:
         BlockedSite.objects.get(user=request.user, url=payload['url']).delete()
+        re = '^https?://' + bs.url + '.*'
+        hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=True)
+        insert_nodes(hn)
+        hn.update(is_blocked=False)
       except BlockedSite.DoesNotExist:
-        continue
+        pass
   
     resp = HttpResponse()
     resp.status_code = 200
