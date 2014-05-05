@@ -24,11 +24,11 @@
 
   <div id="rightmenu" class="menuclosed" style="padding: 20px; transition: right 0.5s ease; -webkit-transition: right 0.5s ease;">
     <div class="btn-group-horizontal">
-      <button type="button" class="btn btn-default btn-sm active" onClick="loadSunburst()">1w</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDigraph()">1m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadLineplot()">3m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadLineplot()">6m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadLineplot()">1y</button>
+      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1w">1w</button>
+      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1m">1m</button>
+      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="3m">3m</button>
+      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="6m">6m</button>
+      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1y">1y</button>
     </div>
     <!-- <div>
       <input type="text" class="dateslider" value="" data-slider-min="0" data-slider-max="300" data-slider-step="1" data-slider-value="[0,7]" data-slider-orientation="vertical">
@@ -173,15 +173,82 @@ $(document).ready(function(){
 </script>
 
 <script type="text/javascript">
+
+function loadDates() {
+  if ($("#sunburst").hasClass("active")) {
+    loadSunburst();
+  }
+  else if ($("#digraph").hasClass("active")) {
+    loadDigraph();
+  }
+  else if ($("#friends").hasClass("active")) {
+    loadFriends();
+  }
+  else if ($("#lineplot").hasClass("active")) {
+    loadLineplot();
+  }
+}
+// active buttons on left and right menus
 $(document).ready(function() {
   $('#friends').removeClass('active');
   $('#digraph').removeClass('active');
   $('#lineplot').removeClass('active');
   $('#sunburst').removeClass('active');
   $('#sunburst').addClass('active');
-  
+
+  $('#1w').removeClass('active');
+  $('#1m').removeClass('active');
+  $('#3m').removeClass('active');
+  $('#6m').removeClass('active');
+  $('#1y').removeClass('active');
+  $('#1w').addClass('active');
+
+  $('#1w').click(function() {
+    $('#1w').removeClass('active');
+    $('#1m').removeClass('active');
+    $('#3m').removeClass('active');
+    $('#6m').removeClass('active');
+    $('#1y').removeClass('active');
+    $('#1w').addClass('active');
+  });
+
+  $('#1m').click(function() {
+    $('#1w').removeClass('active');
+    $('#1m').removeClass('active');
+    $('#3m').removeClass('active');
+    $('#6m').removeClass('active');
+    $('#1y').removeClass('active');
+    $('#1m').addClass('active');
+  });
+
+  $('#3m').click(function() {
+    $('#1w').removeClass('active');
+    $('#1m').removeClass('active');
+    $('#3m').removeClass('active');
+    $('#6m').removeClass('active');
+    $('#1y').removeClass('active');
+    $('#3m').addClass('active');
+  });
+
+  $('#6m').click(function() {
+    $('#1w').removeClass('active');
+    $('#1m').removeClass('active');
+    $('#3m').removeClass('active');
+    $('#6m').removeClass('active');
+    $('#1y').removeClass('active');
+    $('#6m').addClass('active');
+  });
+
+  $('#1y').click(function() {
+    $('#1w').removeClass('active');
+    $('#1m').removeClass('active');
+    $('#3m').removeClass('active');
+    $('#6m').removeClass('active');
+    $('#1y').removeClass('active');
+    $('#1y').addClass('active');
+  });
+
   $('#sunburst').click(function() {
-    console.log('sunburst');
       $('#friends').removeClass('active');
       $('#digraph').removeClass('active');
       $('#lineplot').removeClass('active');
@@ -190,7 +257,6 @@ $(document).ready(function() {
   });
 
   $('#digraph').click(function() {
-    console.log('digraph');
       $('#friends').removeClass('active');
       $('#digraph').removeClass('active');
       $('#lineplot').removeClass('active');
@@ -199,7 +265,6 @@ $(document).ready(function() {
   });
 
   $('#lineplot').click(function() {
-    console.log('lineplot');
       $('#friends').removeClass('active');
       $('#digraph').removeClass('active');
       $('#lineplot').removeClass('active');
@@ -208,7 +273,6 @@ $(document).ready(function() {
   });
 
   $('#friends').click(function() {
-    console.log('friends');
       $('#friends').removeClass('active');
       $('#digraph').removeClass('active');
       $('#lineplot').removeClass('active');
