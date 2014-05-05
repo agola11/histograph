@@ -214,12 +214,12 @@ def insert_nodes(hn_list):
      for node in payload:
        graph.insert(root, node)
      user.six_graph = graph
-   else:
-     graph = user.six_graph
-     root = graph.root
-     for node in payload:
-       graph.insert(root, node)
-     user.six_graph = graph
+  else:
+    graph = user.six_graph
+    root = graph.root
+    for node in payload:
+      graph.insert(root, node)
+    user.six_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
 
