@@ -313,7 +313,7 @@ def insert_nodes(hn_list):
   if hn_list == None:
     return
 
-  hn_list = filter(lambda node: node.is_blocked, hn_list)
+  hn_list = filter(lambda node: not node.is_blocked, hn_list)
 
   http_payload = filter(filter_http, hn_list)
   user = hn_list[0].user
