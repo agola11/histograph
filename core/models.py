@@ -185,14 +185,14 @@ def insert_nodes(hn_list):
     root = graph.create()
     for node in http_payload:
       graph.insert(root, node)
-      node.update(in_year_http=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_year_http=True)
     user.year_graph_http = graph
   else:
     graph = user.year_graph_http
     root = graph.root
     for node in http_payload:
       graph.insert(root, node)
-      node.update(in_year_http=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_year_http=True)
     user.year_graph_http = graph
 
   if user.year_graph == None:
@@ -200,14 +200,14 @@ def insert_nodes(hn_list):
     root = graph.create()
     for node in payload:
       graph.insert(root, node)
-      node.update(in_year=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_year=True)
     user.year_graph = graph
   else:
     graph = user.year_graph
     root = graph.root
     for node in payload:
       graph.insert(root, node)
-      node.update(in_year=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_year=True)
     user.year_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
@@ -217,14 +217,14 @@ def insert_nodes(hn_list):
      root = graph.create()
      for node in payload:
        graph.insert(root, node)
-       node.update(in_six=True)
+       HistoryNode.objects.filter(pk=node.id).update(in_six=True)
      user.six_graph = graph
   else:
     graph = user.six_graph
     root = graph.root
     for node in payload:
       graph.insert(root, node)
-      node.update(in_six=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_six=True)
     user.six_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
@@ -234,14 +234,14 @@ def insert_nodes(hn_list):
     root = graph.create()
     for node in payload:
       graph.insert(root, node)
-      node.update(in_three=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_three=True)
     user.three_graph = graph
   else:
     graph = user.three_graph
     root = graph.root
     for node in payload:
       graph.insert(root, node)
-      node.update(in_three=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_three=True)
     user.three_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (30)), payload)
@@ -251,14 +251,14 @@ def insert_nodes(hn_list):
     root = graph.create()
     for node in payload:
       graph.insert(root, node)
-      node.update(in_one=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_one=True)
     user.one_graph = graph
   else:
     graph = user.one_graph
     root = graph.root
     for node in payload:
       graph.insert(root, node)
-      node.update(in_one=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_one=True)
     user.one_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, 7), payload)
@@ -268,14 +268,14 @@ def insert_nodes(hn_list):
     root = graph.create()
     for node in payload:
       graph.insert(root, node)
-      node.update(in_week=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_week=True)
     user.week_graph = graph
   else:
     graph = user.week_graph
     root = graph.root
     for node in payload:
       graph.insert(root, node)
-      node.update(in_week=True)
+      HistoryNode.objects.filter(pk=node.id).update(in_week=True)
     user.week_graph = graph
 
   user.save()
