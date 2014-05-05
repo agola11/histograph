@@ -52,20 +52,31 @@ def send_blocked_sites(request):
 def store_blocked_sites(request):
   if request.user.is_authenticated():
     payload = json.loads(request.body)
-    bs = BlockedSite()
-    bs.url = payload['url']
-    bs.block_links = payload['block_links']
-    bs.user = request.user
 
-    # re = '^https?://' + bs.url + '.*'
-    # hn = HistoryNode.objects.filter(url__regex=re).update(is_blocked=True)
-    # delete_nodes(hn)
+    if payload['blocked']:
+      try:
+        bs = BlockedSite.objects.get(user=request.user, url=payload['url'])
+      except BlockedSite.DoesNotExist:
+        bs = BlockedSite()
+        bs.url = payload['url']
 
-    # if bs.block_links:
-    #   hn = HistoryNode.objects.filter(referrer__url__regex=re).update(is_blocked=True)
-    #   delete_nodes(hn)
+      bs.block_links = payload['block_links']
+      bs.user = request.user
 
-    bs.save()
+      # re = '^https?://' + bs.url + '.*'
+      # hn = HistoryNode.objects.filter(url__regex=re).update(is_blocked=True)
+      # delete_nodes(hn)
+
+      # if bs.block_links:
+      #   hn = HistoryNode.objects.filter(referrer__url__regex=re).update(is_blocked=True)
+      #   delete_nodes(hn)
+
+      bs.save()
+    else:
+      try:
+        BlockedSite.objects.get(user=request.user, url=payload['url']).delete()
+      except BlockedSite.DoesNotExist:
+        continue
   
     resp = HttpResponse()
     resp.status_code = 200
