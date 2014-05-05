@@ -128,14 +128,6 @@ def strip_scheme(url):
 	scheme = "%s://" % parsed.scheme
 	return parsed.geturl().replace(scheme, '', 1)
 
-def construct_graph(hn_list):
-	hn_list = filter(filter_http, hn_list)
-	graph = UrlGraph()
-	root = graph.create()
-	for hn in hn_list:
-		graph.insert(root, hn)
-	return graph
-
 def update_rank_table(ug, g, rank_table):
 	if ug == None or g == None:
 		return
