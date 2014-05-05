@@ -314,34 +314,34 @@ def create_history_nodes_from_json(payload, user):
   payload = filter(filter_http_s, payload)
   payload = map(remove_trail, payload)
 
-  with transaction.atomic():
-    for node in payload:
-      # if node is already in the database, replace it with the newer one
-      try:
-        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-        existing_hn.delete()
-      except HistoryNode.DoesNotExist:
-        continue
+  # with transaction.atomic():
+  for node in payload:
+    # if node is already in the database, replace it with the newer one
+    try:
+      existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+      existing_hn.delete()
+    except HistoryNode.DoesNotExist:
+      continue
 
-  with transaction.atomic():
-    for node in payload:
-      trunc_title = node['last_title']
-      if len(trunc_title) > 256:
-        trunc_title = trunc_title[:253] + '...'
+  # with transaction.atomic():
+  for node in payload:
+    trunc_title = node['last_title']
+    if len(trunc_title) > 256:
+      trunc_title = trunc_title[:253] + '...'
 
-      # get rid of anchors
-      url = node['url'].split('#')[0]
-      hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-      hn.save()
+    # get rid of anchors
+    url = node['url'].split('#')[0]
+    hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+    hn.save()
 
   # connect referrers
-  with transaction.atomic():
-    for node in payload:
-      try:
-        referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'], user=user)
-        HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
-      except HistoryNode.DoesNotExist:
-        continue
+  # with transaction.atomic():
+  for node in payload:
+    try:
+      referrer = HistoryNode.objects.get(extension_id=node['extension_id'], browser_id=node['referrer_id'], user=user)
+      HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
+    except HistoryNode.DoesNotExist:
+      continue
 
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
