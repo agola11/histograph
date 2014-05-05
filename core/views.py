@@ -266,13 +266,17 @@ def run_rank(request):
   return resp
 
 def up_vote(request):
-  if request.is_ajax():
-      print request.POST
+  # add logic to update user_weight_dict
   return HttpResponse()
 
 def down_vote(request):
-  if request.is_ajax():
-      print request.POST
+  # add logic to update user_weight_dict
+  # I expect a list of indices
+  user = request.user
+  rank_table = user.rank_table
+  weight_table = user.weight_table
+  for index in indices:
+    
   return HttpResponse()
 
 def send_ranked_urls_u(request, user_id):

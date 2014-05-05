@@ -24,7 +24,12 @@ class HistographUser(AbstractUser, FacebookModel):
   three_graph = PickledObjectField(default=None, compress=False, null=True)
   one_graph = PickledObjectField(default=None, compress=False, null=True)
   week_graph = PickledObjectField(default=None, compress=False, null=True)
+
+  # Rank table for ranks
   rank_table = PickledObjectField(default=[], compress=False, null=True)
+
+  # weights for each user to be used in ranking
+  weight_table = PickledObjectField(default={}, compress=False, null=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -307,6 +312,8 @@ def date_in_range(now, bound, hn):
 def insert_nodes(hn_list):
   if hn_list == None:
     return
+
+  hn_list = filter(lambda node: node.is_blocked, hn_list)
 
   http_payload = filter(filter_http, hn_list)
   user = hn_list[0].user
