@@ -44,7 +44,7 @@ class GraphNode:
 		self.node_count = node_count
 		self.gdepth= level
 		self.full_url = full_url
-		self.last_title = 'spagett'
+		self.last_title = None
 
 class UrlGraph:
 	def __init__(self):
@@ -137,13 +137,13 @@ def construct_graph(hn_list):
 	return graph
 
 def update_rank_table(ug, g, rank_table):
-	if g == None or ug == None:
+	if ug == None or g == None:
 		return
 	ulevel_dict = ug.levels
 	level_dict = g.levels
-	_update_rank_table(ug.root, g.root, ulevel_dict, level_dict, 1, 0, 0, rank_table)
+	_update_rank_table(ug.root, g.root, ulevel_dict, level_dict, 1, 0, 0, rank_table, o_id)
 
-def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_score, rank_table):
+def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_score, rank_table, o_id):
 	# if other's root is null, return
 	if g == None:
 		return
@@ -154,7 +154,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 			prev_score = prev_score*30
 		'''
 		if g.full_url not in rank_table:
-			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title}
+			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title, 'users': {o_id:prev_score}}
 		else:
 			score = rank_table[g.full_url]['score']
 			score += prev_score
@@ -165,7 +165,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 	if ug == None or ug.gchildren == None:
 		if prev_bd > 0.001:
 			for child in g.gchildren.values():
-				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.001, prev_score+prev_bd, rank_table)
+				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.001, prev_score+prev_bd, rank_table, o_id)
 		else:
 			return
 	else:
@@ -186,7 +186,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 				else:
 					ug_child = ug.gchildren[key]
 				g_child = g.gchildren[key]
-				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table)
+				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table, o_id)
 
 def split(url):
 	url = url.split('/')
