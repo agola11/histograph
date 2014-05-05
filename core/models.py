@@ -405,7 +405,7 @@ def update_rank_tables():
 
     for o_user in user_set:
       if o_user != user:  # <-DOES THIS WORK?!
-        update_rank_table(user.year_graph_http, o_user.year_graph_http, rank_table)
+        update_rank_table(user.year_graph_http, o_user.year_graph_http, rank_table, o_user.id, user.weight_table)
 
     ranked_urls = list(rank_table.items())
     ranked_urls = filter((lambda (x,y): x not in user_urls), ranked_urls)

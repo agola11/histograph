@@ -128,36 +128,35 @@ def strip_scheme(url):
 	scheme = "%s://" % parsed.scheme
 	return parsed.geturl().replace(scheme, '', 1)
 
-def update_rank_table(ug, g, rank_table):
+def update_rank_table(ug, g, rank_table, o_id, weight_table):
 	if ug == None or g == None:
 		return
 	ulevel_dict = ug.levels
 	level_dict = g.levels
-	_update_rank_table(ug.root, g.root, ulevel_dict, level_dict, 1, 0, 0, rank_table, o_id)
+	_update_rank_table(ug.root, g.root, ulevel_dict, level_dict, 1, 0, 0, rank_table, o_id, weight_table)
 
-def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_score, rank_table, o_id):
+def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_score, rank_table, o_id, weight_table):
 	# if other's root is null, return
 	if g == None:
 		return
 	# if other's root has a last_title (meaning full_url), put the url in the rank_table
 	if g.last_title != None:
-		'''
-		if tldextract.extract(g.full_url).domain == 'reddit':
-			prev_score = prev_score*30
-		'''
+		if o_id in weight_table:
+			prev_score = prev_score + weight_table[o_id]*prev_score
 		if g.full_url not in rank_table:
 			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title, 'users': {o_id:prev_score}}
 		else:
 			score = rank_table[g.full_url]['score']
 			score += prev_score
 			rank_table[g.full_url]['score'] = score
+			rank_table[g.full_url]['users'][o_id] = prev_score
 	if g.gchildren == None:
 		return
 	# if user's root/childrens is null
 	if ug == None or ug.gchildren == None:
 		if prev_bd > 0.001:
 			for child in g.gchildren.values():
-				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.001, prev_score+prev_bd, rank_table, o_id)
+				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.001, prev_score+prev_bd, rank_table, o_id, weight_table)
 		else:
 			return
 	else:
