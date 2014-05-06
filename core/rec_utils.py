@@ -203,7 +203,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 				else:
 					ug_child = ug.gchildren[key]
 				g_child = g.gchildren[key]
-				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table, o_id)
+				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table, o_id, weight_table)
 
 def split(url):
 	url = url.split('/')
