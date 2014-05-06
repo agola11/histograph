@@ -45,6 +45,7 @@ class GraphNode:
 		self.gdepth= level
 		self.full_url = full_url
 		self.last_title = None
+		self.is_dummy = False
 
 class UrlGraph:
 	def __init__(self):
