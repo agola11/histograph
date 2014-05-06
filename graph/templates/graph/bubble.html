@@ -4,6 +4,11 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <style type="text/css">
 
+.tooltip-inner {
+  max-width: 800px;
+  width: auto;
+}
+
 circle:hover {
   fill: #6D1DAA;
   stroke: #999;
@@ -30,16 +35,6 @@ circle.blocked {
 circle.blockedlinks {
   fill:#F11B38;
 }
-
-/*circle.parent:hover {
-  stroke: #ff7f0e;
-  stroke-width: 2px;
-}
-
-circle.child:hover {
-  stroke: #ff7f0e;
-  stroke-width: 2px;
-}*/
 
   </style>
   </head>
@@ -85,8 +80,6 @@ d3.json("https://{{ domain }}/blocked_sites", function (error, data) {
   }
 });
 
-var top;
-
 d3.json("https://{{ domain }}/graph/bubble_blocked", function(data) {
   top = root = data;
   visualize(root);
@@ -94,9 +87,7 @@ d3.json("https://{{ domain }}/graph/bubble_blocked", function(data) {
 
 function visualize(root) {
   d3.selectAll("circle").remove();
-
-  depth = depth + 1;
-  
+  d3.selectAll("node").remove();
   //addPlaceholders(root);
 
   var nodes = pack.nodes(root)
@@ -124,7 +115,7 @@ function visualize(root) {
         return "blockedlinks";
       else
         return d == root ? "parent" : "child"; })
-    .attr("title", function (d) { return d.full_url });
+    .attr("title", function (d) { return d != root ? d.full_url : "" ;});
 
   $("circle").tooltip({
     'container': 'body', 
@@ -134,7 +125,7 @@ function visualize(root) {
 };
 
 function click(d) {
-console.log("clicked on "+d.full_url);
+//console.log("clicked on "+d.full_url);
 var circle_class = d3.select(this).select("circle").attr("class");
 var linked;
 var blocked;
@@ -142,21 +133,23 @@ var shiftPressed = d3.event.shiftKey;
 var ctrlPressed = d3.event.ctrlKey;
 
 if (shiftPressed || ctrlPressed) {  	
-    if (shiftPressed & ctrlPressed) {
-	    d3.select(this).select("circle").attr("class", "blockedlinks");
-	    linked = true;
-	    blocked = true;
-	}
-    else if (shiftPressed) {
-    	d3.select(this).select("circle").attr("class", "blocked"); 
-    	linked = false;
-    	blocked = true;	    
-	}
-	else {
-		d3.select(this).select("circle").attr("class", "child"); 
-    	linked = false;
-    	blocked = false;
-	}
+  if (circle_class != "parent") {  
+      if (shiftPressed & ctrlPressed) {
+  	    d3.select(this).select("circle").attr("class", "blockedlinks");
+  	    linked = true;
+  	    blocked = true;
+  	 }
+      else if (shiftPressed) {
+      	d3.select(this).select("circle").attr("class", "blocked"); 
+      	linked = false;
+      	blocked = true;	    
+  	}
+  	else {
+  		d3.select(this).select("circle").attr("class", "child"); 
+      	linked = false;
+      	blocked = false;
+  	}
+  }
 	var json = {
 	    "url": d.full_url, 
 	    "block_links": linked,
