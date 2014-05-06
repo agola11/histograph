@@ -70,7 +70,7 @@ def store_blocked_sites(request):
 
       if bs.block_links:
         hn = HistoryNode.objects.filter(user=request.user, referrer__url__regex=re, is_blocked=False)
-        delete_nodes(hn)
+        # delete_nodes(hn)
         hn.update(is_blocked=True)
 
       bs.save()
@@ -79,7 +79,7 @@ def store_blocked_sites(request):
         bs = BlockedSite.objects.get(user=request.user, url=payload['url']).delete()
         re = '^https?://' + payload['url'] + '.*'
         hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=True)
-        insert_nodes(hn)
+        # insert_nodes(hn)
         hn.update(is_blocked=False)
       except BlockedSite.DoesNotExist:
         pass
