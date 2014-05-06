@@ -4,11 +4,13 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <style type="text/css">
 
-circle {
+circle:hover {
   fill: #6D1DAA;
   stroke: #999;
   stroke-width: 0.5px;
   pointer-events: all;
+  stroke: #ff7f0e;
+  stroke-width: 2px;
 }
 
 circle.parent {
@@ -22,17 +24,14 @@ circle.child {
 circle.blocked {
   fill:#F11B38;
   fill-opacity: 0.5;
-  stroke: #ff7f0e;
-  stroke-width: 2px;
+  
 }
 
 circle.blockedlinks {
   fill:#F11B38;
-  stroke: #ff7f0e;
-  stroke-width: 2px;
 }
 
-circle.parent:hover {
+/*circle.parent:hover {
   stroke: #ff7f0e;
   stroke-width: 2px;
 }
@@ -40,7 +39,7 @@ circle.parent:hover {
 circle.child:hover {
   stroke: #ff7f0e;
   stroke-width: 2px;
-}
+}*/
 
   </style>
   </head>
@@ -86,23 +85,21 @@ d3.json("https://{{ domain }}/blocked_sites", function (error, data) {
 });
 
 d3.json("https://{{ domain }}/graph/bubble_blocked", function(data) {
-  
   node = root = data;
   visualize(root);
 });
 
 function visualize(root) {
   d3.selectAll("circle").remove();
-  d3.selectAll("text").remove();
 
   depth = depth + 1;
   
-  addPlaceholders(root);
+  //addPlaceholders(root);
 
   var nodes = pack.nodes(root)
       .filter(function(d) {return (d.parent == root || d == root) && d.r > 0.75; });
 
-  removePlaceholders(nodes);
+  //removePlaceholders(nodes);
 
   centerNodes(nodes);
 
@@ -113,10 +110,12 @@ function visualize(root) {
     .enter()
     .append("g");
 
+  console.log(node);
+
   node.append("circle")
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
-    .attr("r", function(d) {return d.r; })
+    .attr("r", function(d) {return d.parent != null ? (d.parent.children.length == 1 ?  d.r - 10 : d.r) : d.r ; })
     .attr("class", function(d) { 
       if (blocked_urls.length > 0 && blocked_urls.indexOf(d.full_url) != -1)
         return "blocked";
@@ -135,6 +134,7 @@ function visualize(root) {
 
 function click(d) {
 console.log("clicked on "+d.full_url);
+console.log(d.children);
 
 var linked;
 var blocked;
@@ -188,7 +188,7 @@ if (shiftPressed || ctrlPressed) {
       visualize(d.parent);
     }
     else if (d.depth != 0) {
-      if (d3.select(this).select("circle").attr("class") == "child")
+      if ((d3.select(this).select("circle").attr("class") == "child") && (d.children != null)) 
         visualize(d);
     }
   }

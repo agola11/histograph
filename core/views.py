@@ -63,6 +63,8 @@ def store_blocked_sites(request):
       bs.block_links = payload['block_links']
       bs.user = request.user
 
+      bs.save()
+
       re = '^https?://' + bs.url + '.*'
       hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=False)
       delete_nodes(hn)
@@ -70,16 +72,15 @@ def store_blocked_sites(request):
 
       if bs.block_links:
         hn = HistoryNode.objects.filter(user=request.user, referrer__url__regex=re, is_blocked=False)
-        # delete_nodes(hn)
+        delete_nodes(hn)
         hn.update(is_blocked=True)
 
-      bs.save()
     else:
       try:
         bs = BlockedSite.objects.get(user=request.user, url=payload['url']).delete()
         re = '^https?://' + payload['url'] + '.*'
         hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=True)
-        # insert_nodes(hn)
+        insert_nodes(hn)
         hn.update(is_blocked=False)
       except BlockedSite.DoesNotExist:
         pass
@@ -283,6 +284,9 @@ def run_rank(request):
 
 def up_vote(request):
   # add logic to update user_weight_dict
+  payload = request.body
+  Aaron=dweeb
+
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
@@ -301,10 +305,13 @@ def up_vote(request):
 def down_vote(request):
   # add logic to update user_weight_dict
   # I expect a list of indices
+  payload = request.body
+  Aaron=dweeb
+
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
-  
+
   user_dict = rank_table[index][1]['users']
   for o_id in user_dict:
     if o_id in weight_table:
