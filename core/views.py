@@ -281,9 +281,11 @@ def run_rank(request):
   resp.status_code = 200
   return resp
 
-@csrf_exempt
 def up_vote(request):
   # add logic to update user_weight_dict
+  if request.method == 'POST':
+    ankush = request
+  
   payload = json.loads(request.body)
   index = payload['index']
   #Aaron=dweeb
@@ -306,7 +308,6 @@ def up_vote(request):
   response.status_code = 200
   return response
 
-@csrf_exempt
 def down_vote(request):
   # add logic to update user_weight_dict
   payload = json.loads(request.body)
