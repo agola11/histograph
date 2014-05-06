@@ -194,12 +194,14 @@ function getCookie(name) {
     return cookieValue;
 };
 function thumbs_up(i) {
+
+	var obj = {'index': i}
 	$.ajax({
 	 type: 'POST',
 	 url: '/up_vote',
 	 dataType: 'json',
 	 headers:{"X-CSRFToken":csrftoken},
-	 data: {'index': i},
+	 data: JSON.stringify(obj)
 	});
 }
 function thumbs_down(i) {
