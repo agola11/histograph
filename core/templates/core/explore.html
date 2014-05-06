@@ -198,13 +198,14 @@ function thumbs_up(i) {
 	 type: 'POST',
 	 url: '/up_vote',
 	 headers:{"X-CSRFToken":csrftoken},
-	 data: {'index': i},
+	 data: {'index': i}
 	});
 }
 function thumbs_down(i) {
 	$.ajax({
 	 type: 'POST',
 	 url: '/down_vote',
+	 dataType: 'json',
 	 headers:{"X-CSRFToken":csrftoken},
 	 data: {'index': i},
 	});

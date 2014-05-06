@@ -283,9 +283,10 @@ def run_rank(request):
 
 def up_vote(request):
   # add logic to update user_weight_dict
-  payload = request.body
-  Aaron=dweeb
+  if request.method == 'POST':
+    index = request.POST['index']
 
+  index = int(index)
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
@@ -299,14 +300,18 @@ def up_vote(request):
 
   user.weight_table = weight_table
   user.save()
-  return HttpResponse()
+
+  response = HttpResponse()
+  response.status_code = 200
+  return response
 
 def down_vote(request):
   # add logic to update user_weight_dict
-  # I expect a list of indices
-  payload = request.body
-  Aaron=dweeb
 
+  if request.method == 'POST':
+    index = request.POST['index']
+
+  index = int(index)
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
@@ -320,7 +325,10 @@ def down_vote(request):
 
   user.weight_table = weight_table
   user.save()
-  return HttpResponse()
+
+  response = HttpResponse()
+  response.status_code = 200
+  return response
 
 def send_ranked_urls_u(request, user_id):
   #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
