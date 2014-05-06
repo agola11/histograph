@@ -160,7 +160,7 @@ function createVisualization(root) {
   // For efficiency, filter nodes to keep only those large enough to see.
   var nodes = partition.nodes(root)
       .filter(function(d) {
-      return (d.dx > 0.01); // 0.005 radians = 0.29 degrees
+      return (d.dx > 0.01 && !(d.is_dummy && d.parent.gchildren.length == 1)); // 0.005 radians = 0.29 degrees
       });
 
   var innerr = Math.sqrt(nodes[1].y);
@@ -176,7 +176,7 @@ function createVisualization(root) {
     .attr("display", function(d) { return d.depth ? null : "none"; })
     .attr("d", arc)
     .attr("fill-rule", "evenodd")
-    .style("fill", function(d) { return (d.gchildren) ? colors((d.children ? d : d.parent).name) : "black"; })
+    .style("fill", function(d) { return ((d.gchildren && d.gchildren.length == 1 && d.gchildren[0].is_dummy) || (!d.gchildren && d.is_dummy)) ? "black" : colors((d.children ? d : d.parent).name); })
     .style("opacity", 1)
     .on("mouseover", mouseover)
     .on("click", clickdown);
@@ -200,11 +200,11 @@ function createVisualization(root) {
 
 function clickdown(d)
 {
-  if (d.gchildren) {
+  if (!d.gchildren || (d.gchildren && d.gchildren.length == 1 && d.gchildren[0].is_dummy)) {
+    window.open("http://" + d.full_url, '_blank');
+  } else {
     rootd = d;
     createVisualization(rootd);
-  } else {
-    window.open("http://" + d.full_url, '_blank');
   }
 }
 
@@ -336,12 +336,21 @@ function updateBreadcrumbs(nodeArray, percentageString) {
       .selectAll("g")
       .data(nodeArray, function(d) { return d.name + d.depth; });
 
+  console.log(g)
+  console.log(g[0])
+  console.log(g[0][0])
+  console.log(g[0].length)
+  // console.log(g[0][g[0].length-1].__data__.is_dummy)
+  // if (g[0][g[0].length-1].__data__.is_dummy == true) {
+  //   // g[0] = g[0].slice(0,length-2);
+  // }
+
   // Add breadcrumb and label for entering nodes.
   var entering = g.enter().append("svg:g");
 
   entering.append("svg:polygon")
       .attr("points", breadcrumbPoints)
-      .style("fill", function(d) { return (d.gchildren) ? colors((d.children ? d : d.parent).name) : "black"; });
+      .style("fill", function(d) { return ((d.gchildren && d.gchildren.length == 1 && d.gchildren[0].is_dummy) || (!d.gchildren && d.is_dummy)) ? "black" : colors((d.children ? d : d.parent).name); });
 
   entering.append("svg:text")
       .attr("x", function(d) { return (getTextWidth(d.name) + 30 + b.t) / 2 })
