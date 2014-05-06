@@ -284,12 +284,9 @@ def run_rank(request):
 def up_vote(request):
   # add logic to update user_weight_dict
   if request.method == 'POST':
-    ankush = request
-  
-  payload = json.loads(request.body)
-  index = payload['index']
-  #Aaron=dweeb
+    index = request.POST['index']
 
+  index = int(index)
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
@@ -310,10 +307,11 @@ def up_vote(request):
 
 def down_vote(request):
   # add logic to update user_weight_dict
-  payload = json.loads(request.body)
-  index = payload['index']
-  #Aaron=dweeb
 
+  if request.method == 'POST':
+    index = request.POST['index']
+
+  index = int(index)
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
