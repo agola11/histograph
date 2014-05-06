@@ -9,13 +9,24 @@
 
 <!-- <div style="float:right; margin-right: 100px;" class="fb-share-button" data-href="https://histograph.us/" data-type="button"></div>
  -->
+ <div id="hoversuggest">
+   <p>Hover over the buttons and tabs to learn more about the site.</p>
+ </div>
  <div id="row">
   <div id="load" class="col-sm-12" align="center"></div>
 
   <div id="leftmenu" class="menuclosed" style="padding: 0px; transition: left 0.5s ease; -webkit-transition: left 0.5s ease;">
     <div class="btn-group-vertical">
-      <button type="button" class="btn btn-default btn-lg" onClick="loadSunburst()" id="sunburst" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you browse different sites">Sunburst</button>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadDigraph()" id="digraph" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you travel from one site to another">Digraph</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadSunburst()" id="sunburst" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you browse different sites">
+        <img src="/static/Sunburst.gif" width="32px" height="36px">
+        <div width="10px"></div>
+        Sunburst
+      </button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDigraph()" id="digraph" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you travel from one site to another">
+        <img src="/static/Digraph.gif" height="36px" width="69px">
+        <div width="10px"></div>
+        Digraph
+      </button>
       <button type="button" class="btn btn-default btn-lg" onClick="loadLineplot()" id="lineplot" data-toggle="tooltip" data-container="body" data-placement="right" title="Look at browsing patterns of your top sites over time">Line Plot</button>
       <button type="button" class="btn btn-default btn-lg" onClick="loadFriends()" id="friends" data-toggle="tooltip" data-container="body" data-placement="right" title="See which friends have a browsing history most similar to yours">Friends</button>
     </div>
@@ -46,10 +57,6 @@
 
   <div style="position:absolute; top:50%; left:20px;">
     <a id="leftButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-container="body" data-placement="right" title="View graphs on your history"></a>
-  </div>
-
-  <div style="position:absolute; top:25%; left:180px;">
-    <div id="qmark" class="qmarkcircle" style="text-align: center;" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Click on a black link to visit the site or a colored link to dive deeper">?</div>
   </div>
 </div>
 <script type="text/javascript">
