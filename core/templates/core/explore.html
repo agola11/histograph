@@ -114,6 +114,7 @@ function updateJSON() {
 		.append($("<span>")
 			.addClass("glyphicon glyphicon-thumbs-up")
 			.attr("onClick", "thumbs_up(" + i + ")")
+			.attr("id", "up" + i)
 			.css("float", "left")
 			.css("margin", "-25px 0px 0px 10px")
 			.css("cursor", "pointer")
@@ -122,6 +123,7 @@ function updateJSON() {
 			.addClass("glyphicon glyphicon-thumbs-down")
 			.css("float", "left")
 			.attr("onClick", "thumbs_down(" + i + ")")
+			.attr("id", "down" + i)
 			.css("margin", "5px 0px 0px 10px")
 			.css("cursor", "pointer")
 			)
@@ -204,6 +206,7 @@ function thumbs_up(i) {
 	 headers:{"X-CSRFToken":csrftoken},
 	 data: {'index': i}
 	});
+	$("#up" + i).css( "color", "green" );
 }
 function thumbs_down(i) {
 	$.ajax({
@@ -213,6 +216,7 @@ function thumbs_down(i) {
 	 headers:{"X-CSRFToken":csrftoken},
 	 data: {'index': i},
 	});
+	$("#down" + i).css( "color", "red" );
 }
 </script>
 {% endblock %}
