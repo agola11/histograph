@@ -77,15 +77,12 @@ var vis = d3.select("body").append("svg")
 var blocked_urls = [];
 var blocked_links = [];
 d3.json("/static/blocked_sites.json", function (error, data) {
-  console.log(data);
   data.forEach(function(d) {
     if(d['block_links'] == true)
       blocked_links.push(d.url);
     else
       blocked_urls.push(d.url);
   });
-  console.log(blocked_urls);
-  console.log(blocked_links);
 });
 
 d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
@@ -122,8 +119,6 @@ d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
       else
         return d.depth <= depth ? "parent" : "child"; });
 
-  console.log(node);
-
   node.filter(function (d) {return d.depth == depth;})
       .append("title")
       .text(function(d) { return d.name; });
@@ -140,8 +135,6 @@ d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
 });
 
 function click(d) {
-
-console.log("clicked on "+d.full_url);
 
 var linked;
 var blocked;
@@ -170,7 +163,6 @@ if (shiftPressed || ctrlPressed) {
 	    "blocked": blocked,
 	    };
 	var send = JSON.stringify(json);
-	console.log(send);
     var csrftoken = getCookie('csrftoken');
     jQuery.ajax({
         url: "http://{{ domain }}/save_blocked_site",
@@ -179,7 +171,6 @@ if (shiftPressed || ctrlPressed) {
         success: function(data, textStatus, jqXHR) {
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          console.log( jqXHR.responseText );
           return;
         },
         data: send,
@@ -198,15 +189,11 @@ function zoom(d, i) {
   var k = r / d.r / 2;
   x.domain([d.x - d.r, d.x + d.r]);
   y.domain([d.y - d.r, d.y + d.r]);
-
-  console.log("clicked on: "+d.depth);
   
   if (d.children)
     depth = d.depth + 1;
   else
     depth = d.depth;
-
-  console.log(depth);
   
   var t = vis.transition()
       .duration(d3.event.altKey ? 7500 : 750);

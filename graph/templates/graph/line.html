@@ -43,8 +43,6 @@ var width = $(window).width() - 300,
     margin = {top: width * (1/100), right: width * (2/100), bottom: height2 * 1.8, left: width * (1.5/100)},
     margin2 = {top: height + 3*margin.top, right: margin.right, bottom: margin.top, left: margin.left};
 //    );
-console.log($(window).width());
-console.log($(window).height());
 
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 
@@ -99,7 +97,6 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
   var labelVar = 'date';
   data = d3.entries(json['line_dict']);
 
-  console.log(data);
 
   data = data.sort(function(a, b) {
     return d3.ascending(a.key, b.key);  
@@ -112,7 +109,6 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
     d.date = parseDate(d.key);
   });
 
-  console.log(data);
 
   seriesData = varNames.map(function (name) {
     return {
@@ -122,8 +118,6 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
       })
     };
   });
-
-  console.log(seriesData);
 
   x.domain(d3.extent(data.map(function(d) { return d.date; })));
   y.domain([
