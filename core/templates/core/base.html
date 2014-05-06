@@ -170,10 +170,21 @@ body a {
 .btn-group-vertical>.btn, .btn-group-vertical>.btn-group, .btn-group-vertical>.btn-group>.btn {
   width: 250px;
 }
-  </style>
+
+</style>
 
 </head>
 <body>
+
+  <!-- facebook sdk code -->
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=621832427895740&version=v2.0";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
 
 <div id="root-content" class="container-fluid">
 <div class="navbar row">
@@ -194,7 +205,7 @@ body a {
 	  <li {% block install-nav %}{% endblock %}><a href="install">Download</a></li>
 	  <li {% block about-nav %}{% endblock %}><a href="about">About</a></li>
 	  <li {% block team-nav %}{% endblock %}><a href="team">Team</a></li>
-	  <li {% block settings-nav %}{% endblock %}><a href="settings">Settings</a></li>
+	  <li {% block settings-nav %}{% endblock %}><a href="settings" id="settings" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Filter sites that you don't want to see">Settings</a></li>
 	</ul>
       </div>
     </div>

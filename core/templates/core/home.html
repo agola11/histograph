@@ -7,7 +7,12 @@
 <script src="/static/bootstrap-slider.js"></script>
 <link href="/static/bootstrap-slider.css" rel="stylesheet">
 
-<div id="row">
+<!-- <div style="float:right; margin-right: 100px;" class="fb-share-button" data-href="https://histograph.us/" data-type="button"></div>
+ -->
+<div id="hoversuggest">
+  <p>Hover over the buttons and tabs to learn more about the site.</p>
+</div>
+ <div id="row">
   <div id="load" class="col-sm-12" align="center"></div>
 
   <div id="leftmenu" class="menuclosed" style="padding: 0px; transition: left 0.5s ease; -webkit-transition: left 0.5s ease;">
@@ -46,7 +51,6 @@
     <a id="leftButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-container="body" data-placement="right" title="View graphs on your history"></a>
   </div>
 </div>
-
 <script type="text/javascript">
 // load graphs on click
 
@@ -178,6 +182,7 @@ $(document).ready(function(){
   $('#friends').tooltip(); 
   $('#explore').tooltip(); 
   $('#graphs').tooltip(); 
+  $('#settings').tooltip(); 
 });
 </script>
 
