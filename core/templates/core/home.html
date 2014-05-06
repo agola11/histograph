@@ -40,13 +40,14 @@
   <div id="leftmenu_over">
   </div>
 
-  <div id="rightmenu" class="menuclosed" style="padding: 20px; transition: right 0.5s ease; -webkit-transition: right 0.5s ease;">
-    <div class="btn-group-horizontal">
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1w">1w</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1m">1m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="3m">3m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="6m">6m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1y">1y</button>
+  <div id="rightmenu" class="menuclosed" style="padding: 0px; transition: right 0.5s ease; -webkit-transition: right 0.5s ease;">
+    <div class="btn-group-vertical">
+      <span class="btn btn-default btn-lg">Look at the previous: </span>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1w">1 week</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1m">1 month</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="3m">3 months</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="6m">6 months</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1y">1 year</button>
     </div>
     <!-- <div>
       <input type="text" class="dateslider" value="" data-slider-min="0" data-slider-max="300" data-slider-step="1" data-slider-value="[0,7]" data-slider-orientation="vertical">
