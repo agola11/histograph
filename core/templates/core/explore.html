@@ -176,10 +176,28 @@ $(document).ready(function(){
 </script>
 
 <script type="text/javascript">
+
+var csrftoken = getCookie('csrftoken');
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
 function thumbs_up(i) {
 	$.ajax({
 	 type: 'POST',
 	 url: '/up_vote',
+	 headers:{"X-CSRFToken":csrftoken},
 	 data: {'index': i},
 	});
 }
@@ -187,6 +205,7 @@ function thumbs_down(i) {
 	$.ajax({
 	 type: 'POST',
 	 url: '/down_vote',
+	 headers:{"X-CSRFToken":csrftoken},
 	 data: {'index': i},
 	});
 }
