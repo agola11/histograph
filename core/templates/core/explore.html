@@ -54,9 +54,6 @@ function updateJSON() {
 			title = jsonResp[i][1]['last_title'];
 		}
 		else title = jsonResp[i][0];
-		if (i == 89) {
-			console.log(truncate(title));
-		}
 		if (jsonResp[i][0].indexOf("&") > -1) {
 			url = 'broken_link'
 		}

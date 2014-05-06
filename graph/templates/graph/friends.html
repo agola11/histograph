@@ -58,7 +58,6 @@ var svg = d3.select("#load").append("svg")
 var root;
 
 d3.json("https://{{ domain }}/graph/friendsdata", function(error, graph) {
-    console.log(graph);
     
     graph.nodes[0].fixed = true;
     graph.nodes[0].x = width / 2;
@@ -84,8 +83,6 @@ d3.json("https://{{ domain }}/graph/friendsdata", function(error, graph) {
       .enter().append("g")
         .call(force.drag)
         .on("click", click);
-
-    console.log(node);
 
     node.append("image")
       .attr("class", "pic")
