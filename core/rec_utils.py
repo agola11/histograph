@@ -73,7 +73,7 @@ class UrlGraph:
 				if DUMMY in child.gchildren:
 					child.gchildren[DUMMY].node_count += 1
 				else:
-					dummy_node = GraphNode('dummy' 1, level+1, '/'.join(hn.url[:level]))
+					dummy_node = GraphNode('dummy', 1, level+1, '/'.join(hn.url[:level]))
 					dummy_node.is_dummy = True
 					child.gchildren[DUMMY] = dummy_node
 			curr_root.gchildren[url_snip] = child
@@ -87,7 +87,7 @@ class UrlGraph:
 					if DUMMY in child.gchildren:
 						child.gchildren[DUMMY].node_count += 1
 					else:
-						dummy_node = GraphNode('dummy' 1, level+1, '/'.join(hn.url[:level]))
+						dummy_node = GraphNode('dummy', 1, level+1, '/'.join(hn.url[:level]))
 						dummy_node.is_dummy = True
 						child.gchildren[DUMMY] = dummy_node
 				curr_root.gchildren[url_snip] = child
@@ -101,7 +101,7 @@ class UrlGraph:
 					if DUMMY in child.gchildren:
 						child.gchildren[DUMMY].node_count += 1
 					else:
-						dummy_node = GraphNode('dummy' 1, level+1, '/'.join(hn.url[:level]))
+						dummy_node = GraphNode('dummy', 1, level+1, '/'.join(hn.url[:level]))
 						dummy_node.is_dummy = True
 						child.gchildren[DUMMY] = dummy_node
 	
