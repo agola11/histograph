@@ -64,7 +64,7 @@ var pack = d3.layout.pack()
     .sort(d3.descending)
     .children(function(d) { return d.gchildren; })
     .value(function(d) { return d.node_count; })
-    .padding(20);
+    .padding(5);
 
 var vis = d3.select("body").append("svg")
     .attr("width", w)
@@ -123,11 +123,12 @@ function visualize(root) {
       else if (blocked_links.indexOf(d.full_url) != -1)
         return "blockedlinks";
       else
-        return d == root ? "parent" : "child"; });
+        return d == root ? "parent" : "child"; })
+    .attr("title", function (d) { return d.full_url });
 
-  node.filter(function(d) {return d != root; })
-      .append("title")
-      .text(function(d) { return d.name; });
+  $("circle").tooltip({
+    'container': 'body', 
+    'placement': 'top'});
 
   node.on("click", click);
 };
