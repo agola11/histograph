@@ -49,12 +49,19 @@ function updateJSON() {
 	for (i = base; i < base+50; i++) {
 		var title;
 		var color;
+		var url;
 		if (jsonResp[i][1]['last_title']) {
 			title = jsonResp[i][1]['last_title'];
 		}
 		else title = jsonResp[i][0];
 		if (i == 89) {
 			console.log(truncate(title));
+		}
+		if (jsonResp[i][0].indexOf("&") > -1) {
+			url = 'broken_link'
+		}
+		else {
+			url = "http://" + jsonResp[i][0]
 		}
 		color = "rgb(" + (241 - i) + "," + (27 + i) + "," + (56 + i) + ")";
 		// if (parseFloat(jsonResp[i][1]['score']) > 150) {
@@ -85,7 +92,7 @@ function updateJSON() {
 			.text(i + 1)
 			)
 		.append($("<a>")
-			.attr("href", "http://" + jsonResp[i][0])
+			.attr("href", url)
 			.attr("target", "_blank")
 			.append($("<h4>")
 				.css("float", "left")
