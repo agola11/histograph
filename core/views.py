@@ -283,6 +283,9 @@ def run_rank(request):
 
 def up_vote(request):
   # add logic to update user_weight_dict
+  payload = request.body
+  Aaron=dweeb
+
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
@@ -301,10 +304,13 @@ def up_vote(request):
 def down_vote(request):
   # add logic to update user_weight_dict
   # I expect a list of indices
+  payload = request.body
+  Aaron=dweeb
+
   user = request.user
   rank_table = user.rank_table
   weight_table = user.weight_table
-  
+
   user_dict = rank_table[index][1]['users']
   for o_id in user_dict:
     if o_id in weight_table:
