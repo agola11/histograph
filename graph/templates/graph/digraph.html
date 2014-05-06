@@ -41,7 +41,25 @@ var svg = d3.select("#load").append("svg")
 loadData();
 
 function loadData(starttime, endtime) {
-  d3.json("https://{{ domain }}/graph/digraphdata", function(error, graph) {
+  var url;
+
+  if ($("#1w").hasClass("active")) {
+    url = "https://{{ domain }}/graph/digraphdata/1w";
+  }
+  else if ($("#1m").hasClass("active")) {
+    url = "https://{{ domain }}/graph/digraphdata/1m";
+  }
+  else if ($("#3m").hasClass("active")) {
+    url = "https://{{ domain }}/graph/digraphdata/3m";
+  }
+  else if ($("#6m").hasClass("active")) {
+    url = "https://{{ domain }}/graph/digraphdata/6m";
+  }
+  else if ($("#1y").hasClass("active")) {
+    url = "https://{{ domain }}/graph/digraphdata/1y";
+  }
+
+  d3.json(url, function(error, graph) {
     force
         .nodes(graph.nodes)
         .links(graph.links)

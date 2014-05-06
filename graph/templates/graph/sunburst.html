@@ -112,10 +112,37 @@ var rootd;
 loadData();
 
 function loadData() {
-  d3.json("https://{{ domain }}/graph/bubble", function(error, data) {
-      rootd = data;
-      createVisualization(data);
-  });
+  console.log("in load data");
+  if ($("#1w").hasClass("active")) {
+    d3.json("https://{{ domain }}/graph/bubble/1w", function(error, data) {
+        rootd = data;
+        createVisualization(data);
+    });
+  }
+  else if ($("#1m").hasClass("active")) {
+    d3.json("https://{{ domain }}/graph/bubble/1m", function(error, data) {
+        rootd = data;
+        createVisualization(data);
+    });
+  }
+  else if ($("#3m").hasClass("active")) {
+    d3.json("https://{{ domain }}/graph/bubble/3m", function(error, data) {
+        rootd = data;
+        createVisualization(data);
+    });
+  }
+  else if ($("#6m").hasClass("active")) {
+    d3.json("https://{{ domain }}/graph/bubble/6m", function(error, data) {
+        rootd = data;
+        createVisualization(data);
+    });
+  }
+  else if ($("#1y").hasClass("active")) {
+    d3.json("https://{{ domain }}/graph/bubble/1y", function(error, data) {
+        rootd = data;
+        createVisualization(data);
+    });
+  }
 }
 
 // Main function to draw and set up the visualization, once we have the data.
@@ -135,6 +162,8 @@ function createVisualization(root) {
       .filter(function(d) {
       return (d.dx > 0.01); // 0.005 radians = 0.29 degrees
       });
+
+  console.log(nodes)
 
   var innerr = Math.sqrt(nodes[1].y);
 
@@ -163,6 +192,8 @@ function createVisualization(root) {
     .attr("id", "center")
     .on("mouseover", mouseleave)
     .on("click", clickup);
+
+  console.log(nodes)
 
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave) ;

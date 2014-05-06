@@ -17,6 +17,7 @@ class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
+  # new_user = models.BooelanField(default=True)
 
   # Graphs
   year_graph_http = PickledObjectField(default=None, compress=False, null=True)
@@ -33,7 +34,7 @@ class HistographUser(AbstractUser, FacebookModel):
   weight_table = PickledObjectField(default={}, compress=False, null=True)
 
   # blocked graph
-  blocked_graph = PickledObjectField(default={}, compress=False, null=True)
+  blocked_graph = PickledObjectField(default=None, compress=False, null=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -171,6 +172,9 @@ def insert_nodes(hn_list):
 
   hn_list = filter(lambda node: not node.is_blocked, hn_list)
 
+  if len(hn_list) == 0:
+    return
+
   http_payload = filter(filter_http, hn_list)
   user = hn_list[0].user
   
@@ -300,7 +304,7 @@ def insert_nodes(hn_list):
   user.save()
 
 def delete_nodes(hn_list):
-  if hn_list == None:
+  if hn_list == None or len(hn_list) == 0:
     return
 
   user = hn_list[0].user

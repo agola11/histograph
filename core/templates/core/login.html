@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>Histograph | Login</title>
-	<link href="/static/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="/static/django_facebook/css/facebook.css" type="text/css" rel="stylesheet" media="all" />
 	<link href='/static/open-sans.css' rel='stylesheet' type='text/css'>
 	{% include 'django_facebook/_facebook_js.html' %}
@@ -15,10 +15,11 @@
 		<div class="row" align="center">
 			<h1>Welcome to Histograph!</h1>
 		</div>
+		<br>
 		<div class="row" align="center">
-			<img src="{{ STATIC_URL }}histograph.jpg" width="40%" height="40%">
+			<img src="{{ STATIC_URL }}Histograph-full.png" width="50%" height="50%">
 		</div>
-		<br><br>
+		<br><br><br>
 		<div class="row"><div align="center">
 		<form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
 			<input type="hidden" value="{{ request.path }}" name="next" />
