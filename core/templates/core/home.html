@@ -42,12 +42,11 @@
 
   <div id="rightmenu" class="menuclosed" style="padding: 0px; transition: right 0.5s ease; -webkit-transition: right 0.5s ease;">
     <div class="btn-group-vertical">
-      <span class="btn btn-default btn-lg">Look at the previous: </span>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1w">1 week</button>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1m">1 month</button>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="3m">3 months</button>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="6m">6 months</button>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1y">1 year</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1w" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past week">This Week</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1m" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past month">This Month</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="3m" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past three months">3 Months</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="6m" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past six months">6 Months</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1y" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past year">Past Year</button>
     </div>
     <!-- <div>
       <input type="text" class="dateslider" value="" data-slider-min="0" data-slider-max="300" data-slider-step="1" data-slider-value="[0,7]" data-slider-orientation="vertical">
