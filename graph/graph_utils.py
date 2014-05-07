@@ -117,6 +117,7 @@ def send_line_plot(hn_list):
 
 def send_digraph(hn_list):
     hn_list = filter(filter_http, hn_list)
+    hn_list = filter(lambda hn: hn.referrer == None or hn.url != hn.referrer.url, hn_list)
     domains = map(lambda hn: tldextract.extract(hn.url).domain, hn_list)
     domains = list(OrderedDict.fromkeys(domains, 0))
     hn_list = map(chop_protocol, hn_list)

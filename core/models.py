@@ -351,8 +351,8 @@ def delete_nodes(hn_list):
   with transaction.atomic():
     for node in hn_list:
       node.save()
-  
-  user.save()  
+
+  user.save()
 
 def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
