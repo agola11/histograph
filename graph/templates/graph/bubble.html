@@ -5,8 +5,13 @@
     <style type="text/css">
 
 .tooltip-inner {
-  max-width: 800px;
-  width: auto;
+  max-width: 1000px;
+}
+
+.tooltip-content {
+  width:100%;
+  overflow: hidden;
+  overflow: ellipsis
 }
 
 circle:hover {
@@ -115,7 +120,7 @@ function visualize(root) {
         return "blockedlinks";
       else
         return d == root ? "parent" : "child"; })
-    .attr("title", function (d) { return d != root ? d.full_url : "" ;});
+    .attr("title", function (d) { return d != root ? d.name : d.full_url ;});
 
   $("circle").tooltip({
     'container': 'body', 
@@ -156,14 +161,18 @@ if (shiftPressed || ctrlPressed) {
 	    "blocked": blocked,
 	    };
 	var send = JSON.stringify(json);
+	console.log(send);
     var csrftoken = getCookie('csrftoken');
     jQuery.ajax({
         url: "https://{{ domain }}/save_blocked_site",
         headers:{"X-CSRFToken":csrftoken},
         type:"POST",
         success: function(data, textStatus, jqXHR) {
+          console.log("success");
         },
         error: function(jqXHR, textStatus, errorThrown) {
+          console.log( jqXHR.responseText );
+          console.log("error");
           return;
         },
         data: send,

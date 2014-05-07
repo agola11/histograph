@@ -3,7 +3,13 @@
 {% block settings-nav %}class="active"{% endblock %}
 
 {% block content %}
-
+<div style="position:absolute; top:25%; right:90px;">
+  <div id="qmark" class="qmarkcircle" style="text-align: left" data-toggle="tooltip" data-container="body" data-html=true data-placement="bottom" title="
+     <p><font color=#f11b38>Click</font> on a bubble to view sub-domains (e.g. www.google.com/maps)</p>
+     <p><font color=#f11b38 weight=thicker>Shift-Click</font> on a bubble to block that domain or sub-domain and all sub-domains from being used by Histograph.</p>
+     <p><font color=#f11b38>Ctrl-Shift-Click</font> on a bubble to block a sub-domain and all sites visited from links on that site.</p>
+     <p><font color=#f11b38>Ctrl-Click</font> on a bubble to unblock that sub-domain.</p>" >Help?</div>
+</div>
 <div id="load" class="col-sm-12" align="center"></div>
  <div id ="legend" class="col-md-3 affix pull-left">
    <!-- <p>This page helps you filter to URLs which you want to be used by Histograph</p>
@@ -68,6 +74,7 @@
       .text(function(d) {
           return d[0];
       });
+  $('#qmark').tooltip('hide');
   $("#load").load("../graph/circle");
 </script>
 {% endblock %}
