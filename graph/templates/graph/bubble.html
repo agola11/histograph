@@ -156,18 +156,14 @@ if (shiftPressed || ctrlPressed) {
 	    "blocked": blocked,
 	    };
 	var send = JSON.stringify(json);
-	console.log(send);
     var csrftoken = getCookie('csrftoken');
     jQuery.ajax({
         url: "https://{{ domain }}/save_blocked_site",
         headers:{"X-CSRFToken":csrftoken},
         type:"POST",
         success: function(data, textStatus, jqXHR) {
-          console.log("success");
         },
         error: function(jqXHR, textStatus, errorThrown) {
-          console.log( jqXHR.responseText );
-          console.log("error");
           return;
         },
         data: send,

@@ -131,8 +131,6 @@
             seriesData.push(d);
         }); 
 
-        console.log(seriesData);
-
         x.domain(d3.extent(data, function(d) { return d.date; }));
         y.domain([
           d3.min(seriesData, function (c) { 

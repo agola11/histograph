@@ -9,31 +9,44 @@
 
 <!-- <div style="float:right; margin-right: 100px;" class="fb-share-button" data-href="https://histograph.us/" data-type="button"></div>
  -->
- <div id="hoversuggest">
-   <p>Hover over the buttons and tabs to learn more about the site.</p>
- </div>
  <div id="row">
   <div id="load" class="col-sm-12" align="center"></div>
 
   <div id="leftmenu" class="menuclosed" style="padding: 0px; transition: left 0.5s ease; -webkit-transition: left 0.5s ease;">
     <div class="btn-group-vertical">
-      <button type="button" class="btn btn-default btn-lg" onClick="loadSunburst()" id="sunburst" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you browse different sites">Sunburst</button>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadDigraph()" id="digraph" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you travel from one site to another">Digraph</button>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadLineplot()" id="lineplot" data-toggle="tooltip" data-container="body" data-placement="right" title="Look at browsing patterns of your top sites over time">Line Plot</button>
-      <button type="button" class="btn btn-default btn-lg" onClick="loadFriends()" id="friends" data-toggle="tooltip" data-container="body" data-placement="right" title="See which friends have a browsing history most similar to yours">Friends</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadSunburst()" id="sunburst" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you browse different sites">
+        <img src="/static/Sunburst_light.gif" width="32px" height="36px">
+        <div width="10px"></div>
+        Sunburst
+      </button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDigraph()" id="digraph" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you travel from one site to another">
+        <img src="/static/Digraph.gif" height="36px" width="69px">
+        <div width="10px"></div>
+        Digraph
+      </button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadLineplot()" id="lineplot" data-toggle="tooltip" data-container="body" data-placement="right" title="Look at browsing patterns of your top sites over time">
+        <img src="/static/Line.gif" height="36px" width="65px">
+        <div width="10px"></div>
+        Line Plot
+      </button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadFriends()" id="friends" data-toggle="tooltip" data-container="body" data-placement="right" title="See which friends have a browsing history most similar to yours">
+        <img src="/static/Friends.gif" height="36px" width="95px">
+        <div width="10px"></div>
+        Friends
+      </button>
     </div>
   </div>
 
   <div id="leftmenu_over">
   </div>
 
-  <div id="rightmenu" class="menuclosed" style="padding: 20px; transition: right 0.5s ease; -webkit-transition: right 0.5s ease;">
-    <div class="btn-group-horizontal">
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1w">1w</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1m">1m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="3m">3m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="6m">6m</button>
-      <button type="button" class="btn btn-default btn-sm" onClick="loadDates()" id="1y">1y</button>
+  <div id="rightmenu" class="menuclosed" style="padding: 0px; transition: right 0.5s ease; -webkit-transition: right 0.5s ease;">
+    <div class="btn-group-vertical">
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1w" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past week">This Week</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1m" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past month">This Month</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="3m" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past three months">3 Months</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="6m" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past six months">6 Months</button>
+      <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1y" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past year">Past Year</button>
     </div>
     <!-- <div>
       <input type="text" class="dateslider" value="" data-slider-min="0" data-slider-max="300" data-slider-step="1" data-slider-value="[0,7]" data-slider-orientation="vertical">
@@ -51,6 +64,10 @@
     <a id="leftButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-container="body" data-placement="right" title="View graphs on your history"></a>
   </div>
 </div>
+
+<div style="position:absolute; top:25%; left:90px;">
+<div id="qmark" class="qmarkcircle" style="text-align: center;" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Click on a black link to visit the site or a colored link to dive deeper">?</div>
+</div>
 <script type="text/javascript">
 // load graphs on click
 
@@ -58,24 +75,34 @@ var graph_state = 'sunburst';
 
 function loadSunburst() {
   $("#load").load("../graph/sunburst");
+  console.log("loading sunburst");
+  $('#qmark').tooltip('hide')
+          .attr('data-original-title', 'Click on a black link to visit the site or a colored link to dive deeper')
+          .tooltip('fixTitle')
   graph_state = 'sunburst';
-  $('.dateslider').on('slideStop', loadSunburst);
 }
 
 function loadDigraph() {
   $("#load").load("../graph/digraph");
+  $('#qmark').tooltip('hide')
+          .attr('data-original-title', 'Examine the nodes to see how you travel from one site to another, and look at the links to see how you got there')
+          .tooltip('fixTitle')
   graph_state = 'digraph';
-  $('.dateslider').on('slideStop', loadDigraph);
 }
 
 function loadLineplot() {
   $("#load").load("../graph/lineplot");
+  $('#qmark').tooltip('hide')
+          .attr('data-original-title', 'Hover over the top plot to see visits per day to your favorite sites. Zoom in by dragging the crosshairs in the bottom plot.')
+          .tooltip('fixTitle')
   graph_state = 'lineplot';
-  $('.dateslider').on('slideStop', loadLineplot);
 }
 
 function loadFriends() {
   $("#load").load("../graph/friends");
+  $('#qmark').tooltip('hide')
+          .attr('data-original-title', 'The shorter the line, the more similar you are')
+          .tooltip('fixTitle')
   graph_state = 'friends';  
 }
 
@@ -151,18 +178,6 @@ $(document).ready(function(){
           $('#rightmenu_over').hide();
       };
   }
-
-  $('.dateslider').slider({
-    formater: function(value) {
-      var date = new Date();
-      date.setDate(date.getDate() - value);
-      var d = date.getDate();
-      var m = date.getMonth() + 1;
-      var y = date.getFullYear();
-
-      return m + '/' + d + '/' + y;
-    }
-  });
 
   loadSunburst();
 

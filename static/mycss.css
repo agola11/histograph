@@ -67,6 +67,18 @@ div.explore_div>a {
 	padding-top: 8px;
 }
 
+.qmarkcircle {
+	width: 40px;
+	height: 40px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px; 
+	background: rgba(109, 29, 170, 0.69);
+	color: #fff;
+	font-size: 16px;
+	padding-top: 8px;
+}
+
 .score_circle {
 	width: 50px;
 	height: 50px;
