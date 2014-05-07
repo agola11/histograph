@@ -438,7 +438,7 @@ def create_history_nodes_from_json(payload, user):
 def update_rank_tables():
   user_set = HistographUser.objects.all()
   # update rank tables and save user
-  for user in user_set:
+  for user in user_set.iterator():
     # get a list of previously seen urls
     user_urls = HistoryNode.objects.filter(user__id=user.id)
     user_urls = map(strip_scheme, user_urls)
