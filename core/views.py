@@ -324,7 +324,7 @@ def down_vote(request):
   user_dict = rank_table[index][1]['users']
   for o_id in user_dict:
     if o_id in weight_table:
-      weight_table[o_id] += user_dict[o_id]
+      weight_table[o_id] -= user_dict[o_id]
     else:
       weight_table[o_id] = user_dict[o_id]
 
