@@ -1,7 +1,7 @@
 from __future__ import division
 from urlparse import urlparse
 from django.http import Http404
-from math import log, sqrt
+from math import log, sqrt, exp, e
 import copy
 try:
     from collections import OrderedDict
@@ -167,8 +167,10 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		return
 	# if other's root has a last_title (meaning full_url), put the url in the rank_table
 	if g.last_title != None:
+		'''
 		if o_id in weight_table:
 			prev_score = prev_score + weight_table[o_id]*prev_score
+		'''
 		if g.full_url not in rank_table:
 			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title, 'users': {o_id:prev_score}}
 		else:
@@ -182,7 +184,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 	if ug == None or ug.gchildren == None:
 		if prev_bd > 0.001:
 			for child in g.gchildren.values():
-				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.001, prev_score+prev_bd, rank_table, o_id, weight_table)
+				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.005, prev_score+prev_bd, rank_table, o_id, weight_table)
 		else:
 			return
 	else:
@@ -200,10 +202,12 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 			for key in g.gchildren:
 				if key not in ug.gchildren:
 					ug_child = None
+					f_u = 0
 				else:
 					ug_child = ug.gchildren[key]
+					f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
 				g_child = g.gchildren[key]
-				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table, o_id, weight_table)
+				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, (prev_score+bd)*(exp(e*f_u)), rank_table, o_id, weight_table)
 
 def split(url):
 	url = url.split('/')
