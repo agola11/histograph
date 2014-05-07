@@ -236,7 +236,6 @@ function mouseover(d) {
       .style("visibility", "");
 
   var sequenceArray = getAncestors(d);
-  updateBreadcrumbs(sequenceArray, percentageString);
 
   // Fade all the segments.
   d3.selectAll("path")
@@ -248,6 +247,11 @@ function mouseover(d) {
                 return (sequenceArray.indexOf(node) >= 0);
               })
       .style("opacity", 1);
+
+  if (sequenceArray[sequenceArray.length - 1].is_dummy) {
+    sequenceArray = sequenceArray.slice(0,length-2);
+  }
+  updateBreadcrumbs(sequenceArray, percentageString);
 }
 
 // Restore everything to full opacity when moving off the visualization.
@@ -332,18 +336,9 @@ var ws = new Array();
 function updateBreadcrumbs(nodeArray, percentageString) {
 
   // Data join; key function combines name and depth (= position in sequence).
-  var g = d3.select("#trail")
+  g = d3.select("#trail")
       .selectAll("g")
       .data(nodeArray, function(d) { return d.name + d.depth; });
-
-  console.log(g)
-  console.log(g[0])
-  console.log(g[0][0])
-  console.log(g[0].length)
-  // console.log(g[0][g[0].length-1].__data__.is_dummy)
-  // if (g[0][g[0].length-1].__data__.is_dummy == true) {
-  //   // g[0] = g[0].slice(0,length-2);
-  // }
 
   // Add breadcrumb and label for entering nodes.
   var entering = g.enter().append("svg:g");

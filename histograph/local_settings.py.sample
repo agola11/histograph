@@ -12,4 +12,7 @@ DATABASES = {
     }
 }
 
-DEBUG = True
+# SECURITY WARNING: don't run with debug turned on in production!
+TEMPLATE_DEBUG = True
+
+DEBUG = False

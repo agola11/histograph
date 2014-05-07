@@ -24,9 +24,6 @@ except ImportError:
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '+2qq7qat+a9xyps@_iw!x)8a+=nu=0bpqvgo6y9ujhtw*g$t3c'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = [
     '.histograph.us', # Allow domain and subdomains
     '.histograph.us.', # Also allow FQDN and subdomains
