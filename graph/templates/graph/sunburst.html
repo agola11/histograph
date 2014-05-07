@@ -112,7 +112,6 @@ var rootd;
 loadData();
 
 function loadData() {
-  console.log("in load data");
   if ($("#1w").hasClass("active")) {
     d3.json("https://{{ domain }}/graph/bubble/1w", function(error, data) {
         rootd = data;
@@ -163,8 +162,6 @@ function createVisualization(root) {
       return (d.dx > 0.01); // 0.005 radians = 0.29 degrees
       });
 
-  console.log(nodes)
-
   var innerr = Math.sqrt(nodes[1].y);
 
   d3.select("#explanation")
@@ -192,8 +189,6 @@ function createVisualization(root) {
     .attr("id", "center")
     .on("mouseover", mouseleave)
     .on("click", clickup);
-
-  console.log(nodes)
 
   // Add the mouseleave handler to the bounding circle.
   d3.select("#container").on("mouseleave", mouseleave) ;

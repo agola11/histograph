@@ -16,6 +16,28 @@
   <link href="/static/open-sans.css" rel="stylesheet" type="text/css">
   <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+  <script type="text/javascript">
+    //hook up tooltips
+    $(document).ready(function(){
+      $('#leftButton').tooltip();
+      $('#rightButton').tooltip();
+      $('#sunburst').tooltip();
+      $('#digraph').tooltip();
+      $('#lineplot').tooltip();
+      $('#friends').tooltip();
+      $('#explore').tooltip();
+      $('#graphs').tooltip();
+      $('#settings').tooltip();
+      $('#qmark').tooltip();
+      $('#1w').tooltip();
+      $('#1m').tooltip();
+      $('#3m').tooltip();
+      $('#6m').tooltip();
+      $('#1y').tooltip();
+    });
+  </script>
+
+
   <style type="text/css">
 
 .alignleft {
@@ -215,4 +237,5 @@ body a {
 {% block content %}{% endblock %}
 
 </body>
+
 </html>

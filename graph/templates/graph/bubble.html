@@ -4,6 +4,16 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <style type="text/css">
 
+.tooltip-inner {
+  max-width: 1000px;
+}
+
+.tooltip-content {
+  width:100%;
+  overflow: hidden;
+  overflow: ellipsis
+}
+
 circle:hover {
   fill: #6D1DAA;
   stroke: #999;
@@ -31,16 +41,6 @@ circle.blockedlinks {
   fill:#F11B38;
 }
 
-/*circle.parent:hover {
-  stroke: #ff7f0e;
-  stroke-width: 2px;
-}
-
-circle.child:hover {
-  stroke: #ff7f0e;
-  stroke-width: 2px;
-}*/
-
   </style>
   </head>
   <body>
@@ -64,7 +64,7 @@ var pack = d3.layout.pack()
     .sort(d3.descending)
     .children(function(d) { return d.gchildren; })
     .value(function(d) { return d.node_count; })
-    .padding(20);
+    .padding(5);
 
 var vis = d3.select("body").append("svg")
     .attr("width", w)
@@ -85,8 +85,6 @@ d3.json("https://{{ domain }}/blocked_sites", function (error, data) {
   }
 });
 
-var top;
-
 d3.json("https://{{ domain }}/graph/bubble_blocked", function(data) {
   top = root = data;
   visualize(root);
@@ -94,9 +92,7 @@ d3.json("https://{{ domain }}/graph/bubble_blocked", function(data) {
 
 function visualize(root) {
   d3.selectAll("circle").remove();
-
-  depth = depth + 1;
-  
+  d3.selectAll("node").remove();
   //addPlaceholders(root);
 
   var nodes = pack.nodes(root)
@@ -123,17 +119,18 @@ function visualize(root) {
       else if (blocked_links.indexOf(d.full_url) != -1)
         return "blockedlinks";
       else
-        return d == root ? "parent" : "child"; });
+        return d == root ? "parent" : "child"; })
+    .attr("title", function (d) { return d != root ? d.name : d.full_url ;});
 
-  node.filter(function(d) {return d != root; })
-      .append("title")
-      .text(function(d) { return d.name; });
+  $("circle").tooltip({
+    'container': 'body', 
+    'placement': 'top'});
 
   node.on("click", click);
 };
 
 function click(d) {
-console.log("clicked on "+d.full_url);
+//console.log("clicked on "+d.full_url);
 var circle_class = d3.select(this).select("circle").attr("class");
 var linked;
 var blocked;
@@ -141,21 +138,23 @@ var shiftPressed = d3.event.shiftKey;
 var ctrlPressed = d3.event.ctrlKey;
 
 if (shiftPressed || ctrlPressed) {  	
-    if (shiftPressed & ctrlPressed) {
-	    d3.select(this).select("circle").attr("class", "blockedlinks");
-	    linked = true;
-	    blocked = true;
-	}
-    else if (shiftPressed) {
-    	d3.select(this).select("circle").attr("class", "blocked"); 
-    	linked = false;
-    	blocked = true;	    
-	}
-	else {
-		d3.select(this).select("circle").attr("class", "child"); 
-    	linked = false;
-    	blocked = false;
-	}
+  if (circle_class != "parent") {  
+      if (shiftPressed & ctrlPressed) {
+  	    d3.select(this).select("circle").attr("class", "blockedlinks");
+  	    linked = true;
+  	    blocked = true;
+  	 }
+      else if (shiftPressed) {
+      	d3.select(this).select("circle").attr("class", "blocked"); 
+      	linked = false;
+      	blocked = true;	    
+  	}
+  	else {
+  		d3.select(this).select("circle").attr("class", "child"); 
+      	linked = false;
+      	blocked = false;
+  	}
+  }
 	var json = {
 	    "url": d.full_url, 
 	    "block_links": linked,
@@ -264,7 +263,7 @@ function makePositionsRelativeToZero( nodes ) {
         node.x -= offsetX;
         node.y -= offsetY;
     }
-};
+}; 
 </script>
 </body>
 </html>
