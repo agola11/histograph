@@ -112,7 +112,6 @@ var rootd;
 loadData();
 
 function loadData() {
-  console.log("in load data");
   if ($("#1w").hasClass("active")) {
     d3.json("https://{{ domain }}/graph/bubble/1w", function(error, data) {
         rootd = data;

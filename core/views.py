@@ -194,6 +194,11 @@ def login(request):
   context = RequestContext(request)
   return HttpResponse(template.render(context))
 
+def broken_link(request):
+  template = loader.get_template('core/broken_link.html')
+  context = RequestContext(request)
+  return HttpResponse(template.render(context))
+
 def logout(request):
   django_logout(request)
   return redirect(login)

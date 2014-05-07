@@ -3,31 +3,78 @@
 {% block settings-nav %}class="active"{% endblock %}
 
 {% block content %}
-
+<div style="position:absolute; top:25%; right:90px;">
+  <div id="qmark" class="qmarkcircle" style="text-align: left" data-toggle="tooltip" data-container="body" data-html=true data-placement="bottom" title="
+     <p><font color=#f11b38>Click</font> on a bubble to view sub-domains (e.g. www.google.com/maps)</p>
+     <p><font color=#f11b38 weight=thicker>Shift-Click</font> on a bubble to block that domain or sub-domain and all sub-domains from being used by Histograph.</p>
+     <p><font color=#f11b38>Ctrl-Shift-Click</font> on a bubble to block a sub-domain and all sites visited from links on that site.</p>
+     <p><font color=#f11b38>Ctrl-Click</font> on a bubble to unblock that sub-domain.</p>" >Help?</div>
+</div>
 <div id="load" class="col-sm-12" align="center"></div>
-<div class="row">
- <div class="col-md-4 affix pull-left">
-   
-   <p>This page helps you filter to URLs which you want to be used by Histograph</p>
+ <div id ="legend" class="col-md-3 affix pull-left">
+   <!-- <p>This page helps you filter to URLs which you want to be used by Histograph</p>
    <p>The following graph shows all top-level domains which you have visited (e.g. www.google.com)</p>
    <ul>
      <li><font color="#f11b38">Click</font> on a bubble to view sub-domains (e.g. www.google.com/maps)</li>
      <li><font color="#f11b38" weight="thicker">Shift-Click</font> on a bubble to block that domain or sub-domain and all sub-domains from being used by Histograph.</li>
      <li><font color="#f11b38">Ctrl-Shift-Click</font> on a bubble to block a sub-domain and all sites visited from links on that site.</li>
      <li><font color="#f11b38">Ctrl-Click</font> on a bubble to unblock that sub-domain.</li>
-   </ul>
+   </ul> -->
+ </div> 
+ 
  </div>
-<!--
- <div class="col-md-3 pull-right">
-   <p><u> Legend </u> </p>
-     <p><font color="#6D1DAA"><b>Sub-Domain Used by Histrograph</font></p>
-     <p><font color="#f11b38"><b>Sub-Domain Blocked</font></p>
-     <p><font color="#f11b38"><b>Sub-Domain and all links blocked</font></p>
- </div>
--->
-</div>
 
 <script type="text/javascript">
+  
+  colors = [["Unblocked", "#6D1DAA"], ["Blocked Site", "#ED7998"], ["Blocked Site and Links", "#F11B38"]];
+
+  var margin = {top: 25, right: 40, bottom: 35, left: 85},
+        w = 250,
+        h = 250;
+
+  var svg = d3.select("#legend")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h)
+      .append("g")
+      .attr("transform", "translate(20,25)");
+
+  var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("height", 100)
+    .attr("width", 100)
+    .attr('transform', 'translate(20,25)');
+
+  var legendRect = legend.selectAll('rect').data(colors);
+
+  legendRect.enter()
+      .append("rect")
+      .attr("x", w - 250)
+      .attr("width", 10)
+      .attr("height", 10);
+
+  legendRect
+      .attr("y", function(d, i) {
+          return i * 20;
+      })
+      .style("fill", function(d) {
+          return d[1];
+      });
+
+  var legendText = legend.selectAll('text').data(colors);
+
+  legendText.enter()
+      .append("text")
+      .attr("x", w - 230);
+
+  legendText
+      .attr("y", function(d, i) {
+          return i * 20 + 9;
+      })
+      .text(function(d) {
+          return d[0];
+      });
+  $('#qmark').tooltip('hide');
   $("#load").load("../graph/circle");
 </script>
 {% endblock %}
