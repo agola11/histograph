@@ -66,7 +66,7 @@
   </div>
 </div>
 
-<div style="position:absolute; top:25%; left:180px;">
+<div style="position:absolute; top:25%; left:90px;">
 <div id="qmark" class="qmarkcircle" style="text-align: center;" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Click on a black link to visit the site or a colored link to dive deeper">?</div>
 </div>
 <script type="text/javascript">
@@ -76,24 +76,34 @@ var graph_state = 'sunburst';
 
 function loadSunburst() {
   $("#load").load("../graph/sunburst");
+  console.log("loading sunburst");
+  $('#qmark').tooltip('hide')
+          .attr('data-original-title', 'Click on a black link to visit the site or a colored link to dive deeper')
+          .tooltip('fixTitle')
   graph_state = 'sunburst';
-  $('.dateslider').on('slideStop', loadSunburst);
 }
 
 function loadDigraph() {
   $("#load").load("../graph/digraph");
+  $('#qmark').tooltip('hide')
+          .attr('data-original-title', 'Examine the nodes to see how you travel from one site to another, and look at the links to see how you got there')
+          .tooltip('fixTitle')
   graph_state = 'digraph';
-  $('.dateslider').on('slideStop', loadDigraph);
 }
 
 function loadLineplot() {
   $("#load").load("../graph/lineplot");
+  $('#qmark').tooltip('hide')
+          .attr('data-original-title', 'Hover over the top plot to see visits per day to your favorite sites. Zoom in by dragging the crosshairs in the bottom plot.')
+          .tooltip('fixTitle')
   graph_state = 'lineplot';
-  $('.dateslider').on('slideStop', loadLineplot);
 }
 
 function loadFriends() {
   $("#load").load("../graph/friends");
+  $('#qmark').tooltip('hide')
+          .attr('data-original-title', 'The shorter the line, the more similar you are')
+          .tooltip('fixTitle')
   graph_state = 'friends';  
 }
 
@@ -169,18 +179,6 @@ $(document).ready(function(){
           $('#rightmenu_over').hide();
       };
   }
-
-  $('.dateslider').slider({
-    formater: function(value) {
-      var date = new Date();
-      date.setDate(date.getDate() - value);
-      var d = date.getDate();
-      var m = date.getMonth() + 1;
-      var y = date.getFullYear();
-
-      return m + '/' + d + '/' + y;
-    }
-  });
 
   loadSunburst();
 
