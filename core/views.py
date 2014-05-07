@@ -193,6 +193,11 @@ def login(request):
   context = RequestContext(request)
   return HttpResponse(template.render(context))
 
+def broken_link(request):
+  template = loader.get_template('core/broken_link.html')
+  context = RequestContext(request)
+  return HttpResponse(template.render(context))
+
 def logout(request):
   django_logout(request)
   return redirect(login)
@@ -319,7 +324,7 @@ def down_vote(request):
   user_dict = rank_table[index][1]['users']
   for o_id in user_dict:
     if o_id in weight_table:
-      weight_table[o_id] -= user_dict[o_id]
+      weight_table[o_id] += user_dict[o_id]
     else:
       weight_table[o_id] = user_dict[o_id]
 
