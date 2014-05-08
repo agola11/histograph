@@ -28,7 +28,7 @@ def compare_to_friend(user, o_user):
         d2[key] = (o_graph.root.gchildren[key].node_count)/(o_graph.levels[1])
     return bhatta_dist(d1, d2)
 
-def filter_http(hn):
+def filter_http_s(hn):
     l = urlparse(hn.url)
     return(l.scheme == 'http' or l.scheme == 'https')
 
@@ -57,29 +57,25 @@ def format_date(hn):
     hn.visit_time = date
     return hn
 
-def _get_value_graph(root):
+def get_value_graph(root):
   if root.gchildren == None:
     return
   root.gchildren = root.gchildren.values()
   for child in root.gchildren:
-    _get_value_graph(child)
+    get_value_graph(child)
 
-# def send_bubble(hns, time):
-
-#   if graph == None:
-#     return
-    
-#   _get_value_graph(graph.root)
-#   return graph.root
-
-def send_bubble_blocked(user):
-  graph = user.blocked_graph
-
-  _get_value_graph(graph.root)
-  return graph.root
+def get_formatted_blocked(root):
+    DUMMY = 333
+    if root.gchildren == None:
+        return
+    if DUMMY in root.gchildren:
+        del(root.gchildren[DUMMY])
+    root.gchildren = root.gchildren.values()
+    for child in root.gchildren:
+        get_formatted_blocked(child)
 
 def send_line_plot(hn_list):
-    hn_list = filter(filter_http, hn_list)
+    hn_list = filter(filter_http_s, hn_list)
     hn_list = map(chop_protocol, hn_list)
     hn_list = map(format_date, hn_list)
     hn_list = sorted(hn_list, key=lambda hn: hn.visit_time)
@@ -106,7 +102,7 @@ def send_line_plot(hn_list):
     return({'sorted_domains':filtered_domains_list, 'line_dict':line_dict})
 
 def send_digraph(hn_list):
-    hn_list = filter(filter_http, hn_list)
+    hn_list = filter(filter_http_s, hn_list)
     hn_list = filter(lambda hn: hn.referrer == None or hn.url != hn.referrer.url, hn_list)
     domains = map(lambda hn: tldextract.extract(hn.url).domain, hn_list)
     domains = list(OrderedDict.fromkeys(domains, 0))

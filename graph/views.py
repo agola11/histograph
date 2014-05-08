@@ -119,7 +119,7 @@ def send_bubble(request, timesetting):
     root = graph_data.create()
     for hn in hns:
       graph_data.insert(root, hn)
-    graph_utils._get_value_graph(graph_data.root)
+    graph_utils.get_value_graph(graph_data.root)
     return HttpResponse(jsonpickle.encode(graph_data.root, unpicklable=False), content_type='application/json')
   else:
     resp = HttpResponse()
@@ -146,7 +146,7 @@ def send_bubble_blocked(request):
     root = graph_data.create()
     for hn in hns:
       graph_data.insert(root, hn)
-    graph_utils._get_value_graph(graph_data.root)
+    graph_utils.get_formatted_blocked(graph_data.root)
     return HttpResponse(jsonpickle.encode(graph_data.root, unpicklable=False), content_type='application/json')
   else:
     resp = HttpResponse()
