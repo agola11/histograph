@@ -20,21 +20,21 @@ class HistographUser(AbstractUser, FacebookModel):
   # new_user = models.BooelanField(default=True)
 
   # Graphs
-  year_graph_http = PickledObjectField(default=None, compress=False, null=True)
-  year_graph = PickledObjectField(default=None, compress=False, null=True)
-  six_graph = PickledObjectField(default=None, compress=False, null=True)
-  three_graph = PickledObjectField(default=None, compress=False, null=True)
-  one_graph = PickledObjectField(default=None, compress=False, null=True)
-  week_graph = PickledObjectField(default=None, compress=False, null=True)
+  # year_graph_http = PickledObjectField(default=None, compress=False, null=True)
+  # year_graph = PickledObjectField(default=None, compress=False, null=True)
+  # six_graph = PickledObjectField(default=None, compress=False, null=True)
+  # three_graph = PickledObjectField(default=None, compress=False, null=True)
+  # one_graph = PickledObjectField(default=None, compress=False, null=True)
+  # week_graph = PickledObjectField(default=None, compress=False, null=True)
 
   # Rank table for ranks
-  rank_table = PickledObjectField(default=[], compress=False, null=True)
+  # rank_table = PickledObjectField(default=[], compress=False, null=True)
 
   # weights for each user to be used in ranking
-  weight_table = PickledObjectField(default={}, compress=False, null=True)
+  # weight_table = PickledObjectField(default={}, compress=False, null=True)
 
   # blocked graph
-  blocked_graph = PickledObjectField(default=None, compress=False, null=True)
+  # blocked_graph = PickledObjectField(default=None, compress=False, null=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -82,13 +82,13 @@ class HistoryNode(models.Model):
   is_blocked = models.BooleanField(default=False)
 
   # field for graph
-  in_year_http = models.BooleanField(default=False)
-  in_year = models.BooleanField(default=False)
-  in_six = models.BooleanField(default=False)
-  in_three = models.BooleanField(default=False)
-  in_one = models.BooleanField(default=False)
-  in_week = models.BooleanField(default=False)
-  in_blocked_graph = models.BooleanField(default=False)
+  # in_year_http = models.BooleanField(default=False)
+  # in_year = models.BooleanField(default=False)
+  # in_six = models.BooleanField(default=False)
+  # in_three = models.BooleanField(default=False)
+  # in_one = models.BooleanField(default=False)
+  # in_week = models.BooleanField(default=False)
+  # in_blocked_graph = models.BooleanField(default=False)
 
   class Meta:
     unique_together = ('user', 'extension_id', 'browser_id')
@@ -364,21 +364,8 @@ def create_history_nodes_from_json(payload, user):
   payload = filter(filter_http_s, payload)
   payload = map(remove_trail, payload)
 
-  duplicates = []
-  new_nodes = []
-
-  # with transaction.atomic():
-  #   for node in payload:
-  #     # if node is already in the database, replace it with the newer one
-  #     try:
-  #       existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-  #       duplicates.append(existing_hn)
-  #     except HistoryNode.DoesNotExist:
-  #       continue
-
-  # delete_nodes(duplicates)
-  # for node in duplicates:
-  #   node.delete()
+  # duplicates = []
+  # new_nodes = []
 
   # compile blocked sites regexs
   blocked_sites = BlockedSite.objects.filter(user=user)
@@ -418,9 +405,9 @@ def create_history_nodes_from_json(payload, user):
             break
 
         hn.save()
-        new_nodes.append(hn)
+        # new_nodes.append(hn)
 
-  insert_nodes(new_nodes)
+  # insert_nodes(new_nodes)
 
   # connect referrers
   with transaction.atomic():

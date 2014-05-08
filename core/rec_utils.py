@@ -10,21 +10,6 @@ except ImportError:
     from ordereddict import OrderedDict
 import tldextract
 
-def remove_trail(hn):
-	url = hn['url']
-	if url[-1] == '/':
-		url = url[:-1]
-	hn['url'] = url
-	return hn
-
-def split_url(hn):
-	url = hn['url']
-	url = url.split('/')
-	if url[-1] == '':
-		del(url[-1])
-	hn['url'] = url
-	return hn
-
 def get_split_url(hn):
 	url = hn.url
 	parsed = urlparse(url)
@@ -148,7 +133,6 @@ class UrlGraph:
 			self._clean_graph(curr_root.gchildren[key])
 
 	def insert(self, root, hn):
-		#hn = split_url(hn)
 		url = get_split_url(hn)
 		self._rec_insert(root, hn, url, 1, root)
 		return self.root
@@ -220,14 +204,4 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 					f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
 				g_child = g.gchildren[key]
 				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, (prev_score+bd)*(exp(e*f_u)), rank_table, o_id, weight_table)
-
-def split(url):
-	url = url.split('/')
-	if url[-1] == '':
-		del(url[-1])
-	return url
-
-class HN:
-	def __init__(self, url, last_title):
-		self.url = url
-		self.last_title = last_title
+	
