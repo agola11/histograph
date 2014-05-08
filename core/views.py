@@ -10,9 +10,9 @@ from django.utils import simplejson
 from django.db.models import Max
 from django.contrib.auth import logout as django_logout
 from itertools import islice
+from rec_utils import *
 from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
 import django_facebook
-import rec_utils
 import json
 import rec_algo
 import jsonpickle
@@ -277,15 +277,49 @@ def settings(request):
     })
   return HttpResponse(template.render(context))
 
+# TODO: change to a year?
 def send_ranked_urls(request):
-  url_dict = request.user.rank_table
-  return HttpResponse(json.dumps(url_dict), content_type='application/json')
+  user_hns = HistoryNode.objects.filter(user = request.user, url__regex = 'http://.*')
+  user_urls = HistoryNode.objects.filter(user = request.user).values('url')
+  user_urls = set(map(lambda hn : hn['url'], user_urls))
+  users = HistographUser.objects.all()
+  user_graph = UrlGraph()
+  u_root = user_graph.create()
+  rank_table = {}
+  for user_hn in user_hns:
+    user_graph.insert(u_root, user_hn)
+  for user in users:
+    if user != request.user:
+      other_hns = user.historynode_set.filter(url__regex = 'http://.*')
+      other_graph = UrlGraph()
+      o_root = other_graph.create()
+      for other_hn in other_hns:
+        other_graph.insert(o_root, other_hn)
+      update_rank_table(user_graph, other_graph, rank_table, user.id, {})
 
-def run_rank(request):
-  update_rank_tables()
-  resp = HttpResponse()
-  resp.status_code = 200
-  return resp
+  ranked_urls = list(rank_table.items())
+  ranked_urls = filter((lambda (x,y): ('https://' + x) not in user_urls and ('http://' + x) not in user_urls), ranked_urls)
+  ranked_urls = list(reversed(sorted(ranked_urls, key=lambda (x,y): y['score'])))
+
+  return HttpResponse(json.dumps(ranked_urls), content_type='application/json')
+
+def send_ranked_urls_u(request, user_id):
+  user_hns = HistoryNode.objects.filter(user__id = int(user_id), url__regex = 'http://.*')
+  users = HistographUser.objects.all()
+  user_graph = UrlGraph()
+  u_root = user_graph.create()
+  rank_table = {}
+  for user_hn in user_hns:
+    user_graph.insert(u_root, user_hn)
+  for user in users:
+    if user.id != int(user_id):
+      other_hns = user.historynode_set.filter(url__regex = 'http://.*')
+      other_graph = UrlGraph()
+      o_root = other_graph.create()
+      for other_hn in other_hns:
+        other_graph.insert(o_root, other_hn)
+      update_rank_table(user_graph, other_graph, rank_table, user.id, {})
+  return HttpResponse(json.dumps(rank_table), content_type='application/json')
 
 def up_vote(request):
   # add logic to update user_weight_dict
@@ -335,12 +369,3 @@ def down_vote(request):
   response = HttpResponse()
   response.status_code = 200
   return response
-
-def send_ranked_urls_u(request, user_id):
-  #hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url','referrer','id'))
-  bitch = HistographUser.objects.get(pk = user_id)
-  #graph = rec_utils.construct_graph(hn_list)
-  url_dict = bitch.rank_table
-  return HttpResponse(json.dumps(url_dict), content_type='application/json')
-
-
