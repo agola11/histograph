@@ -20,21 +20,21 @@ class HistographUser(AbstractUser, FacebookModel):
   # new_user = models.BooelanField(default=True)
 
   # Graphs
-  year_graph_http = PickledObjectField(default=None, compress=False, null=True)
-  year_graph = PickledObjectField(default=None, compress=False, null=True)
-  six_graph = PickledObjectField(default=None, compress=False, null=True)
-  three_graph = PickledObjectField(default=None, compress=False, null=True)
-  one_graph = PickledObjectField(default=None, compress=False, null=True)
-  week_graph = PickledObjectField(default=None, compress=False, null=True)
+  # year_graph_http = PickledObjectField(default=None, compress=False, null=True)
+  # year_graph = PickledObjectField(default=None, compress=False, null=True)
+  # six_graph = PickledObjectField(default=None, compress=False, null=True)
+  # three_graph = PickledObjectField(default=None, compress=False, null=True)
+  # one_graph = PickledObjectField(default=None, compress=False, null=True)
+  # week_graph = PickledObjectField(default=None, compress=False, null=True)
 
   # Rank table for ranks
-  rank_table = PickledObjectField(default=[], compress=False, null=True)
+  # rank_table = PickledObjectField(default=[], compress=False, null=True)
 
   # weights for each user to be used in ranking
-  weight_table = PickledObjectField(default={}, compress=False, null=True)
+  # weight_table = PickledObjectField(default={}, compress=False, null=True)
 
   # blocked graph
-  blocked_graph = PickledObjectField(default=None, compress=False, null=True)
+  # blocked_graph = PickledObjectField(default=None, compress=False, null=True)
 
   def get_friends(self):
     graph = self.get_offline_graph()
@@ -82,13 +82,13 @@ class HistoryNode(models.Model):
   is_blocked = models.BooleanField(default=False)
 
   # field for graph
-  in_year_http = models.BooleanField(default=False)
-  in_year = models.BooleanField(default=False)
-  in_six = models.BooleanField(default=False)
-  in_three = models.BooleanField(default=False)
-  in_one = models.BooleanField(default=False)
-  in_week = models.BooleanField(default=False)
-  in_blocked_graph = models.BooleanField(default=False)
+  # in_year_http = models.BooleanField(default=False)
+  # in_year = models.BooleanField(default=False)
+  # in_six = models.BooleanField(default=False)
+  # in_three = models.BooleanField(default=False)
+  # in_one = models.BooleanField(default=False)
+  # in_week = models.BooleanField(default=False)
+  # in_blocked_graph = models.BooleanField(default=False)
 
   class Meta:
     unique_together = ('user', 'extension_id', 'browser_id')
@@ -166,193 +166,193 @@ def date_in_range(now, bound, hn):
   then = datetime.fromtimestamp(ms/1000.0)
   return ((now-then).days <= bound)
 
-def insert_nodes(hn_list):
-  if hn_list == None:
-    return
+# def insert_nodes(hn_list):
+#   if hn_list == None:
+#     return
 
-  hn_list = filter(lambda node: not node.is_blocked, hn_list)
+#   hn_list = filter(lambda node: not node.is_blocked, hn_list)
 
-  if len(hn_list) == 0:
-    return
+#   if len(hn_list) == 0:
+#     return
 
-  http_payload = filter(filter_http, hn_list)
-  user = hn_list[0].user
+#   http_payload = filter(filter_http, hn_list)
+#   user = hn_list[0].user
   
-  # payload = map(strip_scheme, hn_list)
-  # http_payload = map(strip_scheme, http_payload)
+#   # payload = map(strip_scheme, hn_list)
+#   # http_payload = map(strip_scheme, http_payload)
 
-  # payload = map(split_url, payload)
+#   # payload = map(split_url, payload)
 
-  now = datetime.now()
-  payload = filter(functools.partial(date_in_range, now, 365), hn_list)
-  http_payload = filter(functools.partial(date_in_range, now, 365), http_payload)
+#   now = datetime.now()
+#   payload = filter(functools.partial(date_in_range, now, 365), hn_list)
+#   http_payload = filter(functools.partial(date_in_range, now, 365), http_payload)
 
-  # Insert into url_graphs
-  if user.year_graph_http == None:
-    graph = UrlGraph()
-    root = graph.create()
-  else:
-    graph = user.year_graph_http
-    root = graph.root
-  for node in http_payload:
-    graph.insert(root, node)
-    node.in_year_http=True
-    # HistoryNode.objects.filter(pk=node.id).update(in_year_http=True)
-  user.year_graph_http = graph
+#   # Insert into url_graphs
+#   if user.year_graph_http == None:
+#     graph = UrlGraph()
+#     root = graph.create()
+#   else:
+#     graph = user.year_graph_http
+#     root = graph.root
+#   for node in http_payload:
+#     graph.insert(root, node)
+#     node.in_year_http=True
+#     # HistoryNode.objects.filter(pk=node.id).update(in_year_http=True)
+#   user.year_graph_http = graph
 
-  if user.year_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-  else:
-    graph = user.year_graph
-    root = graph.root
-  for node in payload:
-    graph.insert(root, node)
-    node.in_year=True
-    # HistoryNode.objects.filter(pk=node.id).update(in_year=True)
-  user.year_graph = graph
+#   if user.year_graph == None:
+#     graph = UrlGraph()
+#     root = graph.create()
+#   else:
+#     graph = user.year_graph
+#     root = graph.root
+#   for node in payload:
+#     graph.insert(root, node)
+#     node.in_year=True
+#     # HistoryNode.objects.filter(pk=node.id).update(in_year=True)
+#   user.year_graph = graph
 
-  if user.blocked_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-  else:
-    graph = user.blocked_graph
-    root = graph.root
-  for node in payload:
-    graph.insert(root, node)
-    node.in_blocked_graph=True
-    # HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
-  user.blocked_graph = graph
+#   if user.blocked_graph == None:
+#     graph = UrlGraph()
+#     root = graph.create()
+#   else:
+#     graph = user.blocked_graph
+#     root = graph.root
+#   for node in payload:
+#     graph.insert(root, node)
+#     node.in_blocked_graph=True
+#     # HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
+#   user.blocked_graph = graph
 
-  payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
+#   payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
 
-  if user.six_graph == None:
-     graph = UrlGraph()
-     root = graph.create()
-  else:
-    graph = user.six_graph
-    root = graph.root
-  for node in payload:
-    graph.insert(root, node)
-    node.in_six=True
-    # HistoryNode.objects.filter(pk=node.id).update(in_six=True)
-  user.six_graph = graph
+#   if user.six_graph == None:
+#      graph = UrlGraph()
+#      root = graph.create()
+#   else:
+#     graph = user.six_graph
+#     root = graph.root
+#   for node in payload:
+#     graph.insert(root, node)
+#     node.in_six=True
+#     # HistoryNode.objects.filter(pk=node.id).update(in_six=True)
+#   user.six_graph = graph
 
-  payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
+#   payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
 
-  if user.three_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-  else:
-    graph = user.three_graph
-    root = graph.root
-  for node in payload:
-    graph.insert(root, node)
-    node.in_three=True
-    # HistoryNode.objects.filter(pk=node.id).update(in_three=True)
-  user.three_graph = graph
+#   if user.three_graph == None:
+#     graph = UrlGraph()
+#     root = graph.create()
+#   else:
+#     graph = user.three_graph
+#     root = graph.root
+#   for node in payload:
+#     graph.insert(root, node)
+#     node.in_three=True
+#     # HistoryNode.objects.filter(pk=node.id).update(in_three=True)
+#   user.three_graph = graph
 
-  payload = filter(functools.partial(date_in_range, now, (30)), payload)
+#   payload = filter(functools.partial(date_in_range, now, (30)), payload)
 
-  if user.one_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-  else:
-    graph = user.one_graph
-    root = graph.root
-  for node in payload:
-    graph.insert(root, node)
-    node.in_one=True
-    # HistoryNode.objects.filter(pk=node.id).update(in_one=True)
-  user.one_graph = graph
+#   if user.one_graph == None:
+#     graph = UrlGraph()
+#     root = graph.create()
+#   else:
+#     graph = user.one_graph
+#     root = graph.root
+#   for node in payload:
+#     graph.insert(root, node)
+#     node.in_one=True
+#     # HistoryNode.objects.filter(pk=node.id).update(in_one=True)
+#   user.one_graph = graph
 
-  payload = filter(functools.partial(date_in_range, now, 7), payload)
+#   payload = filter(functools.partial(date_in_range, now, 7), payload)
 
-  if user.week_graph == None:
-    graph = UrlGraph()
-    root = graph.create()
-  else:
-    graph = user.week_graph
-    root = graph.root
-  for node in payload:
-    graph.insert(root, node)
-    node.in_week=True
-    # HistoryNode.objects.filter(pk=node.id).update(in_week=True)
-  user.week_graph = graph
+#   if user.week_graph == None:
+#     graph = UrlGraph()
+#     root = graph.create()
+#   else:
+#     graph = user.week_graph
+#     root = graph.root
+#   for node in payload:
+#     graph.insert(root, node)
+#     node.in_week=True
+#     # HistoryNode.objects.filter(pk=node.id).update(in_week=True)
+#   user.week_graph = graph
 
-  with transaction.atomic():
-    for node in hn_list:
-      node.save()
+#   with transaction.atomic():
+#     for node in hn_list:
+#       node.save()
 
-  user.save()
+#   user.save()
 
-def delete_nodes(hn_list):
-  if hn_list == None or len(hn_list) == 0:
-    return
+# def delete_nodes(hn_list):
+#   if hn_list == None or len(hn_list) == 0:
+#     return
 
-  user = hn_list[0].user
+#   user = hn_list[0].user
 
-  for node in hn_list:
-    if node.in_year_http:
-      graph = node.user.year_graph_http
-      if graph != None:
-        root = graph.root
-        graph.delete(root, node)
-        node.user.year_graph_http = graph
-        node.in_year_http = False
+#   for node in hn_list:
+#     if node.in_year_http:
+#       graph = node.user.year_graph_http
+#       if graph != None:
+#         root = graph.root
+#         graph.delete(root, node)
+#         node.user.year_graph_http = graph
+#         node.in_year_http = False
     
-    if node.in_year:
-      graph = node.user.year_graph
-      if graph != None:
-        root = graph.root
-        graph.delete(root, node)
-        node.user.year_graph = graph
-        node.in_year = False
+#     if node.in_year:
+#       graph = node.user.year_graph
+#       if graph != None:
+#         root = graph.root
+#         graph.delete(root, node)
+#         node.user.year_graph = graph
+#         node.in_year = False
 
-    if node.in_six:
-      graph = node.user.six_graph
-      if graph != None:
-        root = graph.root
-        graph.delete(root, node)
-        node.user.six_graph = graph
-        node.in_six = False
+#     if node.in_six:
+#       graph = node.user.six_graph
+#       if graph != None:
+#         root = graph.root
+#         graph.delete(root, node)
+#         node.user.six_graph = graph
+#         node.in_six = False
 
-    if node.in_three:
-      graph = node.user.three_graph
-      if graph != None:
-        root = graph.root
-        graph.delete(root, node)
-        node.user.three_graph = graph
-        node.in_three = False
+#     if node.in_three:
+#       graph = node.user.three_graph
+#       if graph != None:
+#         root = graph.root
+#         graph.delete(root, node)
+#         node.user.three_graph = graph
+#         node.in_three = False
 
-    if node.in_one:
-      graph = node.user.one_graph
-      if graph != None:
-        root = graph.root
-        graph.delete(root, node)
-        node.user.one_graph = graph
-        node.in_one = False
+#     if node.in_one:
+#       graph = node.user.one_graph
+#       if graph != None:
+#         root = graph.root
+#         graph.delete(root, node)
+#         node.user.one_graph = graph
+#         node.in_one = False
 
-    if node.in_week:
-      graph = node.user.week_graph
-      if graph != None:
-        root = graph.root
-        graph.delete(root, node)
-        node.user.week_graph = graph
-        node.in_week = False
+#     if node.in_week:
+#       graph = node.user.week_graph
+#       if graph != None:
+#         root = graph.root
+#         graph.delete(root, node)
+#         node.user.week_graph = graph
+#         node.in_week = False
 
-  user.year_graph_http._clean_graph(user.year_graph_http.root)
-  user.year_graph._clean_graph(user.year_graph.root)
-  user.six_graph._clean_graph(user.six_graph.root)
-  user.three_graph._clean_graph(user.three_graph.root)
-  user.one_graph._clean_graph(user.one_graph.root)
-  user.week_graph._clean_graph(user.week_graph.root)
+#   user.year_graph_http._clean_graph(user.year_graph_http.root)
+#   user.year_graph._clean_graph(user.year_graph.root)
+#   user.six_graph._clean_graph(user.six_graph.root)
+#   user.three_graph._clean_graph(user.three_graph.root)
+#   user.one_graph._clean_graph(user.one_graph.root)
+#   user.week_graph._clean_graph(user.week_graph.root)
 
-  with transaction.atomic():
-    for node in hn_list:
-      node.save()
+#   with transaction.atomic():
+#     for node in hn_list:
+#       node.save()
 
-  user.save()
+#   user.save()
 
 def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
@@ -364,21 +364,8 @@ def create_history_nodes_from_json(payload, user):
   payload = filter(filter_http_s, payload)
   payload = map(remove_trail, payload)
 
-  duplicates = []
-  new_nodes = []
-
-  # with transaction.atomic():
-  #   for node in payload:
-  #     # if node is already in the database, replace it with the newer one
-  #     try:
-  #       existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-  #       duplicates.append(existing_hn)
-  #     except HistoryNode.DoesNotExist:
-  #       continue
-
-  # delete_nodes(duplicates)
-  # for node in duplicates:
-  #   node.delete()
+  # duplicates = []
+  # new_nodes = []
 
   # compile blocked sites regexs
   blocked_sites = BlockedSite.objects.filter(user=user)
@@ -418,9 +405,9 @@ def create_history_nodes_from_json(payload, user):
             break
 
         hn.save()
-        new_nodes.append(hn)
+        # new_nodes.append(hn)
 
-  insert_nodes(new_nodes)
+  # insert_nodes(new_nodes)
 
   # connect referrers
   with transaction.atomic():
