@@ -136,7 +136,7 @@ def send_bubble_u(user_id):
   root = graph_data.create()
   for hn in hns:
     graph_data.insert(root, hn)
-  graph_utils._get_value_graph(graph_data.root)
+  graph_utils.get_value_graph(graph_data.root)
   return HttpResponse(jsonpickle.encode(graph_data.root, unpicklable=False), content_type='application/json')
 
 def send_bubble_blocked(request):
