@@ -1,7 +1,7 @@
 from __future__ import division
 from urlparse import urlparse
 from django.http import Http404
-from math import log, sqrt
+from math import log, sqrt, exp, e
 import copy
 try:
     from collections import OrderedDict
@@ -23,7 +23,17 @@ def split_url(hn):
 	if url[-1] == '':
 		del(url[-1])
 	hn['url'] = url
-	return hn    
+	return hn
+
+def get_split_url(hn):
+	url = hn.url
+	parsed = urlparse(url)
+	scheme = "%s://" % parsed.scheme
+	url = parsed.geturl().replace(scheme, '', 1)
+	url = url.split('/')
+	if url[-1] == '':
+		del(url[-1])
+	return url
 
 # Compute Bhattacharya Distance between two distributions
 def bhatta_dist(d1, d2):
@@ -58,50 +68,50 @@ class UrlGraph:
 		self.root = root
 		return root
 
-	def _rec_insert(self,top_root, hn, level, curr_root):
+	def _rec_insert(self,top_root, hn, url, level, curr_root):
 		DUMMY = 333
-		if len(hn.url) < level:
+		if len(url) < level:
 			return top_root
-		url_snip = hn.url[level-1]
+		url_snip = url[level-1]
 		if curr_root.gchildren == None:
 			curr_root.gchildren = {}
-			child = GraphNode(url_snip, 1, level, '/'.join(hn.url[:level]))
-			if len(hn.url) == level:
+			child = GraphNode(url_snip, 1, level, '/'.join(url[:level]))
+			if len(url) == level:
 				child.last_title = hn.last_title
 				if child.gchildren == None:
 					child.gchildren = {}
 				if DUMMY in child.gchildren:
 					child.gchildren[DUMMY].node_count += 1
 				else:
-					dummy_node = GraphNode('dummy', 1, level+1, '/'.join(hn.url[:level]))
+					dummy_node = GraphNode('dummy', 1, level+1, '/'.join(url[:level]))
 					dummy_node.is_dummy = True
 					child.gchildren[DUMMY] = dummy_node
 			curr_root.gchildren[url_snip] = child
 		else:
 			if url_snip not in curr_root.gchildren:
-				child = GraphNode(url_snip, 1, level, '/'.join(hn.url[:level]))
-				if len(hn.url) == level:
+				child = GraphNode(url_snip, 1, level, '/'.join(url[:level]))
+				if len(url) == level:
 					child.last_title = hn.last_title
 					if child.gchildren == None:
 						child.gchildren = {}
 					if DUMMY in child.gchildren:
 						child.gchildren[DUMMY].node_count += 1
 					else:
-						dummy_node = GraphNode('dummy', 1, level+1, '/'.join(hn.url[:level]))
+						dummy_node = GraphNode('dummy', 1, level+1, '/'.join(url[:level]))
 						dummy_node.is_dummy = True
 						child.gchildren[DUMMY] = dummy_node
 				curr_root.gchildren[url_snip] = child
 			else:
 				child = curr_root.gchildren[url_snip]
 				child.node_count += 1
-				if len(hn.url) == level:
+				if len(url) == level:
 					child.last_title = hn.last_title
 					if child.gchildren == None:
 						child.gchildren = {}
 					if DUMMY in child.gchildren:
 						child.gchildren[DUMMY].node_count += 1
 					else:
-						dummy_node = GraphNode('dummy', 1, level+1, '/'.join(hn.url[:level]))
+						dummy_node = GraphNode('dummy', 1, level+1, '/'.join(url[:level]))
 						dummy_node.is_dummy = True
 						child.gchildren[DUMMY] = dummy_node
 	
@@ -109,21 +119,21 @@ class UrlGraph:
 			self.levels[level] = 1
 		else:
 			self.levels[level] += 1
-		self._rec_insert(top_root, hn, level+1, child)
+		self._rec_insert(top_root, hn, url, level+1, child)
 
-	def _rec_delete(self, top_root, hn, level, curr_root):
+	def _rec_delete(self, top_root, hn, url, level, curr_root):
 		if curr_root == None:
 			return top_root
-		if curr_root.gchildren == None or len(hn.url) < level:
+		if curr_root.gchildren == None or len(url) < level:
 			return top_root
-		url_snip = hn.url[level-1]
+		url_snip = url[level-1]
 		if url_snip not in curr_root.gchildren:
 			return top_root
 		else:
 			child = curr_root.gchildren[url_snip]
 			child.node_count -= 1
 			self.levels[level] -= 1
-			self._rec_delete(top_root, hn, level+1, child)
+			self._rec_delete(top_root, hn, url, level+1, child)
 
 	# Remove nodes with node_count of 0
 	def _clean_graph(self, curr_root):
@@ -139,14 +149,16 @@ class UrlGraph:
 
 	def insert(self, root, hn):
 		#hn = split_url(hn)
-		self._rec_insert(root, hn, 1, root)
+		url = get_split_url(hn)
+		self._rec_insert(root, hn, url, 1, root)
 		return self.root
 
 	# Same format as insert.  Expects a HistoryNode object with a split url and stripped scheme
 	# in object form.
 	def delete(self, root, hn):
-		root = self._rec_delete(self.root, hn, 1, root)
-		self._clean_graph(self.root)
+		url = get_split_url(hn)
+		root = self._rec_delete(self.root, hn, url, 1, root)
+		# self._clean_graph(self.root)
 		return self.root
 
 def strip_scheme(url):
@@ -167,8 +179,10 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		return
 	# if other's root has a last_title (meaning full_url), put the url in the rank_table
 	if g.last_title != None:
+		'''
 		if o_id in weight_table:
 			prev_score = prev_score + weight_table[o_id]*prev_score
+		'''
 		if g.full_url not in rank_table:
 			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title, 'users': {o_id:prev_score}}
 		else:
@@ -182,7 +196,7 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 	if ug == None or ug.gchildren == None:
 		if prev_bd > 0.001:
 			for child in g.gchildren.values():
-				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.001, prev_score+prev_bd, rank_table, o_id, weight_table)
+				_update_rank_table(None, child, ulevel_dict, level_dict, level+1, prev_bd-0.005, prev_score+prev_bd, rank_table, o_id, weight_table)
 		else:
 			return
 	else:
@@ -200,10 +214,12 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 			for key in g.gchildren:
 				if key not in ug.gchildren:
 					ug_child = None
+					f_u = 0
 				else:
 					ug_child = ug.gchildren[key]
+					f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
 				g_child = g.gchildren[key]
-				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, prev_score+bd, rank_table, o_id, weight_table)
+				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, (prev_score+bd)*(exp(e*f_u)), rank_table, o_id, weight_table)
 
 def split(url):
 	url = url.split('/')

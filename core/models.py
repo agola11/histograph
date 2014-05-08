@@ -178,128 +178,111 @@ def insert_nodes(hn_list):
   http_payload = filter(filter_http, hn_list)
   user = hn_list[0].user
   
-  payload = map(strip_scheme, hn_list)
-  http_payload = map(strip_scheme, http_payload)
+  # payload = map(strip_scheme, hn_list)
+  # http_payload = map(strip_scheme, http_payload)
 
-  payload = map(split_url, payload)
+  # payload = map(split_url, payload)
 
   now = datetime.now()
-  payload = filter(functools.partial(date_in_range, now, 365), payload)
+  payload = filter(functools.partial(date_in_range, now, 365), hn_list)
   http_payload = filter(functools.partial(date_in_range, now, 365), http_payload)
 
   # Insert into url_graphs
   if user.year_graph_http == None:
     graph = UrlGraph()
     root = graph.create()
-    for node in http_payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_year_http=True)
-    user.year_graph_http = graph
   else:
     graph = user.year_graph_http
     root = graph.root
-    for node in http_payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_year_http=True)
-    user.year_graph_http = graph
+  for node in http_payload:
+    graph.insert(root, node)
+    node.in_year_http=True
+    # HistoryNode.objects.filter(pk=node.id).update(in_year_http=True)
+  user.year_graph_http = graph
 
   if user.year_graph == None:
     graph = UrlGraph()
     root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_year=True)
-    user.year_graph = graph
   else:
     graph = user.year_graph
     root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_year=True)
-    user.year_graph = graph
+  for node in payload:
+    graph.insert(root, node)
+    node.in_year=True
+    # HistoryNode.objects.filter(pk=node.id).update(in_year=True)
+  user.year_graph = graph
 
   if user.blocked_graph == None:
     graph = UrlGraph()
     root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
-    user.blocked_graph = graph
   else:
     graph = user.blocked_graph
     root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
-    user.blocked_graph = graph
+  for node in payload:
+    graph.insert(root, node)
+    node.in_blocked_graph=True
+    # HistoryNode.objects.filter(pk=node.id).update(in_blocked_graph=True)
+  user.blocked_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (6*30)), payload)
 
   if user.six_graph == None:
      graph = UrlGraph()
      root = graph.create()
-     for node in payload:
-       graph.insert(root, node)
-       HistoryNode.objects.filter(pk=node.id).update(in_six=True)
-     user.six_graph = graph
   else:
     graph = user.six_graph
     root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_six=True)
-    user.six_graph = graph
+  for node in payload:
+    graph.insert(root, node)
+    node.in_six=True
+    # HistoryNode.objects.filter(pk=node.id).update(in_six=True)
+  user.six_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (3*30)), payload)
 
   if user.three_graph == None:
     graph = UrlGraph()
     root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_three=True)
-    user.three_graph = graph
   else:
     graph = user.three_graph
     root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_three=True)
-    user.three_graph = graph
+  for node in payload:
+    graph.insert(root, node)
+    node.in_three=True
+    # HistoryNode.objects.filter(pk=node.id).update(in_three=True)
+  user.three_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, (30)), payload)
 
   if user.one_graph == None:
     graph = UrlGraph()
     root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_one=True)
-    user.one_graph = graph
   else:
     graph = user.one_graph
     root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_one=True)
-    user.one_graph = graph
+  for node in payload:
+    graph.insert(root, node)
+    node.in_one=True
+    # HistoryNode.objects.filter(pk=node.id).update(in_one=True)
+  user.one_graph = graph
 
   payload = filter(functools.partial(date_in_range, now, 7), payload)
 
   if user.week_graph == None:
     graph = UrlGraph()
     root = graph.create()
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_week=True)
-    user.week_graph = graph
   else:
     graph = user.week_graph
     root = graph.root
-    for node in payload:
-      graph.insert(root, node)
-      HistoryNode.objects.filter(pk=node.id).update(in_week=True)
-    user.week_graph = graph
+  for node in payload:
+    graph.insert(root, node)
+    node.in_week=True
+    # HistoryNode.objects.filter(pk=node.id).update(in_week=True)
+  user.week_graph = graph
+
+  with transaction.atomic():
+    for node in hn_list:
+      node.save()
 
   user.save()
 
@@ -309,9 +292,6 @@ def delete_nodes(hn_list):
 
   user = hn_list[0].user
 
-  hn_list = map(strip_scheme, hn_list)
-  hn_list = map(split_url, hn_list)
-
   for node in hn_list:
     if node.in_year_http:
       graph = node.user.year_graph_http
@@ -319,7 +299,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.year_graph_http = graph
-      HistoryNode.objects.filter(pk=node.id).update(in_year_http=False)
+        node.in_year_http = False
     
     if node.in_year:
       graph = node.user.year_graph
@@ -327,7 +307,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.year_graph = graph
-      HistoryNode.objects.filter(pk=node.id).update(in_year=False)
+        node.in_year = False
 
     if node.in_six:
       graph = node.user.six_graph
@@ -335,7 +315,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.six_graph = graph
-      HistoryNode.objects.filter(pk=node.id).update(in_six=False)
+        node.in_six = False
 
     if node.in_three:
       graph = node.user.three_graph
@@ -343,7 +323,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.three_graph = graph
-      HistoryNode.objects.filter(pk=node.id).update(in_three=False)
+        node.in_three = False
 
     if node.in_one:
       graph = node.user.one_graph
@@ -351,7 +331,7 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.one_graph = graph
-      HistoryNode.objects.filter(pk=node.id).update(in_one=False)
+        node.in_one = False
 
     if node.in_week:
       graph = node.user.week_graph
@@ -359,9 +339,20 @@ def delete_nodes(hn_list):
         root = graph.root
         graph.delete(root, node)
         node.user.week_graph = graph
-      HistoryNode.objects.filter(pk=node.id).update(in_week=False)
-  
-  user.save()  
+        node.in_week = False
+
+  user.year_graph_http._clean_graph(user.year_graph_http.root)
+  user.year_graph._clean_graph(user.year_graph.root)
+  user.six_graph._clean_graph(user.six_graph.root)
+  user.three_graph._clean_graph(user.three_graph.root)
+  user.one_graph._clean_graph(user.one_graph.root)
+  user.week_graph._clean_graph(user.week_graph.root)
+
+  with transaction.atomic():
+    for node in hn_list:
+      node.save()
+
+  user.save()
 
 def create_history_nodes_from_json(payload, user):
   logger = logging.getLogger("core")
@@ -373,16 +364,21 @@ def create_history_nodes_from_json(payload, user):
   payload = filter(filter_http_s, payload)
   payload = map(remove_trail, payload)
 
+  duplicates = []
   new_nodes = []
 
-  with transaction.atomic():
-    for node in payload:
-      # if node is already in the database, replace it with the newer one
-      try:
-        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-        existing_hn.delete()
-      except HistoryNode.DoesNotExist:
-        continue
+  # with transaction.atomic():
+  #   for node in payload:
+  #     # if node is already in the database, replace it with the newer one
+  #     try:
+  #       existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+  #       duplicates.append(existing_hn)
+  #     except HistoryNode.DoesNotExist:
+  #       continue
+
+  # delete_nodes(duplicates)
+  # for node in duplicates:
+  #   node.delete()
 
   # compile blocked sites regexs
   blocked_sites = BlockedSite.objects.filter(user=user)
@@ -393,23 +389,38 @@ def create_history_nodes_from_json(payload, user):
   # add new nodes
   with transaction.atomic():
     for node in payload:
-      trunc_title = node['last_title']
-      if len(trunc_title) > 256:
-        trunc_title = trunc_title[:253] + '...'
+      try:
+        existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
 
-      # get rid of anchors
-      url = node['url'].split('#')[0]
+        trunc_title = node['last_title']
+        if len(trunc_title) > 256:
+          trunc_title = trunc_title[:253] + '...'
 
-      hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
-      
-      # check if in blocked lists
-      for regex in blocked_res:
-        if regex.match(hn.url):
-          hn.is_blocked = True
-          break
+        existing_hn.last_title = trunc_title
+        existing_hn.visit_time = node['visit_time']
+        existing_hn.save()
 
-      hn.save()
-      new_nodes.append(hn)
+        continue
+      except HistoryNode.DoesNotExist:
+        trunc_title = node['last_title']
+        if len(trunc_title) > 256:
+          trunc_title = trunc_title[:253] + '...'
+
+        # get rid of anchors
+        url = node['url'].split('#')[0]
+
+        hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
+        
+        # check if in blocked lists
+        for regex in blocked_res:
+          if regex.match(hn.url):
+            hn.is_blocked = True
+            break
+
+        hn.save()
+        new_nodes.append(hn)
+
+  insert_nodes(new_nodes)
 
   # connect referrers
   with transaction.atomic():
@@ -420,8 +431,6 @@ def create_history_nodes_from_json(payload, user):
       except HistoryNode.DoesNotExist:
         continue
 
-  insert_nodes(new_nodes)
-
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
 
@@ -429,7 +438,7 @@ def create_history_nodes_from_json(payload, user):
 def update_rank_tables():
   user_set = HistographUser.objects.all()
   # update rank tables and save user
-  for user in user_set:
+  for user in user_set.iterator():
     # get a list of previously seen urls
     user_urls = HistoryNode.objects.filter(user__id=user.id)
     user_urls = map(strip_scheme, user_urls)
