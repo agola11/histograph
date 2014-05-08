@@ -51,6 +51,14 @@ def chop_protocol(hn):
     hn.url = url
     return hn
 
+def get_chop_protocol(url):
+    if url[-1] == '/':
+        return url[:-1]
+    if url.startswith('http://'):
+        return url[7:]
+    if url.startswith('https://'):
+        return url[8:]
+
 def split_url(hn):
     url = hn.url
     url = url.split('/')
@@ -110,58 +118,66 @@ def send_line_plot(hn_list):
     return({'sorted_domains':filtered_domains_list, 'line_dict':line_dict})
 
 def send_digraph(hn_list):
-    hn_list = filter(filter_http_s, hn_list)
-    hn_list = filter(lambda hn: hn.referrer == None or hn.url != hn.referrer.url, hn_list)
-    domains = map(lambda hn: tldextract.extract(hn.url).domain, hn_list)
-    domains = list(OrderedDict.fromkeys(domains, 0))
+    hn_list = filter(filter_http, hn_list)
+    domains = set(map(lambda hn: tldextract.extract(hn.url).domain, hn_list))
+    # domains = list(OrderedDict.fromkeys(domains, 0))
+
     hn_list = map(chop_protocol, hn_list)
-    hn_list = map(split_url, hn_list)
+
+    urls = set(map(lambda hn: hn.url, hn_list))
+    # hn_list = map(split_url, hn_list)
+
+    domain_id_dict = {}
+    i = 0
+    for domain in domains:
+        domain_id_dict[domain] = i
+        i += 1
+
+    url_dict = {}
+    for url in urls:
+        url_dict[url] = {}
+
+    for hn in hn_list:
+        if not hn.referrer is None:
+            ref_url = get_chop_protocol(hn.referrer.url)
+            if ref_url in url_dict and ref_url != hn.url:
+                hn_url_obj = url_dict[hn.url]
+                ref_url_obj = url_dict[ref_url]
+
+                if ref_url in hn_url_obj:
+                    hn_url_obj[ref_url]['count'] += 1
+                else:
+                    hn_url_obj[ref_url] = {'count': 1, 'type': set([get_link_type_name(hn.transition_type)]), 'valid': True}
+
+                if hn.url in ref_url_obj:
+                    ref_url_obj[hn.url]['count'] += 1
+                    ref_url_obj[hn.url]['type'].add(get_link_type_name(hn.transition_type))
+                else:
+                    ref_url_obj[hn.url] = {'count': 1, 'type': set([get_link_type_name(hn.transition_type)]), 'valid': True}
+
+    for n_key in url_dict.keys():
+        n = url_dict[n_key]
+
+        if len(n) == 0:
+            del(url_dict[n_key])
 
     nodes = []
-    id_dict = {}
-    i=0
-
-    for hn in hn_list:
-        full_url = '/'.join(hn.url)
-
-        if full_url in id_dict:
-            continue
-
-        nodes.append({'name':full_url, 'group':domains.index(tldextract.extract(full_url).domain)})
-        id_dict[full_url] = i
-        i+=1
-
-    link_dict = {}
     links = []
-    for hn in hn_list:
-        full_url = '/'.join(hn.url)
-        if (hn.referrer != None):
-            referrer_url = chop_protocol(hn.referrer).url
+    id_dict = {}
+    i = 0
+    for url in url_dict:
+        nodes.append({'name':url, 'group':domain_id_dict[tldextract.extract(url).domain]})
+        id_dict[url] = i
+        i += 1
 
-            if (referrer_url in id_dict):
-                if (full_url in link_dict and referrer_url in link_dict[full_url]):
-                    link = link_dict[full_url][referrer_url]
-                    link['value'] += 5
-                    if not get_link_type_name(hn.transition_type) in link['type']:
-                        link['type'].add(get_link_type_name(hn.transition_type))
-                    link_dict[full_url][referrer_url] = link
-
-                elif (referrer_url in link_dict and full_url in link_dict[referrer_url]):
-                    link = link_dict[referrer_url][full_url]
-                    link['value'] += 5
-                    if not get_link_type_name(hn.transition_type) in link['type']:
-                        link['type'].add(get_link_type_name(hn.transition_type))
-                    link_dict[referrer_url][full_url] = link
-
-                else:
-                    if not full_url in link_dict:
-                        link_dict[full_url] = {}
-                    link_dict[full_url][referrer_url] = {'source':id_dict[full_url], 'target':id_dict[referrer_url], 'value': 5, 'type':set([get_link_type_name(hn.transition_type)])}
-
-    for a in link_dict:
-        for b in link_dict[a]:
-            link = link_dict[a][b]
-            link['type'] = ' | '.join(link['type'])
-            links.append(link)
+    for url in url_dict:
+        link_list = url_dict[url]
+        for url2 in link_list:
+            link = link_list[url2]
+            link2 = url_dict[url2][url]
+            if link['valid']:
+                links.append({'source':id_dict[url], 'target':id_dict[url2], 'value': 5 * link['count'], 'type': ' | '.join(link['type'])})
+                link['valid'] = False
+                link2['valid'] = False
 
     return {'nodes':nodes, 'links':links}
