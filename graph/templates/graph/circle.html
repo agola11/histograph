@@ -47,10 +47,10 @@ circle.child:hover {
   </style>
   </head>
   <body>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script src="/static/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script> 
 	<script src="http://d3js.org/d3.v3.min.js"></script>
-	<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 <script type="text/javascript">
 var w = 1280,
     h = 800,
@@ -85,7 +85,7 @@ d3.json("/static/blocked_sites.json", function (error, data) {
   });
 });
 
-d3.json("http://{{ domain }}/graph/bubble/{{ user_id }}", function(data) {
+d3.json("https://{{ domain }}/graph/bubble_blocked", function(data) {
   
   node = root = data;
 
