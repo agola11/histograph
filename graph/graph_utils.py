@@ -110,7 +110,7 @@ def send_line_plot(hn_list):
     return({'sorted_domains':filtered_domains_list, 'line_dict':line_dict})
 
 def send_digraph(hn_list):
-    hn_list = filter(filter_http, hn_list)
+    # hn_list = filter(filter_http, hn_list)
     domains = set(map(lambda hn: tldextract.extract(hn.url).domain, hn_list))
     # domains = list(OrderedDict.fromkeys(domains, 0))
 
