@@ -200,29 +200,67 @@ function getCookie(name) {
     return cookieValue;
 };
 function thumbs_up(i) {
-	console.log($("#up" + i).css('color'));
-	if( $("#up" + i).css('color') == 'green') {
-		console.log("in green");
-		$("#up" + i).css( "color", "#6d1daa" );
+	if ( ($("#down" + i).css('color')) == 'rgb(255, 0, 0)') {
+		$("#down" + i).css( "color", "#6d1daa" );
+		$("#up" + i).css( "color", "green" );
+		$.ajax({
+		 type: 'POST',
+		 url: '/up_vote',
+		 headers:{"X-CSRFToken":csrftoken},
+		 data: {'index': i}
+		});
 	}
-	$.ajax({
-	 type: 'POST',
-	 url: '/up_vote',
-	 headers:{"X-CSRFToken":csrftoken},
-	 data: {'index': i}
-	});
-	$("#up" + i).css( "color", "green" );
+	else if( $("#up" + i).css('color') == 'rgb(0, 128, 0)') {
+		$("#up" + i).css( "color", "#6d1daa" );
+		$.ajax({
+		 type: 'POST',
+		 url: '/down_vote',
+		 dataType: 'json',
+		 headers:{"X-CSRFToken":csrftoken},
+		 data: {'index': i},
+		});
+	}
+	else {
+		$.ajax({
+		 type: 'POST',
+		 url: '/up_vote',
+		 headers:{"X-CSRFToken":csrftoken},
+		 data: {'index': i}
+		});
+		$("#up" + i).css( "color", "green" );
+	}
 
 }
 function thumbs_down(i) {
-	$.ajax({
-	 type: 'POST',
-	 url: '/down_vote',
-	 dataType: 'json',
-	 headers:{"X-CSRFToken":csrftoken},
-	 data: {'index': i},
-	});
-	$("#down" + i).css( "color", "red" );
+	if ( ($("#up" + i).css('color')) == 'rgb(0, 128, 0)') {
+		$("#up" + i).css( "color", "#6d1daa" );
+		$.ajax({
+		 type: 'POST',
+		 url: '/down_vote',
+		 headers:{"X-CSRFToken":csrftoken},
+		 data: {'index': i}
+		});
+		$("#down" + i).css( "color", "red" );
+	}
+	else if ( ($("#down" + i).css('color')) == 'rgb(255, 0, 0)') {
+		$("#down" + i).css( "color", "#6d1daa" );
+		$.ajax({
+		 type: 'POST',
+		 url: '/up_vote',
+		 headers:{"X-CSRFToken":csrftoken},
+		 data: {'index': i}
+		});
+	}
+	else {
+		$.ajax({
+		 type: 'POST',
+		 url: '/down_vote',
+		 dataType: 'json',
+		 headers:{"X-CSRFToken":csrftoken},
+		 data: {'index': i},
+		});
+		$("#down" + i).css( "color", "red" );
+	}
 }
 </script>
 {% endblock %}
