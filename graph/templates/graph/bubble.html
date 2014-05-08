@@ -101,7 +101,7 @@ function visualize(root) {
   //addPlaceholders(root);
 
   var nodes = pack.nodes(root)
-      .filter(function(d) {return (d.parent == root || d == root) });
+      .filter(function(d) {return (d.parent == root || d == root) && d.isDummy });
 
   //removePlaceholders(nodes);
 

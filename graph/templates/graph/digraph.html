@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <style>
 
+body
+{
+overflow: hidden;
+}
+
 .node {
   stroke: #fff;
   stroke-width: 1.5px;
@@ -12,6 +17,10 @@
 .link {
   stroke: #999;
   stroke-opacity: .6;
+}
+
+.tooltip-inner {
+  max-width: 1000px;
 }
 
 </style>
@@ -23,20 +32,14 @@
 <link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 <script>
 
-var width = $(window).width();
+var width = $(window).width() - 200;
 var height = $(window).height() - 100;
+//var height = width;
 
 var color = d3.scale.category20();
 
-var force = d3.layout.force()
-    .charge(-30)
-    .linkDistance( function(d) { return 10 * Math.pow(d.value, 0.3); } )
-    .size([width, height]);
-
-var svg = d3.select("#load").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
+/*$("#load").css("height", 1000);
+$("#load").css("weight", 1000);*/
 // var val = $('.dateslider').slider('getValue');
 loadData();
 
@@ -60,10 +63,36 @@ function loadData(starttime, endtime) {
   }
 
   d3.json(url, function(error, graph) {
+
+  	var k = Math.sqrt(graph.nodes.length / (width * height));
+  	
+  	/*var yscale = Math.sqrt(graph.nodes.length / height);
+
+  	var xscale = Math.sqrt(graph.nodes.length / width);
+
+  	if (yscale < 1)
+  		yscale = 1;
+
+  	if (xscale < 1)
+  		xscale = 1;*/
+
+  	var force = d3.layout.force()
+    .charge(-30)
+    .linkDistance( function(d) { return 10 * Math.pow(d.value, 0.3); } )
+    .size([width, height]);
+
+	var svg = d3.select("#load").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
     force
         .nodes(graph.nodes)
         .links(graph.links)
         .start();
+   
+    force
+        .charge(-10 / k)
+        .gravity(12 * k);
 
     var link = svg.selectAll(".link")
         .data(graph.links)
@@ -73,11 +102,17 @@ function loadData(starttime, endtime) {
         .attr("data-toggle", "tooltip")
         .attr("title", function(d) { return d.type; });
 
+    var orig_circle = 4;
+
+     circle_scale = k * k;
+     if (circle_scale < 1)
+     	circle_scale = 1;
+
     var node = svg.selectAll(".node")
         .data(graph.nodes)
       .enter().append("circle")
         .attr("class", "node")
-        .attr("r", 5)
+        .attr("r", orig_circle / circle_scale)
         .style("fill", function(d) { return color(d.group); })
         .call(force.drag)
         .attr("data-toggle", "tooltip")
@@ -85,10 +120,6 @@ function loadData(starttime, endtime) {
 
     $(".node").tooltip({'container': 'body', 'placement': 'top'});
     $(".link").tooltip({'container': 'body', 'placement': 'top'});
-
-
-    // node.append("title")
-    //     .text(function(d) { return d.name; });
 
     force.on("tick", function() {
       link.attr("x1", function(d) { return d.source.x; })
