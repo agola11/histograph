@@ -9,7 +9,7 @@ from django.http import Http404
 from datetime import datetime
 from urlparse import urlparse
 import tldextract
-from core.rec_utils import bhatta_dist
+from core.rec_utils import *
 try:
     from collections import OrderedDict
 except ImportError:
@@ -17,8 +17,16 @@ except ImportError:
     from ordereddict import OrderedDict
 
 def compare_to_friend(user, o_user):
-    u_graph = user.year_graph
-    o_graph = o_user.year_graph
+    user_hns = HistoryNode.objects.filter(user=user)
+    other_hns = HistoryNode.objects.filter(user=o_user)
+    u_graph = UrlGraph()
+    u_root = u_graph.create()
+    o_graph = UrlGraph()
+    o_root = o_graph.create()
+    for user_hn in user_hns:
+        u_graph.insert(u_root, user_hn)
+    for other_hn in other_hns:
+        o_graph.insert(o_root, other_hn)
     if u_graph == None or o_graph == None:
         return 0
     d1, d2 = {}, {}
