@@ -17,6 +17,18 @@
 			<img src="{{ STATIC_URL }}Histograph-full.png" width="30%" height="30%">
 		</div>
 		<br><br><br>
+		<div class="row" style="margin-left: 150px">
+		<div class="col-md-4">
+		<img src="{{ STATIC_URL }}login_sunburst.png" width="50%" height="50%">
+		</div>
+		<div class="col-md-4">
+		<img src="{{ STATIC_URL }}login_digraph.png" width="50%" height="50%">
+		</div>
+		<div class="col-md-4">
+		<img src="{{ STATIC_URL }}login_line.png" width="50%" height="50%">
+		</div>
+		</div>
+		<br><br><br><br>
 		<div class="row"><div align="center">
 		<form action="{% url 'facebook_connect' %}?facebook_login=1" method="post">
 			<input type="hidden" value="{{ request.path }}" name="next" />

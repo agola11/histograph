@@ -48,6 +48,17 @@
   z-index: -1;
 }
 
+#back-arrow {
+  position: absolute;
+/*  top: 230px;
+  left: 305px;
+  width: 140px;*/
+  text-align: center;
+  color: #666;
+  z-index: -1;
+  font-size: 24px;
+}
+
 #percentage {
   font-size: 2.5em;
 }
@@ -66,6 +77,8 @@
           <span id="percentage"></span><br/>
           <span id="count"></span><br/>
           of visits begin with this sequence of pages
+        </div>
+        <div id="back-arrow" style="visibility: hidden;">
           <span class="glyphicon glyphicon-circle-arrow-left"></span>
         </div>
       </div>
@@ -169,6 +182,11 @@ function createVisualization(root) {
     .style("left", Math.round(width / 2 - innerr * 0.8).toString() + "px")
     .style("width", Math.round(innerr * 1.6).toString() + "px");
 
+  d3.select("#back-arrow")
+    .style("top", Math.round(height / 2 - innerr * 0.7).toString() + "px")
+    .style("left", Math.round(width / 2 - innerr * 0.8).toString() + "px")
+    .style("width", Math.round(innerr * 1.6).toString() + "px");
+
   var path = vis.data([root]).selectAll("path")
     .data(nodes)
     .enter().append("svg:path")
@@ -205,6 +223,12 @@ function clickdown(d)
     rootd = d;
     createVisualization(rootd);
   }
+
+  if (rootd.parent) {
+    d3.select("#back-arrow")
+        .style("visibility", "");
+  }
+
 }
 
 function clickup(d)
@@ -213,6 +237,14 @@ function clickup(d)
     rootd = rootd.parent;
     createVisualization(rootd);
   }
+
+  if (!rootd.parent) {
+    d3.select("#back-arrow")
+      .transition()
+      .duration(100)
+      .style("visibility", "hidden");
+  }
+
 }
 
 // Fade all but the current sequence, and show it in the breadcrumb trail.
@@ -251,6 +283,13 @@ function mouseover(d) {
     sequenceArray = sequenceArray.slice(0,length-2);
   }
   updateBreadcrumbs(sequenceArray, percentageString);
+
+  if (!rootd.parent) {
+    d3.select("#back-arrow")
+      .transition()
+      .duration(100)
+      .style("visibility", "hidden");
+  }
 }
 
 // Restore everything to full opacity when moving off the visualization.
@@ -275,6 +314,13 @@ function mouseleave(d) {
       .transition()
       .duration(100)
       .style("visibility", "hidden");
+
+  if (!rootd.parent) {
+    d3.select("#back-arrow")
+      .transition()
+      .duration(100)
+      .style("visibility", "hidden");
+  }
 }
 
 // Given a node in a partition layout, return an array of all of its ancestor
