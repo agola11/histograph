@@ -32,6 +32,8 @@ def compare_to_friend(user, o_user):
     if u_graph.root == None or o_graph.root == None:
         return 0
     d1, d2 = {}, {}
+    if u_graph.root.gchildren == None or o_graph.root.gchildren == None:
+        return 0 
     for key in u_graph.root.gchildren:
         d1[key] = (u_graph.root.gchildren[key].node_count)/(u_graph.levels[1])
     for key in o_graph.root.gchildren:
