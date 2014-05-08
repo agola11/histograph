@@ -187,7 +187,7 @@ if (shiftPressed || ctrlPressed) {
     if (circle_class == "parent") {
       visualize(d.parent);
     }
-    else if ((circle_class != "blocked") && (circle_class != "blocked_links") && (d.children != null)) {  
+    else if ((circle_class == "child") && (d.children != null)) {  
       visualize(d);
     }
   }
