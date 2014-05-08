@@ -3,7 +3,8 @@ from graph import views
 
 urlpatterns = patterns('', 
     #url(r'^bubble/(?P<user_id>\d+)$', views.send_user_bubble, name='user_bubble'),
-    url(r'^bubble/(?P<time>\w+)$', views.send_bubble, name='bubble'), 
+    url(r'^bubble/(?P<timesetting>\w+)$', views.send_bubble, name='bubble'), 
+    url(r'^bubble_u/(?P<user_id>\d+)$', views.send_bubble_u, name='bubble_u'),
     url(r'^bubble_blocked$', views.send_bubble_blocked, name='bubble_blocked'), 
     url(r'^pie$', views.pie, name='pie'),
     url(r'^line/(?P<user_id>\d+)$', views.send_user_line_plot, name='user_line'),

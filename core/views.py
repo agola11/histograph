@@ -10,9 +10,9 @@ from django.utils import simplejson
 from django.db.models import Max
 from django.contrib.auth import logout as django_logout
 from itertools import islice
+from rec_utils import *
 from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
 import django_facebook
-import rec_utils
 import json
 import rec_algo
 import jsonpickle
@@ -67,20 +67,20 @@ def store_blocked_sites(request):
 
       re = '^https?://' + bs.url + '.*'
       hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=False)
-      delete_nodes(hn)
-      # hn.update(is_blocked=True)
+      # delete_nodes(hn)
+      hn.update(is_blocked=True)
 
       if bs.block_links:
         hn = HistoryNode.objects.filter(user=request.user, referrer__url__regex=re, is_blocked=False)
-        delete_nodes(hn)
-        # hn.update(is_blocked=True)
+        # delete_nodes(hn)
+        hn.update(is_blocked=True)
 
     else:
       try:
         bs = BlockedSite.objects.get(user=request.user, url=payload['url']).delete()
         re = '^https?://' + payload['url'] + '.*'
         hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=True)
-        insert_nodes(hn)
+        # insert_nodes(hn)
         hn.update(is_blocked=False)
       except BlockedSite.DoesNotExist:
         pass
@@ -278,14 +278,20 @@ def settings(request):
   return HttpResponse(template.render(context))
 
 def send_ranked_urls(request):
-  url_dict = request.user.rank_table
-  return HttpResponse(json.dumps(url_dict), content_type='application/json')
+  user_hns = HistoryNode.objects.filter(user = request.user, url__regex = 'http://.*')
+  users = HistographUser.objects.all()
+  user_graph = UrlGraph()
+  u_root = user_graph.create()
+  for user_hn in user_hns:
+    user_graph.insert(u_root, user_hn)
+  for user in users:
+    pass
 
-def run_rank(request):
-  update_rank_tables()
-  resp = HttpResponse()
-  resp.status_code = 200
-  return resp
+# def run_rank(request):
+#   update_rank_tables()
+#   resp = HttpResponse()
+#   resp.status_code = 200
+#   return resp
 
 
 def up_vote(request):
