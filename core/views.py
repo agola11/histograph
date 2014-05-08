@@ -286,6 +286,7 @@ def run_rank(request):
   resp.status_code = 200
   return resp
 
+
 def up_vote(request):
   # add logic to update user_weight_dict
   if request.method == 'POST':

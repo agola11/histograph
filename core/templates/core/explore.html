@@ -200,6 +200,11 @@ function getCookie(name) {
     return cookieValue;
 };
 function thumbs_up(i) {
+	console.log($("#up" + i).css('color'));
+	if( $("#up" + i).css('color') == 'green') {
+		console.log("in green");
+		$("#up" + i).css( "color", "#6d1daa" );
+	}
 	$.ajax({
 	 type: 'POST',
 	 url: '/up_vote',
@@ -207,6 +212,7 @@ function thumbs_up(i) {
 	 data: {'index': i}
 	});
 	$("#up" + i).css( "color", "green" );
+
 }
 function thumbs_down(i) {
 	$.ajax({
