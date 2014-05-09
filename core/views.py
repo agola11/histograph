@@ -279,7 +279,7 @@ def settings(request):
   return HttpResponse(template.render(context))
 
 # TODO: change to a year?
-def send_ranked_urls(request):
+def send_ranked_urls(request, page):
   user_hns = HistoryNode.objects.filter(user = request.user, url__regex = 'http://.*')
   user_urls = HistoryNode.objects.filter(user = request.user).values('url')
   user_urls = set(map(lambda hn : hn['url'], user_urls))
