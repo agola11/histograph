@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'django_facebook',
     'djcelery',
     'core',
+    'django_cron',
     'graph',
 )
 
