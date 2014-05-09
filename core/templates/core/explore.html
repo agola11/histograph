@@ -31,7 +31,13 @@
 
 $(window).scroll(function() {
 	if($(window).scrollTop() + $(window).height() == $(document).height()) {
-		updateJSON();
+		$.getJSON( "rank/" + page_num, function( data ) {
+			jsonResp = data;
+			updateJSON();
+			page_num += 1;
+			offset += 50;
+		});
+
 	}
 });
 </script>
@@ -46,7 +52,7 @@ function truncate(string){
 
 function updateJSON() {
 	var items = [];
-	for (i = base; i < base+50; i++) {
+	for (i = 0; i < 50; i++) {
 		var title;
 		var color;
 		var url;
@@ -60,7 +66,7 @@ function updateJSON() {
 		else {
 			url = "http://" + jsonResp[i][0]
 		}
-		color = "rgb(" + (241 - i) + "," + (27 + i) + "," + (56 + i) + ")";
+		color = "rgb(" + (241 - (i + offset)) + "," + (27 + i + offset) + "," + (56 + i + offset) + ")";
 		// if (parseFloat(jsonResp[i][1]['score']) > 150) {
 		// 	color = '#f11b38';
 		// }
@@ -86,7 +92,7 @@ function updateJSON() {
 			.addClass("circle")
 			.css("float", "left")
 			.css("margin", "20px 0px")
-			.text(i + 1)
+			.text(i + 1 + offset)
 			)
 		.append($("<a>")
 			.attr("href", url)
@@ -113,8 +119,8 @@ function updateJSON() {
 			.css("width", "80%")
 		.append($("<span>")
 			.addClass("glyphicon glyphicon-thumbs-up")
-			.attr("onClick", "thumbs_up(" + i + ")")
-			.attr("id", "up" + i)
+			.attr("onClick", "thumbs_up(" + (i + offset) + ")")
+			.attr("id", "up" + (i + offset))
 			.css("float", "left")
 			.css("margin", "-25px 0px 0px 10px")
 			.css("cursor", "pointer")
@@ -122,8 +128,8 @@ function updateJSON() {
 		.append($("<span>")
 			.addClass("glyphicon glyphicon-thumbs-down")
 			.css("float", "left")
-			.attr("onClick", "thumbs_down(" + i + ")")
-			.attr("id", "down" + i)
+			.attr("onClick", "thumbs_down(" + (i + offset) + ")")
+			.attr("id", "down" + (i + offset))
 			.css("margin", "5px 0px 0px 10px")
 			.css("cursor", "pointer")
 			)
@@ -173,10 +179,14 @@ $("#all").html($("#all").html());
 <script type="text/javascript">
 var jsonResp = null;
 var base = 0;
+var page_num = 1;
+var offset = 0;
 $(document).ready(function(){
-	$.getJSON( "rank", function( data ) {
+	$.getJSON( "rank/" + page_num, function( data ) {
 		jsonResp = data;
 		updateJSON();
+		page_num += 1;
+		offset += 50;
 	});
 });
 </script>

@@ -12,6 +12,7 @@ from django.contrib.auth import logout as django_logout
 from itertools import islice
 from rec_utils import *
 from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
+from django_cron import CronJobBase, Schedule
 import django_facebook
 import json
 import rec_algo
@@ -316,3 +317,4 @@ def down_vote(request):
   response = HttpResponse()
   response.status_code = 200
   return response
+
