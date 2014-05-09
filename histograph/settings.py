@@ -33,6 +33,9 @@ ALLOWED_HOSTS = [
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
+CRONJOBS = [
+        ('*/5 * * * *', 'myproject.myapp.cron.my_scheduled_job')
+]
 
 # Application definition
 
@@ -46,6 +49,7 @@ INSTALLED_APPS = (
     'django_facebook',
     'djcelery',
     'core',
+    'django_crontab',
     'django_cron',
     'graph',
 )
