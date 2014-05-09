@@ -132,22 +132,53 @@ function visualize(root) {
   node.on("click", click);
 };
 
+var blockPressed = false;
+$(window).keydown(function(evt) {
+  if (evt.which == 66) { // b
+    blockPressed = true;
+  }
+}).keyup(function(evt) {
+  if (evt.which == 66) { // b
+    blockPressed = false;
+  }
+});
+
+var linksPressed = false;
+$(window).keydown(function(evt) {
+  if (evt.which == 76) { // l
+    linksPressed = true;
+  }
+}).keyup(function(evt) {
+  if (evt.which == 76) { // l
+    linksPressed = false;
+  }
+});
+
+var unblockPressed = false;
+$(window).keydown(function(evt) {
+  if (evt.which == 85) { // u
+    unblockPressed = true;
+  }
+}).keyup(function(evt) {
+  if (evt.which == 85) { // u
+    unblockPressed = false;
+  }
+});
+
 function click(d) {
 //console.log("clicked on "+d.full_url);
 var circle_class = d3.select(this).select("circle").attr("class");
 var linked;
 var blocked;
-var shiftPressed = d3.event.shiftKey;
-var ctrlPressed = d3.event.ctrlKey;
 
-if (shiftPressed || ctrlPressed) {  	
+if (unblockPressed || blockPressed || linksPressed) {  	
   if (circle_class != "parent") {  
-      if (shiftPressed & ctrlPressed) {
+      if (linksPressed) {
   	    d3.select(this).select("circle").attr("class", "blockedlinks");
   	    linked = true;
   	    blocked = true;
   	 }
-      else if (shiftPressed) {
+      else if (blockPressed) {
       	d3.select(this).select("circle").attr("class", "blocked"); 
       	linked = false;
       	blocked = true;	    
