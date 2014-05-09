@@ -1,7 +1,7 @@
 from __future__ import division
 from urlparse import urlparse
-from django.http import Http404
 from math import log, sqrt, exp, e
+from core.models import HistoryNode, HistographUser
 import copy
 try:
     from collections import OrderedDict
@@ -19,6 +19,30 @@ def get_split_url(hn):
 	if url[-1] == '':
 		del(url[-1])
 	return url
+
+def run_algorithm(user):
+  user_hns = HistoryNode.objects.filter(user = user, url__regex = 'http://.*', is_blocked=False)
+  user_urls = HistoryNode.objects.filter(user = user).values('url')
+  user_urls = set(map(lambda hn : hn['url'], user_urls))
+  all_users = HistographUser.objects.all()
+  user_graph = UrlGraph()
+  u_root = user_graph.create()
+  rank_table = {}
+  for user_hn in user_hns:
+    user_graph.insert(u_root, user_hn)
+  for o_user in all_users:
+    if o_user != user:
+      other_hns = o_user.historynode_set.filter(url__regex = 'http://.*', is_blocked=False)
+      other_graph = UrlGraph()
+      o_root = other_graph.create()
+      for other_hn in other_hns:
+        other_graph.insert(o_root, other_hn)
+      update_rank_table(user_graph, other_graph, rank_table, o_user.id, {})
+
+  ranked_urls = list(rank_table.items())
+  ranked_urls = filter((lambda (x,y): ('https://' + x) not in user_urls and ('http://' + x) not in user_urls), ranked_urls)
+  ranked_urls = list(reversed(sorted(ranked_urls, key=lambda (x,y): y['score'])))
+  return ranked_urls
 
 # Compute Bhattacharya Distance between two distributions
 def bhatta_dist(d1, d2):
