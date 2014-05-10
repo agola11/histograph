@@ -183,5 +183,12 @@ def create_history_nodes_from_json(payload, user):
       except HistoryNode.DoesNotExist:
         continue
 
+  version = cache.get(str(user.id))
+  if not version:
+    version = 1
+  else:
+    version = version + 1
+  cache.set(str(user.id), version)
+
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')
