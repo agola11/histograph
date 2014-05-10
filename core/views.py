@@ -268,12 +268,15 @@ def settings(request):
 # TODO: change to a year?
 def send_ranked_urls(request, page):
   PAGE_SIZE = 50
+  LIMIT = 350
   page = int(page)
+  if page > (LIMIT)/(PAGE_SIZE):
+    return HttpResponse(json.dumps([]), content_type='application/json')
   # Try to retrieve page from cache
   results = cache.get(str(request.user.id)+str((page-1)*PAGE_SIZE))
   if not results:
     # If not in cache, run ranking algorithm
-    results = run_algorithm(request.user)
+    results = run_algorithm(request.user)[:LIMIT]
     for index in range(0, len(results), PAGE_SIZE):
       cache.set(str(request.user.id)+str(index), results[index:index+(PAGE_SIZE-1)])
 
