@@ -25,6 +25,11 @@ class HistographUser(AbstractUser, FacebookModel):
     friend_users = HistographUser.objects.filter(facebook_id__in=friend_ids)
     return friend_users
 
+class UserWeight(models.Model):
+  to_user = models.ForeignKey(HistographUser, related_name = 'userweight_to')
+  from_user = models.ForeignKey(HistographUser, related_name = 'userweight_from')
+  weight = models.FloatField()
+
 class HistoryNode(models.Model):
   # choices for the transition type field
   LINK = 0
@@ -182,6 +187,13 @@ def create_history_nodes_from_json(payload, user):
         HistoryNode.objects.filter(extension_id=node['extension_id'], browser_id=node['browser_id'], user=user).update(referrer=referrer)
       except HistoryNode.DoesNotExist:
         continue
+
+  version = cache.get(str(user.id))
+  if not version:
+    version = 1
+  else:
+    version = version + 1
+  cache.set(str(user.id), version)
 
   end_time = time.time()
   logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')

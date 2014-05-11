@@ -13,6 +13,7 @@ from itertools import islice
 from rec_utils import *
 from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
 from django_cron import CronJobBase, Schedule
+from django.core.cache import cache
 import django_facebook
 import json
 import rec_algo
@@ -266,8 +267,24 @@ def settings(request):
 
 # TODO: change to a year?
 def send_ranked_urls(request, page):
-  ranked_urls = run_algorithm(request.user)
-  return HttpResponse(json.dumps(ranked_urls), content_type='application/json')
+  PAGE_SIZE = 50
+  LIMIT = 200
+  page = int(page)
+  version = cache.get(str(request.user.id))
+  if not version:
+    version = 1
+    cache.set(str(request.user.id), version)
+  if page > (LIMIT)/(PAGE_SIZE):
+    return HttpResponse(json.dumps([]), content_type='application/json')
+  # Try to retrieve page from cache
+  results = cache.get(str(request.user.id)+str((page-1)*PAGE_SIZE), version=version)
+  if not results:
+    # If not in cache, run ranking algorithm
+    results = run_algorithm(request.user)[:LIMIT]
+    for index in range(0, len(results), PAGE_SIZE):
+      cache.set(str(request.user.id)+str(index), results[index:index+(PAGE_SIZE-1)], version=version)
+
+  return HttpResponse(json.dumps(results), content_type='application/json')
 
 def up_vote(request):
   # add logic to update user_weight_dict
