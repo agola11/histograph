@@ -34,11 +34,10 @@ $(window).scroll(function() {
 		console.log("reached bottom");
 		$.getJSON( "rank/" + page_num, function( data ) {
 			jsonResp = data;
+			updateJSON();
+			page_num += 1;
+			offset += 50;
 		});
-		updateJSON();
-		page_num += 1;
-		console.log(offset);
-		offset += 50;
 
 	}
 });
@@ -53,6 +52,8 @@ function truncate(string){
 };
 
 function updateJSON() {
+	console.log("updated JSON");
+	console.log(offset);
 	var items = [];
 	for (i = 0; i < 50; i++) {
 		var title;
@@ -184,6 +185,7 @@ var base = 0;
 var page_num = 1;
 var offset = 0;
 $(document).ready(function(){
+	console.log("document ready");
 	$.getJSON( "rank/" + page_num, function( data ) {
 		jsonResp = data;
 		updateJSON();
