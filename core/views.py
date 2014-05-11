@@ -282,29 +282,17 @@ def send_ranked_urls(request, page):
     # If not in cache, run ranking algorithm
     results = run_algorithm(request.user)[:LIMIT]
     for index in range(0, len(results), PAGE_SIZE):
-      cache.set(str(request.user.id)+str(index), results[index:index+(PAGE_SIZE-1)], version=version)
+      cache.set(str(request.user.id)+str(index), results[index:index+(PAGE_SIZE)], version=version)
+    results = cache.get(str(request.user.id)+str((page-1)*PAGE_SIZE), version=version)
 
   return HttpResponse(json.dumps(results), content_type='application/json')
 
 def up_vote(request):
   # add logic to update user_weight_dict
   if request.method == 'POST':
-    index = request.POST['index']
+    user_dict = request.POST.get('users', None)
 
-  index = int(index)
-  user = request.user
-  rank_table = user.rank_table
-  weight_table = user.weight_table
-
-  user_dict = rank_table[index][1]['users']
-  for o_id in user_dict:
-    if o_id in weight_table:
-      weight_table[o_id] += user_dict[o_id]
-    else:
-      weight_table[o_id] = user_dict[o_id]
-
-  user.weight_table = weight_table
-  user.save()
+  user_dict['1']
 
   response = HttpResponse()
   response.status_code = 200

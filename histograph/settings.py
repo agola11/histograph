@@ -41,7 +41,7 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
 CRONJOBS = [
-        ('*/5 * * * *', 'myproject.myapp.cron.my_scheduled_job')
+        ('*/5 * * * *', 'histograph-dev1.views.my_scheduled_job')
 ]
 
 # Application definition
