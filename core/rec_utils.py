@@ -205,7 +205,4 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 				g_child = g.gchildren[key]
 				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, (prev_score+bd)*(exp(e*f_u)), rank_table, o_id, weight_table)
 	
-
-def my_scheduled_job():
-    ankush = ruhroh
     
