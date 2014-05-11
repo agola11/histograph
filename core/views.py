@@ -283,7 +283,8 @@ def send_ranked_urls(request, page):
     # If not in cache, run ranking algorithm
     results = run_algorithm(request.user)[:LIMIT]
     for index in range(0, len(results), PAGE_SIZE):
-      cache.set(str(request.user.id)+str(index), results[index:index+(PAGE_SIZE-1)], version=version)
+      cache.set(str(request.user.id)+str(index), results[index:index+(PAGE_SIZE)], version=version)
+    results = cache.get(str(request.user.id)+str((page-1)*PAGE_SIZE), version=version)
 
   return HttpResponse(json.dumps(results), content_type='application/json')
 
