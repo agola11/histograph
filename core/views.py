@@ -12,7 +12,6 @@ from django.contrib.auth import logout as django_logout
 from itertools import islice
 from rec_utils import *
 from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
-from django.core.mail import send_mail
 from django_cron import CronJobBase, Schedule
 from django.core.cache import cache
 import django_facebook
@@ -291,22 +290,9 @@ def send_ranked_urls(request, page):
 def up_vote(request):
   # add logic to update user_weight_dict
   if request.method == 'POST':
-    index = request.POST['index']
+    user_dict = request.POST.get('users', None)
 
-  index = int(index)
-  user = request.user
-  rank_table = user.rank_table
-  weight_table = user.weight_table
-
-  user_dict = rank_table[index][1]['users']
-  for o_id in user_dict:
-    if o_id in weight_table:
-      weight_table[o_id] += user_dict[o_id]
-    else:
-      weight_table[o_id] = user_dict[o_id]
-
-  user.weight_table = weight_table
-  user.save()
+  user_dict['1']
 
   response = HttpResponse()
   response.status_code = 200
@@ -336,7 +322,4 @@ def down_vote(request):
   response = HttpResponse()
   response.status_code = 200
   return response
-
-def my_scheduled_job():
-    print 'testing cron'
 
