@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, get_value_graph, update_rank_tables
+from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -14,16 +14,11 @@ from rec_utils import *
 from django.views.decorators.csrf import csrf_exempt, requires_csrf_token
 from django.core.mail import send_mail
 from django_cron import CronJobBase, Schedule
+from django.core.cache import cache
 import django_facebook
 import json
 import rec_algo
 import jsonpickle
-
-# TODO: change to simplejson?
-# def send_history(request, user_id):
-#   resp = HttpResponse()
-#   serializers.serialize('json', HistoryNode.objects.filter(user__id=int(user_id)), stream=resp)
-#   return HttpResponse(resp, content_type="application/json")
 
 @csrf_exempt
 @requires_csrf_token
@@ -128,14 +123,6 @@ def send_new_extension_id(request):
     resp = HttpResponse()
     resp.status_code = 401
     return resp
-
-# def send_user_id(request):
-#   if request.user.is_authenticated():
-#     data = {'user_id': request.user.id, 'is_auth': 1}
-#     return HttpResponse(simplejson.dumps(data), content_type="application/json")
-#   else:
-#     data = {'user_id': 0, 'is_auth': 0}
-#     return HttpResponse(simplejson.dumps(data), content_type="application/json")
 
 @csrf_exempt
 @requires_csrf_token
@@ -281,48 +268,24 @@ def settings(request):
 
 # TODO: change to a year?
 def send_ranked_urls(request, page):
-  user_hns = HistoryNode.objects.filter(user = request.user, url__regex = 'http://.*')
-  user_urls = HistoryNode.objects.filter(user = request.user).values('url')
-  user_urls = set(map(lambda hn : hn['url'], user_urls))
-  users = HistographUser.objects.all()
-  user_graph = UrlGraph()
-  u_root = user_graph.create()
-  rank_table = {}
-  for user_hn in user_hns:
-    user_graph.insert(u_root, user_hn)
-  for user in users:
-    if user != request.user:
-      other_hns = user.historynode_set.filter(url__regex = 'http://.*')
-      other_graph = UrlGraph()
-      o_root = other_graph.create()
-      for other_hn in other_hns:
-        other_graph.insert(o_root, other_hn)
-      update_rank_table(user_graph, other_graph, rank_table, user.id, {})
+  PAGE_SIZE = 50
+  LIMIT = 200
+  page = int(page)
+  version = cache.get(str(request.user.id))
+  if not version:
+    version = 1
+    cache.set(str(request.user.id), version)
+  if page > (LIMIT)/(PAGE_SIZE):
+    return HttpResponse(json.dumps([]), content_type='application/json')
+  # Try to retrieve page from cache
+  results = cache.get(str(request.user.id)+str((page-1)*PAGE_SIZE), version=version)
+  if not results:
+    # If not in cache, run ranking algorithm
+    results = run_algorithm(request.user)[:LIMIT]
+    for index in range(0, len(results), PAGE_SIZE):
+      cache.set(str(request.user.id)+str(index), results[index:index+(PAGE_SIZE-1)], version=version)
 
-  ranked_urls = list(rank_table.items())
-  ranked_urls = filter((lambda (x,y): ('https://' + x) not in user_urls and ('http://' + x) not in user_urls), ranked_urls)
-  ranked_urls = list(reversed(sorted(ranked_urls, key=lambda (x,y): y['score'])))
-
-  return HttpResponse(json.dumps(ranked_urls), content_type='application/json')
-
-def send_ranked_urls_u(request, user_id):
-  user_hns = HistoryNode.objects.filter(user__id = int(user_id), url__regex = 'http://.*')
-  users = HistographUser.objects.all()
-  user_graph = UrlGraph()
-  u_root = user_graph.create()
-  rank_table = {}
-  for user_hn in user_hns:
-    user_graph.insert(u_root, user_hn)
-  for user in users:
-    if user.id != int(user_id):
-      other_hns = user.historynode_set.filter(url__regex = 'http://.*')
-      other_graph = UrlGraph()
-      o_root = other_graph.create()
-      for other_hn in other_hns:
-        other_graph.insert(o_root, other_hn)
-      update_rank_table(user_graph, other_graph, rank_table, user.id, {})
-  return HttpResponse(json.dumps(rank_table), content_type='application/json')
-
+  return HttpResponse(json.dumps(results), content_type='application/json')
 
 def up_vote(request):
   # add logic to update user_weight_dict
