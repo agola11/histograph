@@ -221,7 +221,7 @@ function thumbs_up(i) {
 		 type: 'POST',
 		 url: '/up_vote',
 		 headers:{"X-CSRFToken":csrftoken},
-		 data: {'users': jsonResp[i][1]['users']}
+		 data: {'users': JSON.stringify(jsonResp[i][1]['users'])}
 		});
 	}
 	else if( $("#up" + i).css('color') == 'rgb(0, 128, 0)') {
@@ -231,7 +231,7 @@ function thumbs_up(i) {
 		 url: '/down_vote',
 		 dataType: 'json',
 		 headers:{"X-CSRFToken":csrftoken},
-		 data: {'users': jsonResp[i][1]['users']},
+		 data: {'users': JSON.stringify(jsonResp[i][1]['users'])}
 		});
 	}
 	else {
@@ -239,7 +239,7 @@ function thumbs_up(i) {
 		 type: 'POST',
 		 url: '/up_vote',
 		 headers:{"X-CSRFToken":csrftoken},
-		 data: {'users': jsonResp[i][1]['users']}
+		 data: {'users': JSON.stringify(jsonResp[i][1]['users'])}
 		});
 		$("#up" + i).css( "color", "green" );
 	}

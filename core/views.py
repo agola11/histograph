@@ -290,11 +290,19 @@ def send_ranked_urls(request, page):
 def up_vote(request):
   # add logic to update user_weight_dict
   if request.method == 'POST':
-    user_dict = request.POST.get('users', None)
+    user_dict = request.POST['users']
 
-  user_dict['1']
+  user_dict = user_dict.replace('"', '').replace("{", "").replace("}", "").split(',')
 
-  response = HttpResponse()
+  overall_dict = {}
+  for i in user_dict:
+    key = i.split(':')[0]
+    value = float(i.split(':')[1])
+    overall_dict[key] = value
+
+  # USE OVERALL DICT
+
+  response = HttpResponse(json.dumps(overall_dict), content_type='application/json')
   response.status_code = 200
   return response
 
@@ -302,7 +310,7 @@ def down_vote(request):
   # add logic to update user_weight_dict
 
   if request.method == 'POST':
-    index = request.POST['index']
+    index = request.POST.get['index']
 
   index = int(index)
   user = request.user
