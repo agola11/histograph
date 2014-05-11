@@ -25,6 +25,11 @@ class HistographUser(AbstractUser, FacebookModel):
     friend_users = HistographUser.objects.filter(facebook_id__in=friend_ids)
     return friend_users
 
+class UserWeight(models.Model):
+  to_user = models.ForeignKey(HistographUser, related_name = 'userweight_to')
+  from_user = models.ForeignKey(HistographUser, related_name = 'userweight_from')
+  weight = models.FloatField()
+
 class HistoryNode(models.Model):
   # choices for the transition type field
   LINK = 0
