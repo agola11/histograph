@@ -1,6 +1,25 @@
 <!doctype html>
 {% load staticfiles %}
 <html lang="en" ng-app>
+<style>
+	td {
+		width:500px;
+	}
+	tr {
+		width:500px;
+		height:200px;
+	}
+	#gif {
+		width:252px;
+		height:130px;
+	}
+	#heading {
+		color:#442560;
+	}
+	#small {
+		height:50px;
+	}
+</style>
 <head>
 	<meta charset="utf-8">
 	<title>Histograph | Login</title>
@@ -14,7 +33,7 @@
 	<div id="all">
 		<br>
 		<div class="row" align="center">
-			<img src="{{ STATIC_URL }}Histograph-full.png" width="30%" height="30%">
+			<img src="{{ STATIC_URL }}histograph-large.png" width="30%" height="30%">
 		</div>
 		<br><br><br>
 		<div class="row" style="margin-left: 150px">
@@ -38,6 +57,64 @@
 			<input onclick="F.connect(this.parentNode); return false;" type="image" src="{{ STATIC_URL }}django_facebook/images/facebook_login.png" />
 		</form>
 	</div></div>
+		<div id="about" align="center">
+			<table>
+				<tr>
+					<td> 
+					<h3 id="heading"> Upload </h3>
+						Install our Chrome extension to share your browsing habits with us. 
+					</td>
+					<td align="center"> <img src="/static/extension.png" id="gif"></td>
+				</tr>
+				<tr id="small"> <td> 
+						<h3 id="heading"> Analyze </h3>
+						Interact with intuitive graphs to discover how you really use the web.
+					</td> 
+				</tr>
+				<tr>
+					<td> 
+						<h4 id="heading"> Sunburst </h4>
+							A recursivly explorable visual breakdown of your most frequently visited webpages.  
+					</td>
+					<td align="center"> <img src="/static/gif3.gif" id="gif"></td>
+				</tr>
+				<tr>
+					<td> 
+						<h4 id="heading"> Digraph </h4>
+							Interactive graph that shows the webpages you've visited and how you got there.     
+					</td>
+					<td align="center"> <img src="/static/gif4.gif" id="gif"></td>
+				</tr>
+				<tr>
+					<td> 
+						<h4 id="heading"> Line Plot </h4>
+							A zoomable record of your visits to domains over the past year.    
+					</td>
+					<td align="center"> <img src="/static/gif5.gif" id="gif"></td>
+				</tr>
+				<tr>
+					<td> 
+					<h3 id="heading"> Explore </h3>
+						Discover new sites you haven't seen based your browsing patterns. 
+					</td>
+					<td align="center"> <img src="/static/gif6.gif" id="gif"></td>
+				</tr>
+				<tr>
+					<td> 
+					<h3 id="heading"> Friends </h3>
+						Compare your browsing history with your Facebook friends. 
+					</td>
+					<td align="center"> <img src="/static/gif9.gif" id="gif"></td>
+				</tr>
+				<tr>
+					<td> 
+					<h3 id="heading"> Block </h3>
+						Recursively explore your browsing history and filter sites from being shown in your graphs. 
+					</td>
+					<td align="center"> <img src="/static/gif8.gif" id="gif"></td>
+				</tr>
+			</table>
+		</div>
 	</div>
 
 </body>
