@@ -16,6 +16,7 @@ except ImportError:
     # python 2.6 or earlier, use backport
     from ordereddict import OrderedDict
 
+# compare a user to another user
 def compare_to_friend(user, o_user):
     user_hns = HistoryNode.objects.filter(user=user)
     other_hns = HistoryNode.objects.filter(user=o_user)
@@ -40,6 +41,7 @@ def compare_to_friend(user, o_user):
         d2[key] = (o_graph.root.gchildren[key].node_count)/(o_graph.levels[1])
     return bhatta_dist(d1, d2)
 
+# filters for nodes
 def filter_http_s(hn):
     l = urlparse(hn.url)
     return(l.scheme == 'http' or l.scheme == 'https')
@@ -94,6 +96,7 @@ def get_formatted_blocked(root):
     for child in root.gchildren:
         get_formatted_blocked(child)
 
+# send line plot data to the frontend
 def send_line_plot(hn_list):
     hn_list = filter(filter_http_s, hn_list)
     hn_list = map(chop_protocol, hn_list)
@@ -121,33 +124,37 @@ def send_line_plot(hn_list):
 
     return({'sorted_domains':filtered_domains_list, 'line_dict':line_dict})
 
+# send digraph data to the frontend - condense identical urls to single nodes
 def send_digraph(hn_list):
-    # hn_list = filter(filter_http, hn_list)
     domains = set(map(lambda hn: tldextract.extract(hn.url).domain, hn_list))
-    # domains = list(OrderedDict.fromkeys(domains, 0))
 
     hn_list = map(chop_protocol, hn_list)
 
+    # get a list of unique urls
     urls = set(map(lambda hn: hn.url, hn_list))
-    # hn_list = map(split_url, hn_list)
 
+    # map unique domains to indices
     domain_id_dict = {}
     i = 0
     for domain in domains:
         domain_id_dict[domain] = i
         i += 1
 
+    # initialize dict
     url_dict = {}
     for url in urls:
         url_dict[url] = {}
 
+    # construct two-way links between unique urls
     for hn in hn_list:
         if not hn.referrer is None:
             ref_url = get_chop_protocol(hn.referrer.url)
+            # exclude nodes with links to themselves
             if ref_url in url_dict and ref_url != hn.url:
                 hn_url_obj = url_dict[hn.url]
                 ref_url_obj = url_dict[ref_url]
 
+                # add a link
                 if ref_url in hn_url_obj:
                     hn_url_obj[ref_url]['count'] += 1
                 else:
@@ -159,12 +166,14 @@ def send_digraph(hn_list):
                 else:
                     ref_url_obj[hn.url] = {'count': 1, 'type': set([get_link_type_name(hn.transition_type)]), 'valid': True}
 
+    # delete singletons
     for n_key in url_dict.keys():
         n = url_dict[n_key]
 
         if len(n) == 0:
             del(url_dict[n_key])
 
+    # construct indexed node and link arrays
     nodes = []
     links = []
     id_dict = {}

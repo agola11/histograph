@@ -5,30 +5,11 @@
 {% block content %}
 <body>
 	<div align="center" class="col-sm-8 col-sm-offset-2" id="all">
-		<!-- {% for key, value in first %}
-		<div class="rnd">
-			{% if value.last_title %}
-			<svg width="20" height="20">
-				<circle cx="10" cy="10" r="10" fill="#ddd" />
-			</svg>
-			<h6 align="left"> {{value.last_title}} </h6>
-			{% else %}
-			<h6 align="left"> {{key}} </h6>
-			{% endif %}
-			<a a href="http://{{key}}" target="_blank" class="btn btn-lg btn-success alignleft">Go</a>
-			<button class="btn btn-sm-red alignright">{{value.score}}</button>
-			<hl>
-		</div>
-		{% endfor %} -->
 	</div>
 
-	<script type="text/javascript">
-	// $('#all').waypoint(function(direction) {
-	// 	if (direction == 'down') {
-	// 		alert('Basic example callback triggered.');
-	// 	}
-	// });
+<script type="text/javascript">
 
+// dynamically load paginated results when scroll to end of page
 $(window).scroll(function() {
 	if($(window).scrollTop() + $(window).height() == $(document).height()) {
 		console.log("reached bottom");
@@ -44,6 +25,7 @@ $(window).scroll(function() {
 </script>
 
 <script type="text/javascript">
+// truncate url titles to 50 chars
 function truncate(string){
 	if (string.length > 50)
 		return string.substring(0,50)+'...';
@@ -52,8 +34,7 @@ function truncate(string){
 };
 
 function updateJSON() {
-	console.log("updated JSON");
-	console.log(offset);
+	// update results when new data is received
 	var items = [];
 	for (i = 0; i < 50; i++) {
 		var title;
@@ -69,28 +50,13 @@ function updateJSON() {
 		else {
 			url = "http://" + jsonResp[i][0]
 		}
-		color = "rgb(" + (241 - (i + offset)) + "," + (27 + i + offset) + "," + (56 + i + offset) + ")";
-		// if (parseFloat(jsonResp[i][1]['score']) > 150) {
-		// 	color = '#f11b38';
-		// }
-		// else if (parseFloat(jsonResp[i][1]['score']) > 75) {
-		// 	color = '#fd751c';
-		// }
 
-		// else {
-		// 	color = '#12a286';
-		// }
+		// dynamcially change color based on how good result is
+		color = "rgb(" + (241 - (i + offset)) + "," + (27 + i + offset) + "," + (56 + i + offset) + ")";
 
 		var new_div = $("<div>")
 		.addClass("explore_div")
 		.addClass("row")
-		// .append($("<div>")
-		// 	.css("float", "left")
-		// 	.css("margin", "20px 0px")
-		// 	.append($("<button>")
-		// 		.addClass("btn btn-default btn-lg")
-		// 		)
-		// 	)
 		.append($("<div>")
 			.addClass("circle")
 			.css("float", "left")
@@ -145,33 +111,7 @@ function updateJSON() {
 			);
 		$("#all").append(url_div);
 		$("#all").append("<hr>");
-
-
-			// $("#all").append("div:rnd");
-			// var svg = main.append("svg");
-			// var circle = svg.attr("width", "20")
-			// 	.attr("height", "20")
-			// 	.append("circle");
-
-			// circle.attr("cx", "10")
-			// 	.attr("cy", "10")
-			// 	.attr("r", "10")
-			// 	.attr("fill", "#ddd");
-			// main.append("")
-
-			// items.push( "<div class='rnd'><svg width='20' height='20'><circle cx='10' cy='10' r='10' fill='#ddd' /></svg><h6 align='left'>" + jsonResp[i][1]['last_title'] + "</h6>" );
-		// else {
-		// 	items.push( "<div class='rnd'><h6 align='left'>" + jsonResp[i][0] + "</h6>" );
-		// }
-		// items.push("<a a href='http://" + jsonResp[i][0] + "'" + " target='_blank' class='btn btn-lg btn-success alignleft'>Go</a>");
-		// items.push("<button class='btn btn-sm-red alignright'>" + jsonResp[i][1]['score'] + "</button>");
-		// items.push("</div><br>");
 	}
-
-	// $( "<ul/>", {
-	// 	"class": "my-new-list",
-	// 	html: items.join( "" )
-	// }).appendTo( "#all" );
 
 base = base+50;
 
@@ -185,7 +125,6 @@ var base = 0;
 var page_num = 1;
 var offset = 0;
 $(document).ready(function(){
-	console.log("document ready");
 	$.getJSON( "rank/" + page_num, function( data ) {
 		jsonResp = data;
 		updateJSON();
@@ -196,7 +135,7 @@ $(document).ready(function(){
 </script>
 
 <script type="text/javascript">
-
+// get csrf cookie
 var csrftoken = getCookie('csrftoken');
 function getCookie(name) {
     var cookieValue = null;
@@ -213,7 +152,9 @@ function getCookie(name) {
     }
     return cookieValue;
 };
+
 function thumbs_up(i) {
+	// process thumbs up feedback
 	if ( ($("#down" + i).css('color')) == 'rgb(255, 0, 0)') {
 		$("#down" + i).css( "color", "#6d1daa" );
 		$("#up" + i).css( "color", "green" );
@@ -246,6 +187,7 @@ function thumbs_up(i) {
 
 }
 function thumbs_down(i) {
+	// process thumbs down feedback
 	if ( ($("#up" + i).css('color')) == 'rgb(0, 128, 0)') {
 		$("#up" + i).css( "color", "#6d1daa" );
 		$.ajax({

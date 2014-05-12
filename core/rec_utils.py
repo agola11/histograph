@@ -10,6 +10,7 @@ except ImportError:
     from ordereddict import OrderedDict
 import tldextract
 
+# split a node's url into an array of segments delineated by slashes
 def get_split_url(hn):
 	url = hn.url
 	parsed = urlparse(url)
@@ -20,6 +21,7 @@ def get_split_url(hn):
 		del(url[-1])
 	return url
 
+# run the recommendations algorithm
 def run_algorithm(user):
   user_hns = HistoryNode.objects.filter(user = user, url__regex = 'http://.*', is_blocked=False)
   user_urls = HistoryNode.objects.filter(user = user).values('url')
