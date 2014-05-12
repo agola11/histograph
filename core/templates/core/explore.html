@@ -252,7 +252,7 @@ function thumbs_down(i) {
 		 type: 'POST',
 		 url: '/down_vote',
 		 headers:{"X-CSRFToken":csrftoken},
-		 data: {'users': jsonResp[i][1]['users']}
+		 data: {'users': JSON.stringify(jsonResp[i][1]['users'])}
 		});
 		$("#down" + i).css( "color", "red" );
 	}
@@ -262,7 +262,7 @@ function thumbs_down(i) {
 		 type: 'POST',
 		 url: '/up_vote',
 		 headers:{"X-CSRFToken":csrftoken},
-		 data: {'users': jsonResp[i][1]['users']}
+		 data: {'users': JSON.stringify(jsonResp[i][1]['users'])}
 		});
 	}
 	else {
@@ -271,7 +271,7 @@ function thumbs_down(i) {
 		 url: '/down_vote',
 		 dataType: 'json',
 		 headers:{"X-CSRFToken":csrftoken},
-		 data: {'users': jsonResp[i][1]['users']},
+		 data: {'users': JSON.stringify(jsonResp[i][1]['users'])},
 		});
 		$("#down" + i).css( "color", "red" );
 	}
