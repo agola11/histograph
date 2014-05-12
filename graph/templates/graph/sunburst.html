@@ -5,25 +5,6 @@
     <title>Sequences sunburst</title>
     <style>
 
-
-/*#main {
-  width: 750px;
-}*/
-
-/*#sidebar {
-  float: right;
-  width: 100px;
-}
-*/
-/*#sequence {
-  width: 600px;
-  height: 70px;
-}*/
-
-/*#legend {
-  padding: 10px 0 0 3px;
-}*/
-
 #sequence text, #legend text {
   fill: #fff;
 }
@@ -40,9 +21,6 @@
 
 #explanation {
   position: absolute;
-/*  top: 230px;
-  left: 305px;
-  width: 140px;*/
   text-align: center;
   color: #666;
   z-index: -1;
@@ -50,9 +28,6 @@
 
 #back-arrow {
   position: absolute;
-/*  top: 230px;
-  left: 305px;
-  width: 140px;*/
   text-align: center;
   color: #666;
   z-index: -1;
@@ -84,7 +59,7 @@
       </div>
     </div>
     <script type="text/javascript">
-      // Dimensions of sunburst.
+// Dimensions of sunburst.
 var width = $(window).width();
 var height = $(window).height() - 200;
 var radius = Math.min(width, height) / 2;
@@ -121,7 +96,6 @@ initializeBreadcrumbTrail();
 
 var rootd;
 
-// var val = $('.dateslider').slider('getValue');
 loadData();
 
 function loadData() {
@@ -169,10 +143,10 @@ function createVisualization(root) {
       .attr("r", radius)
       .style("opacity", 0);
 
-  // For efficiency, filter nodes to keep only those large enough to see.
+  // For efficiency, filter nodes to keep only those large enough to see. ALso filter dummy nodes
   var nodes = partition.nodes(root)
       .filter(function(d) {
-      return (d.dx > 0.01 && !(d.is_dummy && d.parent.gchildren.length == 1)); // 0.005 radians = 0.29 degrees
+      return (d.dx > 0.01 && !(d.is_dummy && d.parent.gchildren.length == 1));
       });
 
   var innerr = Math.sqrt(nodes[1].y);
@@ -187,13 +161,14 @@ function createVisualization(root) {
     .style("left", Math.round(width / 2 - innerr * 0.8).toString() + "px")
     .style("width", Math.round(innerr * 1.6).toString() + "px");
 
+  // define segment style and attributes
   var path = vis.data([root]).selectAll("path")
     .data(nodes)
     .enter().append("svg:path")
     .attr("display", function(d) { return d.depth ? null : "none"; })
     .attr("d", arc)
     .attr("fill-rule", "evenodd")
-    .style("fill", function(d) { return ((d.gchildren && d.gchildren.length == 1 && d.gchildren[0].is_dummy) || (!d.gchildren && d.is_dummy)) ? "black" : colors((d.children ? d : d.parent).name); })
+    .style("fill", function(d) { return ((d.gchildren && d.gchildren.length == 1 && d.gchildren[0].is_dummy) || (!d.gchildren && d.is_dummy)) ? "black" : colors((d.children ? d : d.parent).name); }) // make the right leaf nodes black
     .style("opacity", 1)
     .on("mouseover", mouseover)
     .on("click", clickdown);
@@ -215,8 +190,10 @@ function createVisualization(root) {
   totalSize = path.node().__data__.value;
  };
 
+// handle clicking downwards into the graph
 function clickdown(d)
 {
+  // open new tab if leaf node
   if (!d.gchildren || (d.gchildren && d.gchildren.length == 1 && d.gchildren[0].is_dummy)) {
     window.open("http://" + d.full_url, '_blank');
   } else {
@@ -231,6 +208,7 @@ function clickdown(d)
 
 }
 
+// handle returning up a level
 function clickup(d)
 {
   if (rootd.parent) {
@@ -375,6 +353,7 @@ function breadcrumbPoints(d, i) {
   return points.join(" ");
 }
 
+// used to store breadcrumb trail widths
 var ws = new Array();
 
 // Update the breadcrumb trail to show the current sequence and percentage.

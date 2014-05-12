@@ -13,12 +13,13 @@ from django.core.cache import cache
 from django.dispatch import receiver
 import re
 
+# user class extended from Django user
 class HistographUser(AbstractUser, FacebookModel):
   objects = UserManager()
   state = models.CharField(max_length=255, blank=True, null=True)
   ext_downloaded = models.BooleanField(default=False)
-  # new_user = models.BooelanField(default=True)
 
+  # get users that are facebook friends with this user
   def get_friends(self):
     graph = self.get_offline_graph()
     friends = graph.get('me/friends')
@@ -26,11 +27,13 @@ class HistographUser(AbstractUser, FacebookModel):
     friend_users = HistographUser.objects.filter(facebook_id__in=friend_ids)
     return friend_users
 
+# model to store weighting preferences between users, determined from feedback
 class UserWeight(models.Model):
   to_user = models.ForeignKey(HistographUser, related_name = 'userweight_to')
   from_user = models.ForeignKey(HistographUser, related_name = 'userweight_from')
   weight = models.FloatField()
 
+# model representing a single visit to a URL; most users have between 20ka nd 60k of these
 class HistoryNode(models.Model):
   # choices for the transition type field
   LINK = 0
@@ -58,12 +61,11 @@ class HistoryNode(models.Model):
     (KEYWORD_GENERATED, 'keyword_generated'),
     )
 
-  # fields
   url = models.URLField(max_length=2048)
-  last_title = models.CharField(max_length=256)
-  visit_time = models.BigIntegerField()
-  transition_type = models.IntegerField(choices=TRANSITION_CHOICES)
-  browser_id = models.IntegerField()
+  last_title = models.CharField(max_length=256) # page title last time it was visited
+  visit_time = models.BigIntegerField() # time visited since the UNIX epoch in milliseconds
+  transition_type = models.IntegerField(choices=TRANSITION_CHOICES) # type of transition from the referrer to this node
+  browser_id = models.IntegerField() # id assigned within the browser
   extension_id = models.IntegerField()
   referrer = models.ForeignKey('HistoryNode', blank=True, null=True)
   user = models.ForeignKey(HistographUser)
@@ -72,18 +74,22 @@ class HistoryNode(models.Model):
   class Meta:
     unique_together = ('user', 'extension_id', 'browser_id')
 
+# incrementing extension ID for distributing IDs to new extensions
 class ExtensionID(models.Model):
   next_id = models.IntegerField()
 
+# model to store whether an extension is currently working on a node import
 class Extension(models.Model):
   extension_id = models.IntegerField()
   lock = models.BooleanField()
 
+# represents a single blocked url or set of urls a user can block
 class BlockedSite(models.Model):
   url = models.URLField(max_length=2048)
   user = models.ForeignKey(HistographUser)
   block_links = models.BooleanField()
 
+# translate link type enum into human-readable form
 def get_link_type_name(value):
   if value == 0:
     return 'link'
@@ -120,23 +126,11 @@ def remove_trail(hn):
   hn['url'] = url
   return hn
 
-def date_in_range(now, bound, hn):
-  ms = hn.visit_time
-  then = datetime.fromtimestamp(ms/1000.0)
-  return ((now-then).days <= bound)
-
+# function that inserts newly received history nodes
 def create_history_nodes_from_json(payload, user):
-  logger = logging.getLogger("core")
-  logger.info("test1")
-  start_time = time.time()
-  now = datetime.now()
- 
   # strip non-http(s) urls and remove trailing '/'
   payload = filter(filter_http_s, payload)
   payload = map(remove_trail, payload)
-
-  # duplicates = []
-  # new_nodes = []
 
   # compile blocked sites regexs
   blocked_sites = BlockedSite.objects.filter(user=user)
@@ -147,6 +141,7 @@ def create_history_nodes_from_json(payload, user):
   # add new nodes
   with transaction.atomic():
     for node in payload:
+      # check if this node has already been imported and update
       try:
         existing_hn = HistoryNode.objects.get(browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
 
@@ -159,14 +154,15 @@ def create_history_nodes_from_json(payload, user):
         existing_hn.save()
 
         continue
+      # add a new node
       except HistoryNode.DoesNotExist:
+        # truncate title 256 characters
         trunc_title = node['last_title']
         if len(trunc_title) > 256:
           trunc_title = trunc_title[:253] + '...'
 
         # get rid of anchors
         url = node['url'].split('#')[0]
-
         hn = HistoryNode(url=url, last_title=trunc_title, visit_time=node['visit_time'], transition_type=node['transition_type'], browser_id=node['browser_id'], extension_id=node['extension_id'], user=user)
         
         # check if in blocked lists
@@ -176,9 +172,6 @@ def create_history_nodes_from_json(payload, user):
             break
 
         hn.save()
-        # new_nodes.append(hn)
-
-  # insert_nodes(new_nodes)
 
   # connect referrers
   with transaction.atomic():
@@ -189,12 +182,10 @@ def create_history_nodes_from_json(payload, user):
       except HistoryNode.DoesNotExist:
         continue
 
+  # update caching
   version = cache.get(str(user.id))
   if not version:
     version = 1
   else:
     version = version + 1
   cache.set(str(user.id), version)
-
-  end_time = time.time()
-  logger.info("test")#'Added ' + str(len(payload)) + ' nodes in ' + str(end_time - start_time) + ' s')

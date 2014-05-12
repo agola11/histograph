@@ -19,6 +19,7 @@ import json
 import rec_algo
 import jsonpickle
 
+# send a user's most recent node time to the extension so it knows what time range to send
 @csrf_exempt
 @requires_csrf_token
 def send_most_recent_history_time(request, extension_id):
@@ -34,22 +35,24 @@ def send_most_recent_history_time(request, extension_id):
     resp.status_code = 401
     return resp
 
-@csrf_exempt
-@requires_csrf_token
-def send_blocked_sites(request):
-  if request.user.is_authenticated():
-    sites = BlockedSite.objects.filter(user=request.user).values('url', 'block_links')
-    return HttpResponse(simplejson.dumps(list(sites)), content_type="application/json")
-  else:
-    resp = HttpResponse()
-    resp.status_code = 401
-    return resp
+# @csrf_exempt
+# @requires_csrf_token
+# def send_blocked_sites(request):
+#   if request.user.is_authenticated():
+#     sites = BlockedSite.objects.filter(user=request.user).values('url', 'block_links')
+#     return HttpResponse(simplejson.dumps(list(sites)), content_type="application/json")
+#   else:
+#     resp = HttpResponse()
+#     resp.status_code = 401
+#     return resp
 
+# save a blocked site sent from the settings page
 def store_blocked_sites(request):
   if request.user.is_authenticated():
     payload = json.loads(request.body)
 
     if payload['blocked']:
+      # update or create new blocked site object
       try:
         bs = BlockedSite.objects.get(user=request.user, url=payload['url'])
       except BlockedSite.DoesNotExist:
@@ -58,25 +61,24 @@ def store_blocked_sites(request):
         bs.user = request.user
 
       bs.block_links = payload['block_links']
-
       bs.save()
 
+      # update blocked nodes
       re = '^https?://' + bs.url + '.*'
       hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=False)
-      # delete_nodes(hn)
       hn.update(is_blocked=True)
 
+      # update blocked links
       if bs.block_links:
         hn = HistoryNode.objects.filter(user=request.user, referrer__url__regex=re, is_blocked=False)
-        # delete_nodes(hn)
         hn.update(is_blocked=True)
 
     else:
+      # unblock a site
       try:
         bs = BlockedSite.objects.get(user=request.user, url=payload['url']).delete()
         re = '^https?://' + payload['url'] + '.*'
         hn = HistoryNode.objects.filter(user=request.user, url__regex=re, is_blocked=True)
-        # insert_nodes(hn)
         hn.update(is_blocked=False)
       except BlockedSite.DoesNotExist:
         pass
@@ -89,6 +91,7 @@ def store_blocked_sites(request):
     resp.status_code = 401
     return resp
 
+# send whether an extension ID is locked to the extension
 @csrf_exempt
 @requires_csrf_token
 def send_ext_locked(request):
@@ -104,6 +107,7 @@ def send_ext_locked(request):
     resp.status_code = 401
     return resp
 
+# send a new extension ID acquired from the counter to a newly installed extension
 @csrf_exempt
 @requires_csrf_token
 def send_new_extension_id(request):
@@ -123,6 +127,7 @@ def send_new_extension_id(request):
     resp.status_code = 401
     return resp
 
+# store new history nodes sent from the extension
 @csrf_exempt
 @requires_csrf_token
 def store_history(request):
@@ -132,6 +137,7 @@ def store_history(request):
     if len(payload) > 0:
       ext = Extension.objects.get(extension_id=payload[0]['extension_id'])
       
+      # only save nodes if server is done working
       if ext.lock:
         resp = HttpResponse()
         resp.status_code = 409
@@ -171,7 +177,6 @@ def home(request):
         'user_fullname' : request.user.get_full_name(),
         'downloaded' : request.user.ext_downloaded,
         'id': request.user.id,
-        # 'friends': django_facebook.api.facebook_profile_data(),
   })
   return HttpResponse(template.render(context))
 
@@ -242,7 +247,6 @@ def explore(request):
   if (request.user.is_authenticated() == False):
     return redirect(login)
   template = loader.get_template('core/explore.html')
-  # url_dict = rec_algo.rank_urls(request.user.id)
   context = RequestContext(request, {
         'domain': get_current_site(request).domain,
         'authenticated': request.user.is_authenticated(),
@@ -265,7 +269,7 @@ def settings(request):
     })
   return HttpResponse(template.render(context))
 
-# TODO: change to a year?
+# send recommendation data to the frontend
 def send_ranked_urls(request, page):
   PAGE_SIZE = 50
   LIMIT = 200
@@ -293,6 +297,7 @@ def normalize(d):
     d[k] = d[k]*factor
   return d
 
+# receive and save feedback from the frontend
 def up_vote(request):
   if request.method == 'POST':
     user_dict = request.POST['users']
