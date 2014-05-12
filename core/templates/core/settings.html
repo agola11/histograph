@@ -13,23 +13,9 @@
      <p><font color=#f11b38 weight=thicker>B + Click</font> on a bubble to block that domain or sub-domain and all sub-domains from being used by Histograph.</p>
      <p><font color=#f11b38>L + Click </font> on a bubble to block a sub-domain and all sites visited from links on that site.</p>
      <p><font color=#f11b38>U + Click</font> on a bubble to unblock that sub-domain.</p>">?</div>
-  <!--<div id="tfheader">
-    <form action="/" id="tfnewsearch">
-            <input type="text" id="tfq2b" class="tftextinput2" name="q" size="21" maxlength="120" value="Search our website"><input type="submit" value=">" class="tfbutton2">
-    </form>
-  </div> 
-  <div id="dialog"> </div> -->
 </div>
 <div id="load" class="col-sm-12" align="center"></div>
  <div id ="legend" class="col-md-3 affix pull-left">
-   <!-- <p>This page helps you filter to URLs which you want to be used by Histograph</p>
-   <p>The following graph shows all top-level domains which you have visited (e.g. www.google.com)</p>
-   <ul>
-     <li><font color="#f11b38">Click</font> on a bubble to view sub-domains (e.g. www.google.com/maps)</li>
-     <li><font color="#f11b38" weight="thicker">Shift-Click</font> on a bubble to block that domain or sub-domain and all sub-domains from being used by Histograph.</li>
-     <li><font color="#f11b38">Ctrl-Shift-Click</font> on a bubble to block a sub-domain and all sites visited from links on that site.</li>
-     <li><font color="#f11b38">Ctrl-Click</font> on a bubble to unblock that sub-domain.</li>
-   </ul> -->
  </div> 
  
  </div>
@@ -84,48 +70,6 @@ colors = [["Unblocked", "#6D1DAA"], ["Blocked Site", "#ED7998"], ["Blocked Site 
       });
   $('#qmark').tooltip('hide');
   $("#load").load("../graph/circle");
-
-  /*$('#dialog').dialog({
-        autoOpen: false
-    });
-
-$(function() {
-  $("#tfq2b").click(function() {
-    if ($("#tfq2b").val() == "Search our website"){
-      $("#tfq2b").val(""); 
-    }
-  });
-});
-
-$("#tfnewsearch").submit(function(event) {
-    event.preventDefault();
-
-  var $form = $(this),
-      term = $form.find('input[name="q"]').val(),
-      url = $form.attr('action');
-
-  d3.json("https://{{ domain }}/graph/bubble/1w", function(data) {
-    var list = "<ul>";
-    $.each(data, recurse);
-
-    function recurse(key, val) {
-      list += "<li>";
-      if (val instanceof Object) {
-          $.each(val, recurse);
-      } else {
-          if(key == 'full_url')
-            list += val;
-      }
-      list += "</li>";
-    }
-    list += "</ul>";
-
-    //d3.select(".results").attr("title", list);
-    $("#dialog").empty().html(list);
-    $("#dialog").dialog("open");
-    //alert(list);
-    });
-  }); */
   
 </script>
 {% endblock %}
