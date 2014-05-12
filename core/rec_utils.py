@@ -1,7 +1,7 @@
 from __future__ import division
 from urlparse import urlparse
 from math import log, sqrt, exp, e
-from core.models import HistoryNode, HistographUser
+from core.models import HistoryNode, HistographUser, UserWeight
 import copy
 try:
     from collections import OrderedDict
@@ -24,6 +24,11 @@ def run_algorithm(user):
   user_hns = HistoryNode.objects.filter(user = user, url__regex = 'http://.*', is_blocked=False)
   user_urls = HistoryNode.objects.filter(user = user).values('url')
   user_urls = set(map(lambda hn : hn['url'], user_urls))
+  uws = user.userweight_to.all()
+  weight_dict = {}
+  for uw in uws:
+  	weight_dict[uw.from_user.id] = uw.weight
+  
   all_users = HistographUser.objects.all()
   user_graph = UrlGraph()
   u_root = user_graph.create()
@@ -37,7 +42,7 @@ def run_algorithm(user):
       o_root = other_graph.create()
       for other_hn in other_hns:
         other_graph.insert(o_root, other_hn)
-      update_rank_table(user_graph, other_graph, rank_table, o_user.id, {})
+      update_rank_table(user_graph, other_graph, rank_table, o_user.id, weight_dict)
 
   ranked_urls = list(rank_table.items())
   ranked_urls = filter((lambda (x,y): ('https://' + x) not in user_urls and ('http://' + x) not in user_urls), ranked_urls)
@@ -187,10 +192,8 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		return
 	# if other's root has a last_title (meaning full_url), put the url in the rank_table
 	if g.last_title != None:
-		'''
 		if o_id in weight_table:
 			prev_score = prev_score + weight_table[o_id]*prev_score
-		'''
 		if g.full_url not in rank_table:
 			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title, 'users': {o_id:prev_score}}
 		else:

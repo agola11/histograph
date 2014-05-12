@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core import serializers
-from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser
+from core.models import HistoryNode, Extension, ExtensionID, BlockedSite, create_history_nodes_from_json, HistographUser, UserWeight
 from datetime import datetime
 from django.template import RequestContext, loader
 from django.contrib.sites.models import get_current_site
@@ -287,37 +287,72 @@ def send_ranked_urls(request, page):
 
   return HttpResponse(json.dumps(results), content_type='application/json')
 
-def up_vote(request):
-  # add logic to update user_weight_dict
-  if request.method == 'POST':
-    user_dict = request.POST.get('users', None)
+def normalize(d):
+  factor=1.0/sum(d.itervalues())
+  for k in d:
+    d[k] = d[k]*factor
+  return d
 
-  user_dict['1']
+def up_vote(request):
+  if request.method == 'POST':
+    user_dict = request.POST['users']
+
+  user_dict = user_dict.replace('"', '').replace("{", "").replace("}", "").split(',')
+
+  overall_dict = {}
+  for i in user_dict:
+    key = i.split(':')[0]
+    value = float(i.split(':')[1])
+    overall_dict[key] = value
+
+  overall_dict = normalize(overall_dict)
+
+  # USE OVERALL DICT
+  for key in overall_dict:
+    from_user = HistographUser.objects.get(pk=int(key))
+    try:
+      uw = UserWeight.objects.get(to_user = request.user, from_user=from_user)
+    except UserWeight.DoesNotExist:
+      uw = None
+    if uw == None:
+      uw = UserWeight(to_user=request.user, from_user=from_user, weight=overall_dict[key])
+      uw.save()
+    else:
+      uw.weight = uw.weight + overall_dict[key]
+      uw.save()
 
   response = HttpResponse()
   response.status_code = 200
   return response
 
 def down_vote(request):
-  # add logic to update user_weight_dict
-
   if request.method == 'POST':
-    index = request.POST['index']
+    user_dict = request.POST['users']
 
-  index = int(index)
-  user = request.user
-  rank_table = user.rank_table
-  weight_table = user.weight_table
+  user_dict = user_dict.replace('"', '').replace("{", "").replace("}", "").split(',')
 
-  user_dict = rank_table[index][1]['users']
-  for o_id in user_dict:
-    if o_id in weight_table:
-      weight_table[o_id] -= user_dict[o_id]
+  overall_dict = {}
+  for i in user_dict:
+    key = i.split(':')[0]
+    value = float(i.split(':')[1])
+    overall_dict[key] = value
+
+  overall_dict = normalize(overall_dict)
+
+  # USE OVERALL DICT
+  for key in overall_dict:
+    from_user = HistographUser.objects.get(pk=int(key))
+    try:
+      uw = UserWeight.objects.get(to_user = request.user, from_user=from_user)
+    except UserWeight.DoesNotExist:
+      uw = None
+    if uw == None:
+      uw = UserWeight(to_user=request.user, from_user=from_user, weight=(-1.0)*overall_dict[key])
+      uw.save()
     else:
-      weight_table[o_id] = user_dict[o_id]
-
-  user.weight_table = weight_table
-  user.save()
+      uw.weight = uw.weight - overall_dict[key]
+      uw.save()
+    uw.save()
 
   response = HttpResponse()
   response.status_code = 200
