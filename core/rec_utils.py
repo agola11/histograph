@@ -217,9 +217,15 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		d1 = {}
 		d2 = {}
 		for key in ug.gchildren:
-			d1[key] = (ug.gchildren[key].node_count)/ulevel_dict[level]
+			if level in ulevel_dict:
+				d1[key] = (ug.gchildren[key].node_count)/ulevel_dict[level]
+			else:
+				d1[key] = 0.0
 		for key in g.gchildren:
-			d2[key] = (g.gchildren[key].node_count)/level_dict[level]
+			if level in level_dict:
+				d2[key] = (g.gchildren[key].node_count)/level_dict[level]
+			else:
+				d2[key] = 0.0
 		bd = bhatta_dist(d1, d2)
 		if bd >= 0.001:
 			for key in g.gchildren:
