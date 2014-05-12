@@ -280,6 +280,11 @@ def send_ranked_urls(request, page):
   if not results:
     # If not in cache, run ranking algorithm
     results = run_algorithm(request.user)[:LIMIT]
+    cum = sum(map(lambda (x,y): y['score'], results))
+    for result in results:
+      score = result[1]['score']
+      score = score/cum
+      result[1]['score'] = score * 1000.0
     for index in range(0, len(results), PAGE_SIZE):
       cache.set(str(request.user.id)+str(index), results[index:index+(PAGE_SIZE)], version=version)
     results = cache.get(str(request.user.id)+str((page-1)*PAGE_SIZE), version=version)
