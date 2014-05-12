@@ -16,7 +16,6 @@ from django_cron import CronJobBase, Schedule
 from django.core.cache import cache
 import django_facebook
 import json
-import rec_algo
 import jsonpickle
 
 @csrf_exempt
