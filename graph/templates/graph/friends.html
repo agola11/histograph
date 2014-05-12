@@ -57,6 +57,8 @@ var svg = d3.select("#load").append("svg")
     .attr("width", width)
     .attr("height", height);
 
+var root; 
+
 //get friends data from server 
 d3.json("https://{{ domain }}/graph/friendsdata", function(error, graph) {
     
@@ -64,6 +66,8 @@ d3.json("https://{{ domain }}/graph/friendsdata", function(error, graph) {
     graph.nodes[0].fixed = true;
     graph.nodes[0].x = width / 2;
     graph.nodes[0].y = height / 2; 
+
+    root = graph.nodes[0];
 
     //set up force layout 
     force

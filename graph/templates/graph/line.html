@@ -91,6 +91,7 @@ var formatDate = d3.time.format("%b %d, '%y");
 
 //read from the server and display
 d3.json("https://{{ domain }}/graph/line", function (error, json) {  
+  
   //parse the JSON into a graphable form 
   var labelVar = 'date';
   data = d3.entries(json['line_dict']);
