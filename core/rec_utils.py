@@ -234,7 +234,10 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 					f_u = 0
 				else:
 					ug_child = ug.gchildren[key]
-					f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
+					if level in ulevel_dict:
+						f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
+					else:
+						f_u = 0.0
 				g_child = g.gchildren[key]
 				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, (prev_score+bd)*(exp(e*f_u)), rank_table, o_id, weight_table)
 	
