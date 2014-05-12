@@ -6,12 +6,12 @@
 
 <script src="/static/bootstrap-slider.js"></script>
 <link href="/static/bootstrap-slider.css" rel="stylesheet">
-
-<!-- <div style="float:right; margin-right: 100px;" class="fb-share-button" data-href="https://histograph.us/" data-type="button"></div>
- -->
  <div id="row">
+
+  <!-- main html div that loads different components dynamically -->
   <div id="load" class="col-sm-12" align="center"></div>
 
+  <!-- left sliding menu -->
   <div id="leftmenu" class="menuclosed" style="padding: 0px; transition: left 0.5s ease; -webkit-transition: left 0.5s ease;">
     <div class="btn-group-vertical">
       <button type="button" class="btn btn-default btn-lg" onClick="loadSunburst()" id="sunburst" data-toggle="tooltip" data-container="body" data-placement="right" title="View how you browse different sites">
@@ -40,6 +40,7 @@
   <div id="leftmenu_over">
   </div>
 
+  <!-- right sliding menu -->
   <div id="rightmenu" class="menuclosed" style="padding: 0px; transition: right 0.5s ease; -webkit-transition: right 0.5s ease;">
     <div class="btn-group-vertical">
       <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1w" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past week">This Week</button>
@@ -48,31 +49,31 @@
       <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="6m" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past six months">6 Months</button>
       <button type="button" class="btn btn-default btn-lg" onClick="loadDates()" id="1y" data-toggle="tooltip" data-container="body" data-placement="left" title="Reload this graph with data from the past year">Past Year</button>
     </div>
-    <!-- <div>
-      <input type="text" class="dateslider" value="" data-slider-min="0" data-slider-max="300" data-slider-step="1" data-slider-value="[0,7]" data-slider-orientation="vertical">
-    </div> -->
   </div>
 
   <div id="rightmenu_over">
   </div>
 
+  <!-- right button  -->
   <div style="position:absolute; top:50%; right:90px">
     <a id="rightButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-right" data-toggle="tooltip" data-container="body" data-placement="left" title="Change time settings"></a>
   </div>
 
+  <!-- left button  -->
   <div style="position:absolute; top:50%; left:20px;">
     <a id="leftButton" class="btn btn-primary btn-lg btn-side-menu glyphicon glyphicon-chevron-left" data-toggle="tooltip" data-container="body" data-placement="right" title="View graphs on your history"></a>
   </div>
 </div>
 
+<!-- help question bubble -->
 <div style="position:absolute; top:25%; right:90px;">
 <div id="qmark" class="qmarkcircle" style="text-align: center;" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Click on a black link to visit the site or a colored link to dive deeper. Click in the center to go back up a level.">?</div>
 </div>
 <script type="text/javascript">
-// load graphs on click
 
 var graph_state = 'sunburst';
 
+// load various graphs on click
 function loadSunburst() {
   $("#load").load("../graph/sunburst");
   console.log("loading sunburst");
@@ -185,6 +186,7 @@ $(document).ready(function(){
 </script>
 <script type="text/javascript">
 
+// reload dates dependent upon which graph is active
 function loadDates() {
   if ($("#sunburst").hasClass("active")) {
     loadSunburst();
