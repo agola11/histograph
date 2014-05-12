@@ -1,7 +1,7 @@
 from __future__ import division
 from urlparse import urlparse
-from django.http import Http404
 from math import log, sqrt, exp, e
+from core.models import HistoryNode, HistographUser, UserWeight
 import copy
 try:
     from collections import OrderedDict
@@ -19,6 +19,35 @@ def get_split_url(hn):
 	if url[-1] == '':
 		del(url[-1])
 	return url
+
+def run_algorithm(user):
+  user_hns = HistoryNode.objects.filter(user = user, url__regex = 'http://.*', is_blocked=False)
+  user_urls = HistoryNode.objects.filter(user = user).values('url')
+  user_urls = set(map(lambda hn : hn['url'], user_urls))
+  uws = user.userweight_to.all()
+  weight_dict = {}
+  for uw in uws:
+  	weight_dict[uw.from_user.id] = uw.weight
+  
+  all_users = HistographUser.objects.all()
+  user_graph = UrlGraph()
+  u_root = user_graph.create()
+  rank_table = {}
+  for user_hn in user_hns:
+    user_graph.insert(u_root, user_hn)
+  for o_user in all_users:
+    if o_user != user:
+      other_hns = o_user.historynode_set.filter(url__regex = 'http://.*', is_blocked=False)
+      other_graph = UrlGraph()
+      o_root = other_graph.create()
+      for other_hn in other_hns:
+        other_graph.insert(o_root, other_hn)
+      update_rank_table(user_graph, other_graph, rank_table, o_user.id, weight_dict)
+
+  ranked_urls = list(rank_table.items())
+  ranked_urls = filter((lambda (x,y): ('https://' + x) not in user_urls and ('http://' + x) not in user_urls), ranked_urls)
+  ranked_urls = list(reversed(sorted(ranked_urls, key=lambda (x,y): y['score'])))
+  return ranked_urls
 
 # Compute Bhattacharya Distance between two distributions
 def bhatta_dist(d1, d2):
@@ -163,10 +192,8 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		return
 	# if other's root has a last_title (meaning full_url), put the url in the rank_table
 	if g.last_title != None:
-		'''
 		if o_id in weight_table:
 			prev_score = prev_score + weight_table[o_id]*prev_score
-		'''
 		if g.full_url not in rank_table:
 			rank_table[g.full_url] = {'score':prev_score, 'last_title': g.last_title, 'users': {o_id:prev_score}}
 		else:
@@ -190,9 +217,15 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		d1 = {}
 		d2 = {}
 		for key in ug.gchildren:
-			d1[key] = (ug.gchildren[key].node_count)/ulevel_dict[level]
+			if level in ulevel_dict:
+				d1[key] = (ug.gchildren[key].node_count)/ulevel_dict[level]
+			else:
+				d1[key] = 0.0
 		for key in g.gchildren:
-			d2[key] = (g.gchildren[key].node_count)/level_dict[level]
+			if level in level_dict:
+				d2[key] = (g.gchildren[key].node_count)/level_dict[level]
+			else:
+				d2[key] = 0.0
 		bd = bhatta_dist(d1, d2)
 		if bd >= 0.001:
 			for key in g.gchildren:
@@ -201,7 +234,11 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 					f_u = 0
 				else:
 					ug_child = ug.gchildren[key]
-					f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
+					if level in ulevel_dict:
+						f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
+					else:
+						f_u = 0.0
 				g_child = g.gchildren[key]
 				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, (prev_score+bd)*(exp(e*f_u)), rank_table, o_id, weight_table)
 	
+    

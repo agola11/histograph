@@ -114,7 +114,7 @@ def send_bubble(request, timesetting):
     now = time.mktime(datetime.now().timetuple()) * 1000
     startstamp = now - time_dict[timesetting] * 24 * 3600 * 1000
     endstamp = now - 0 * 24 * 3600 * 1000
-    hns = HistoryNode.objects.filter(user=request.user, is_blocked=False, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
+    hns = HistoryNode.objects.filter(user=request.user, is_blocked=False, visit_time__range=(startstamp, endstamp))
     graph_data = UrlGraph()
     root = graph_data.create()
     for hn in hns:
@@ -131,7 +131,7 @@ def send_bubble_u(user_id):
   now = time.mktime(datetime.now().timetuple()) * 1000
   startstamp = now - time_dict['6m'] * 24 * 3600 * 1000
   endstamp = now - 0 * 24 * 3600 * 1000
-  hns = HistoryNode.objects.filter(user__id=int(user_id), is_blocked=False, visit_time__range=(startstamp, endstamp)).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
+  hns = HistoryNode.objects.filter(user__id=int(user_id), is_blocked=False, visit_time__range=(startstamp, endstamp))
   graph_data = UrlGraph()
   root = graph_data.create()
   for hn in hns:

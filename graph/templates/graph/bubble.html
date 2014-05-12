@@ -61,9 +61,10 @@ var w = $(window).width(),
 
 var pack = d3.layout.pack()
   .size([r, r])
-  .children(function(d) { return d.gchildren; })
   .value(function (d) { return d.node_count; })
-  .padding(10);
+  .padding(10)
+  .sort(d3.descending)
+  .children(function(d) { return d.gchildren; });
 
 var vis = d3.select("body").append("svg")
     .attr("width", w)
@@ -131,22 +132,53 @@ function visualize(root) {
   node.on("click", click);
 };
 
+var blockPressed = false;
+$(window).keydown(function(evt) {
+  if (evt.which == 66) { // b
+    blockPressed = true;
+  }
+}).keyup(function(evt) {
+  if (evt.which == 66) { // b
+    blockPressed = false;
+  }
+});
+
+var linksPressed = false;
+$(window).keydown(function(evt) {
+  if (evt.which == 76) { // l
+    linksPressed = true;
+  }
+}).keyup(function(evt) {
+  if (evt.which == 76) { // l
+    linksPressed = false;
+  }
+});
+
+var unblockPressed = false;
+$(window).keydown(function(evt) {
+  if (evt.which == 85) { // u
+    unblockPressed = true;
+  }
+}).keyup(function(evt) {
+  if (evt.which == 85) { // u
+    unblockPressed = false;
+  }
+});
+
 function click(d) {
 //console.log("clicked on "+d.full_url);
 var circle_class = d3.select(this).select("circle").attr("class");
 var linked;
 var blocked;
-var shiftPressed = d3.event.shiftKey;
-var ctrlPressed = d3.event.ctrlKey;
 
-if (shiftPressed || ctrlPressed) {  	
+if (unblockPressed || blockPressed || linksPressed) {  	
   if (circle_class != "parent") {  
-      if (shiftPressed & ctrlPressed) {
+      if (linksPressed) {
   	    d3.select(this).select("circle").attr("class", "blockedlinks");
   	    linked = true;
   	    blocked = true;
   	 }
-      else if (shiftPressed) {
+      else if (blockPressed) {
       	d3.select(this).select("circle").attr("class", "blocked"); 
       	linked = false;
       	blocked = true;	    
@@ -186,7 +218,7 @@ if (shiftPressed || ctrlPressed) {
     if (circle_class == "parent") {
       visualize(d.parent);
     }
-    else if ((circle_class != "blocked") && (circle_class != "blocked_links") && (d.children != null)) {  
+    else if ((circle_class == "child") && (d.children != null)) {  
       visualize(d);
     }
   }
