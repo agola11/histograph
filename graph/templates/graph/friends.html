@@ -34,56 +34,63 @@
 </style>
 </head>
 <body>
-<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="/static/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script> 
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 <script>
+//Code based on http://bl.ocks.org/d3noob/5155181
 
+//set window size
 var width = $(window).width();
 var height = $(window).height() - 100;
+
+//constants and scales
 var maxLinkLength = 200;
 var minLinkLength = 10;
 var color = d3.scale.category20();
 
+//set up force layout and change dynamically set link length between nodes 
 var force = d3.layout.force()
     .charge(-20)
     .linkDistance(function (d) {return d.value * maxLinkLength + minLinkLength; })
     .size([width, height]);
 
+//set image to load into div
 var svg = d3.select("#load").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-var root;
+var root; 
 
+//get friends data from server 
 d3.json("https://{{ domain }}/graph/friendsdata", function(error, graph) {
     
+    //fix main user to the center of the creen
     graph.nodes[0].fixed = true;
     graph.nodes[0].x = width / 2;
     graph.nodes[0].y = height / 2; 
 
     root = graph.nodes[0];
+
+    //set up force layout 
     force
         .nodes(graph.nodes)
         .links(graph.links)
         .gravity(0)
         .start();
 
+    //append links
     var link = svg.selectAll(".link")
         .data(graph.links)
       .enter().append("line")
         .attr("class", "link")
         .style("stroke-width", "3px");
 
-    var picSize = 30;
-
+    //append nodes
     var node = svg.selectAll(".node")
         .data(graph.nodes)
       .enter().append("g")
-        .call(force.drag)
-        .on("click", click);
+        .call(force.drag);
 
+    //append profile pictures to nodes from Facebook
+    var picSize = 30;
     node.append("image")
       .attr("class", "pic")
       .attr("xlink:href", function (d) { return "https://graph.facebook.com/"+d.id+"/picture?type=square"; })
@@ -92,6 +99,7 @@ d3.json("https://{{ domain }}/graph/friendsdata", function(error, graph) {
       .attr("width", picSize)
       .attr("height", picSize);
 
+    //append circles around profile pictures 
      node.append("circle")
         .attr("class", function (d) {return (d.id == root.id) ? "node": "unselected";})
         .attr("r", picSize / 2 * 1.41)
@@ -100,28 +108,15 @@ d3.json("https://{{ domain }}/graph/friendsdata", function(error, graph) {
               
     $(".unselected").tooltip({'container': 'body', 'placement': 'top'});
     $(".selected").tooltip({'container': 'body', 'placement': 'top'});
-    //$(".link").tooltip({'container': 'body', 'placement': 'top'});
 
     force.on("tick", function() {
       link.attr("x1", function(d) { return d.source.x; })
           .attr("y1", function(d) { return d.source.y; })
           .attr("x2", function(d) { return d.target.x; })
           .attr("y2", function(d) { return d.target.y; });
-
       node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-
     });
 });
-
-function click(d) {
-  
-  /*if (d3.select(this) != root) {
-    if(d3.select(this).select("circle").attr("class") == "unselected")
-      d3.select(this).select("circle").attr("class", "selected");  
-    else if (d3.select(this).select("circle").attr("class") == "selected")
-      d3.select(this).select("circle").attr("class", "unselected");
-  }*/
-}
 
 </script>
 </body>

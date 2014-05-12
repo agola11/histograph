@@ -50,6 +50,7 @@ circle.blockedlinks {
   </head>
   <body>
 <script type="text/javascript">
+/* Code for the graph adapted from http://bl.ocks.org/nilanjenator/4950148 */
 var w = $(window).width(),
     h = $(window).height()-100,
     r = Math.min(w, h),
@@ -59,6 +60,7 @@ var w = $(window).width(),
     root,
     depth = 0;
 
+//set up circle packing layout
 var pack = d3.layout.pack()
   .size([r, r])
   .value(function (d) { return d.node_count; })
@@ -72,6 +74,7 @@ var vis = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + w / 2 + "," + h / 2 + ")");
 
+//get blocked sites from server
 var blocked_urls = [];
 var blocked_links = [];
 d3.json("https://{{ domain }}/blocked_sites", function (error, data) {
@@ -85,25 +88,24 @@ d3.json("https://{{ domain }}/blocked_sites", function (error, data) {
   }
 });
 
+//get sites from the server
 d3.json("https://{{ domain }}/graph/bubble_blocked", function(data) {
   root = data;
-  visualize(root);
+  visualize(root); 
 });
 
+//function to draw bubbles
 function visualize(root) {
+  //clear screen
   d3.selectAll("circle").remove();
   d3.selectAll("node").remove();
-  //addPlaceholders(root);
 
+  //pack nodes, filtering out nodes that aren't seen
   var nodes = pack.nodes(root)
               .filter(function(d) {return (d.parent == root || d == root); });
 
-  //console.log(nodes);
-
-  //removePlaceholders(nodes);
-
+  //helper functions to reposition nodes as needed
   centerNodes(nodes);
-
   makePositionsRelativeToZero(nodes);
 
   var node = vis.selectAll(".node")
@@ -111,11 +113,11 @@ function visualize(root) {
     .enter()
     .append("g");
 
+  //append cirlces and set the appropriate classes
   node.append("circle")
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .attr("r", function(d) {return d.parent != null ? ((d.parent.children.length == 1 && d != root) ?  (d.r - 10) : d.r) : d.r ; })
-    //.attr("r", function (d) {return d.r; })
     .attr("class", function(d) { 
       if (blocked_urls.length > 0 && blocked_urls.indexOf(d.full_url) != -1)
         return "blocked";
@@ -125,6 +127,7 @@ function visualize(root) {
         return d == root ? "parent" : "child"; })
     .attr("title", function (d) { return d != root ? d.name : d.full_url ;});
 
+  //activate tooltips
   $("circle").tooltip({
     'container': 'body', 
     'placement': 'top'});
@@ -132,6 +135,7 @@ function visualize(root) {
   node.on("click", click);
 };
 
+//Capture keystrokes to block/unblock bubbles
 var blockPressed = false;
 $(window).keydown(function(evt) {
   if (evt.which == 66) { // b
@@ -165,12 +169,13 @@ $(window).keydown(function(evt) {
   }
 });
 
+//click handler function
 function click(d) {
-//console.log("clicked on "+d.full_url);
 var circle_class = d3.select(this).select("circle").attr("class");
 var linked;
 var blocked;
 
+//block/unblock bubbles
 if (unblockPressed || blockPressed || linksPressed) {  	
   if (circle_class != "parent") {  
       if (linksPressed) {
@@ -189,31 +194,29 @@ if (unblockPressed || blockPressed || linksPressed) {
       	blocked = false;
   	}
   }
+  //send json packed with block/unblock information back to the server 
 	var json = {
 	    "url": d.full_url, 
 	    "block_links": linked,
 	    "blocked": blocked,
 	    };
 	var send = JSON.stringify(json);
-	console.log(send);
     var csrftoken = getCookie('csrftoken');
     jQuery.ajax({
         url: "https://{{ domain }}/save_blocked_site",
         headers:{"X-CSRFToken":csrftoken},
         type:"POST",
         success: function(data, textStatus, jqXHR) {
-          console.log("success");
         },
         error: function(jqXHR, textStatus, errorThrown) {
           console.log( jqXHR.responseText );
-          console.log("error");
           return;
         },
         data: send,
         async: true
       });
   }
-
+  //dive down or up into bubble graph
   else if (d.parent != null) {
     if (circle_class == "parent") {
       visualize(d.parent);
@@ -225,6 +228,7 @@ if (unblockPressed || blockPressed || linksPressed) {
 
 }
 
+//helper function to communicate with server
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -241,6 +245,7 @@ function getCookie(name) {
     return cookieValue;
 };
 
+//helper function to center nodes
 function centerNodes( nodes ) {
     for( var i = 0; i < nodes.length; i ++ ) {
         var node = nodes[i];
@@ -263,6 +268,7 @@ function centerNodes( nodes ) {
     };
 };
 
+//helper function to reposition nodes
 function makePositionsRelativeToZero( nodes ) {
     //use this to have vis centered at 0,0,0 (easier for positioning)
     var offsetX = nodes[0].x;

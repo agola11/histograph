@@ -29,20 +29,16 @@ body {
 
 </style>
 <body>
-<!-- <script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="/static/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>  -->
 
 <script>
+/*Code adpated from http://bl.ocks.org/Matthew-Weber/5645518 and http://bl.ocks.org/mbostock/1667367 */
 
-//$(window).load(
+//set up axes, scales, and resize the canvases as needed
 var width = $(window).width() - 300,
     height = $(window).height() * (4/8),
     height2 = $(window).height() * (1/8),
     margin = {top: width * (1/100), right: width * (2/100), bottom: height2 * 1.8, left: width * (1.5/100)},
     margin2 = {top: height + 3*margin.top, right: margin.right, bottom: margin.top, left: margin.left};
-//    );
 
 var parseDate = d3.time.format("%Y-%m-%d").parse;
 
@@ -93,11 +89,13 @@ var context = svg.append("g")
 
 var formatDate = d3.time.format("%b %d, '%y");
 
+//read from the server and display
 d3.json("https://{{ domain }}/graph/line", function (error, json) {  
+  
+  //parse the JSON into a graphable form 
   var labelVar = 'date';
   data = d3.entries(json['line_dict']);
-
-
+  
   data = data.sort(function(a, b) {
     return d3.ascending(a.key, b.key);  
   });
@@ -109,7 +107,6 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
     d.date = parseDate(d.key);
   });
 
-
   seriesData = varNames.map(function (name) {
     return {
       name: name,
@@ -119,6 +116,7 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
     };
   });
 
+  //rescale x and y domains 
   x.domain(d3.extent(data.map(function(d) { return d.date; })));
   y.domain([
     d3.min(seriesData, function (c) { 
@@ -131,6 +129,7 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
   x2.domain(x.domain());
   y2.domain(y.domain());
 
+  //append axes to larger focus screen
   focus.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
@@ -146,11 +145,13 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
     .style("text-anchor", "end")
     .text("Visits");
 
+//append axes to smaller context screen
   context.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height2 + ")")
       .call(xAxis2);
 
+  //append data to a line meant for the focus
   var series = focus.selectAll(".series")
     .data(seriesData)
   .enter().append("g")
@@ -170,6 +171,7 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
           .style("opacity",1);         
     });
 
+  //append the lines to the focus
   series.append("path")
     .attr("class", "line")
     .attr("d", function (d) { return line(d.values); })
@@ -177,6 +179,7 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
     .style("stroke-width", "4px")
     .style("fill", "none");
 
+  //add points for the tooltips
   series.selectAll(".point")
     .data(function (d) { return d.values; })
     .enter().append("circle")
@@ -189,24 +192,25 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
      .style("stroke-width", "2px")
      .attr("data-html", "true")
      .attr("title", function (d) { return String.format("{0}<br/>{1} visits<br/>{2}", d.name, d.value, formatDate(d.label)); });
-     /*.on("mouseover", tip.show)
-     .on("mouseout",   tip.hide); */
 
   $(".point").tooltip({
     'container': 'body', 
     'placement': 'top'});
 
+  //append data to the lines meant fro the context
   var series2 = context.selectAll(".series")
       .data(seriesData)
     .enter().append("g")
-      .attr("class", "city");
+      .attr("class", "series");
 
+  //add the lines to the context
   series2.append("path")
     .attr("class", "line")
     .attr("d", function(d) { return line2(d.values); })
     .style("stroke", function(d) { return color(d.name); })
     .style("fill", "none");
 
+  //add brushing tool to zoom into the focus as needed
   context.append("g")
       .attr("class", "x brush")
       .call(brush)
@@ -215,6 +219,7 @@ d3.json("https://{{ domain }}/graph/line", function (error, json) {
       .attr("height", height2 + 7);
 });
 
+//helper function to resize data for zooming
 function brushed() {
   x.domain(brush.empty() ? x2.domain() : brush.extent());
   focus.selectAll(".series")
@@ -227,7 +232,7 @@ function brushed() {
   focus.select(".x.axis").call(xAxis);
 }
 
-
+//helper function to format tooltips
 String.format = function() {
   var s = arguments[0];
   for (var i = 0; i < arguments.length - 1; i++) {       

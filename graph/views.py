@@ -17,6 +17,7 @@ from django.db.models import Q, Count
 import jsonpickle
 import math
 
+#display bubble graph
 def circle(request):
   if (request.user.is_authenticated() == False):
     return redirect(login)
@@ -28,6 +29,7 @@ def circle(request):
         })
   return HttpResponse(template.render(context))
 
+#display friends digraph
 def friends(request): 
   if (request.user.is_authenticated() == False):
     return redirect(login)
@@ -38,26 +40,21 @@ def friends(request):
         })
   return HttpResponse(template.render(context))
 
-def area(request): 
-  if (request.user.is_authenticated() == False):
-    return redirect(login)
-  domain = get_current_site(request).domain
-  template = loader.get_template('graph/area.html')
-  context = RequestContext(request, {
-        'domain': get_current_site(request).domain,
-        })
-  return HttpResponse(template.render(context))
+#display sites digraph
+def digraph(request):
+  if request.user.is_authenticated():
+    domain = get_current_site(request).domain
+    template = loader.get_template('graph/digraph.html')
+    context = RequestContext(request, {
+          'domain': get_current_site(request).domain,
+          })
+    return HttpResponse(template.render(context))  
+  else:
+    resp = HttpResponse()
+    resp.status_code = 401
+    return resp
 
-def pie(request): 
-  if (request.user.is_authenticated() == False):
-    return redirect(login)
-  domain = get_current_site(request).domain
-  template = loader.get_template('graph/pie.html')
-  context = RequestContext(request, {
-        'domain': get_current_site(request).domain,
-        })
-  return HttpResponse(template.render(context))
-
+#display line plot
 def line_plot(request): 
   if (request.user.is_authenticated() == False):
     return redirect(login)
@@ -69,17 +66,7 @@ def line_plot(request):
         })
   return HttpResponse(template.render(context))
 
-def user_sunburst(request, user_id): 
-  if (request.user.is_authenticated() == False):
-    return redirect(login)
-  domain = get_current_site(request).domain
-  template = loader.get_template('graph/sunburst-user.html')
-  context = RequestContext(request, {
-        'domain': get_current_site(request).domain,
-        'user_id': user_id,
-        })
-  return HttpResponse(template.render(context))
-
+#display sunburst
 def sunburst(request): 
   if (request.user.is_authenticated() == False):
     return redirect(login)
@@ -96,18 +83,7 @@ def sunburst(request):
   template = loader.get_template('graph/sunburst.html')
   return HttpResponse(template.render(context))
 
-'''
-def send_user_bubble(request, user_id):
-  if request.user.is_authenticated():
-    hn_list = list(HistoryNode.objects.filter(user__id=int(user_id)).values('url'))
-    bubble_tree = graph_utils.send_bubble(hn_list)
-    return HttpResponse(simplejson.dumps(bubble_tree), content_type='application/json')
-  else:
-    resp = HttpResponse()
-    resp.status_code = 401
-    return resp
-'''
-
+#request bubble data
 def send_bubble(request, timesetting):
   time_dict = {'1y':365, '6m':180, '3m':90, '1m':30, '1w':7}
   if request.user.is_authenticated():
@@ -126,19 +102,7 @@ def send_bubble(request, timesetting):
     resp.status_code = 401
     return resp
 
-def send_bubble_u(user_id):
-  time_dict = {'1y':365, '6m':180, '3m':90, '1m':30, '1w':7}
-  now = time.mktime(datetime.now().timetuple()) * 1000
-  startstamp = now - time_dict['6m'] * 24 * 3600 * 1000
-  endstamp = now - 0 * 24 * 3600 * 1000
-  hns = HistoryNode.objects.filter(user__id=int(user_id), is_blocked=False, visit_time__range=(startstamp, endstamp))
-  graph_data = UrlGraph()
-  root = graph_data.create()
-  for hn in hns:
-    graph_data.insert(root, hn)
-  graph_utils.get_value_graph(graph_data.root)
-  return HttpResponse(jsonpickle.encode(graph_data.root, unpicklable=False), content_type='application/json')
-
+#request all user bubble data for settings graph
 def send_bubble_blocked(request):
   if request.user.is_authenticated():
     hns = HistoryNode.objects.filter(user=request.user).annotate(Count('historynode')).filter(Q(referrer__isnull=False) | Q(historynode__count__gt=0))
@@ -153,16 +117,7 @@ def send_bubble_blocked(request):
     resp.status_code = 401
     return resp
 
-def send_user_line_plot(request, user_id):
-  if request.user.is_authenticated():
-    hn_objs = HistoryNode.objects.filter(user__id=int(user_id), is_blocked=False).values('url','visit_time')
-    line_data = graph_utils.send_line_plot(hn_objs)
-    return HttpResponse(simplejson.dumps(line_data), content_type='application/json')
-  else:
-    resp = HttpResponse()
-    resp.status_code = 401
-    return resp
-
+#request line plot data
 def send_line_plot(request):
   if request.user.is_authenticated():
     hn_objs = HistoryNode.objects.filter(user=request.user, is_blocked=False)
@@ -173,6 +128,7 @@ def send_line_plot(request):
     resp.status_code = 401
     return resp
 
+#request digraph data
 def send_digraph(request, timesetting):
   time_dict = {'1y':365, '6m':180, '3m':90, '1m':30, '1w':7}
   if request.user.is_authenticated():
@@ -187,19 +143,7 @@ def send_digraph(request, timesetting):
     resp.status_code = 401
     return resp
 
-def digraph(request):
-  if request.user.is_authenticated():
-    domain = get_current_site(request).domain
-    template = loader.get_template('graph/digraph.html')
-    context = RequestContext(request, {
-          'domain': get_current_site(request).domain,
-          })
-    return HttpResponse(template.render(context))  
-  else:
-    resp = HttpResponse()
-    resp.status_code = 401
-    return resp
-
+#request friends digraph data
 def send_friends(request):
   if request.user.is_authenticated():
     me = request.user
