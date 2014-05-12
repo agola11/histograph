@@ -16,7 +16,6 @@ from django_cron import CronJobBase, Schedule
 from django.core.cache import cache
 import django_facebook
 import json
-import rec_algo
 import jsonpickle
 
 # send a user's most recent node time to the extension so it knows what time range to send
