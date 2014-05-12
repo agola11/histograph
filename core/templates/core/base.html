@@ -17,6 +17,7 @@
   <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
   <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
   <script type="text/javascript">
+    
     //hook up tooltips
     $(document).ready(function(){
       $('#leftButton').tooltip();
@@ -38,172 +39,10 @@
   </script>
 
 
-  <style type="text/css">
-
-.alignleft {
-  float: left;
-}
-.alignright {
-  float: right;
-}
-
-.col-centered {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 20%;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #6d1daa;
-  border-color: #6d1daa;
-}
-
-.btn-primary:hover {
-  background-color: #2153ab;
-  border-color: #2153ab;
-}
-
-.btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active, .open .dropdown-toggle.btn-default {
-  color: #333;
-  background-color: #ead9f8;
-  border-color: #adadad;
-}
-
-.btn-tool {
-  color: #fff;
-  background-color: rgba(86, 61, 124, 0.49);
-  border-color: #6d1daa;
-}
-
-.btn-side-menu {
-  padding: 12px 8px;
-}
-
-.navbar {
-  background-color: #ead9f8;
-}
-
-.navbutton {
-  background-color: #a4a4ff;
-  padding: 5px 5px;
-  margin: 10px 5px 0px 5px;
-}
-
-.nav-pills>li.active>a {
-  background-color: #f11b38;
-}
-
-.nav-pills>li:hover>a {
-  background-color: #2153ab;
-  color: #fff;
-}
-
-.nav-pills>li.active:hover>a {
-  background-color: #2153ab;
-}
-
-body {
-  color: #6d1daa;
-  background-color: #fff;
-}
-
-body a {
-  color: #2153ab;
-}
-
-.pace {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  -o-box-sizing: border-box;
-  box-sizing: border-box;
-
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-
-  -moz-background-clip: padding;
-  -webkit-background-clip: padding-box;
-  background-clip: padding-box;
-
-  -webkit-pointer-events: none;
-  pointer-events: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-
-  z-index: 2000;
-  position: fixed;
-  margin: auto;
-  top: 12px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 200px;
-  height: 25px;
-  border: 2px solid #6d1daa;
-  background-color: #fff;
-}
-
-.pace .pace-progress {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  -o-box-sizing: border-box;
-  box-sizing: border-box;
-
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding;
-  background-clip: padding-box;
-
-  -webkit-transition: width 1s ease-in-out 1s linear;
-  -moz-transition: width 1s ease-in-out 1s linear;
-  -ms-transition: width 1s ease-in-out 1s linear;
-  -o-transition: width 1s ease-in-out 1s linear;
-  transition: width 1s ease-in-out 1s linear;
-
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-
-  max-width: 190px;
-  position: fixed;
-  z-index: 2000;
-  display: block;
-  position: absolute;
-  left: 3px;
-  top: 3px;
-  height: 15px;
-  font-size: 12px;
-  background: #6d1daa;
-  color: #6d1daa;
-  line-height: 60px;
-  font-weight: bold;
-  font-family:  Helvetica, Arial, "Lucida Grande", sans-serif;
-}
-
-.pace .pace-progress:after {
-  content: attr(data-progress-text);
-  display: inline-block;
-}
-
-.pace.pace-inactive {
-  display: none;
-}
-
-.btn-group-vertical>.btn, .btn-group-vertical>.btn-group, .btn-group-vertical>.btn-group>.btn {
-  width: 250px;
-}
-
-</style>
-
 </head>
 <body>
+  
+  <!-- base file to be inherited by other files -->
 
   <!-- facebook sdk code -->
   <div id="fb-root"></div>
@@ -215,6 +54,7 @@ body a {
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));</script>
 
+<!-- main navbar -->
 <div id="root-content" class="container-fluid">
 <div class="navbar row">
   <div class="col-sm-4" style="padding: 10px 0px 10px 10px;">
@@ -232,9 +72,7 @@ body a {
 	  <li {% block graphs-nav %}{% endblock %}><a href="/" id="graphs" data-toggle="tooltip" data-container="body" data-placement="bottom" title="View graphs to analyze your browsing patterns">Graphs</a></li>
 	  <li {% block explore-nav %}{% endblock %}><a href="explore" id="explore" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Explore new sites to visit based on your previous browsing history">Explore</a></li>
 	  <li {% block install-nav %}{% endblock %}><a href="install">Download</a></li>
-	  <li {% block about-nav %}{% endblock %}><a href="about">About</a></li>
-	  <li {% block team-nav %}{% endblock %}><a href="team">Team</a></li>
-	  <li {% block settings-nav %}{% endblock %}><a href="settings" id="settings" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Filter sites that you don't want to see">Settings</a></li>
+    <li {% block settings-nav %}{% endblock %}><a href="settings" id="settings" data-toggle="tooltip" data-container="body" data-placement="bottom" title="Filter sites that you don't want to see">Settings</a></li>
 	</ul>
       </div>
     </div>

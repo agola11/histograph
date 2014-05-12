@@ -10,6 +10,7 @@ except ImportError:
     from ordereddict import OrderedDict
 import tldextract
 
+# split a node's url into an array of segments delineated by slashes
 def get_split_url(hn):
 	url = hn.url
 	parsed = urlparse(url)
@@ -20,6 +21,7 @@ def get_split_url(hn):
 		del(url[-1])
 	return url
 
+# run the recommendations algorithm
 def run_algorithm(user):
   user_hns = HistoryNode.objects.filter(user = user, url__regex = 'http://.*', is_blocked=False)
   user_urls = HistoryNode.objects.filter(user = user).values('url')
@@ -217,9 +219,15 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 		d1 = {}
 		d2 = {}
 		for key in ug.gchildren:
-			d1[key] = (ug.gchildren[key].node_count)/ulevel_dict[level]
+			if level in ulevel_dict:
+				d1[key] = (ug.gchildren[key].node_count)/ulevel_dict[level]
+			else:
+				d1[key] = 0.0
 		for key in g.gchildren:
-			d2[key] = (g.gchildren[key].node_count)/level_dict[level]
+			if level in level_dict:
+				d2[key] = (g.gchildren[key].node_count)/level_dict[level]
+			else:
+				d2[key] = 0.0
 		bd = bhatta_dist(d1, d2)
 		if bd >= 0.001:
 			for key in g.gchildren:
@@ -228,7 +236,10 @@ def _update_rank_table(ug, g, ulevel_dict, level_dict, level, prev_bd, prev_scor
 					f_u = 0
 				else:
 					ug_child = ug.gchildren[key]
-					f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
+					if level in ulevel_dict:
+						f_u = (ug.gchildren[key].node_count)/ulevel_dict[level]
+					else:
+						f_u = 0.0
 				g_child = g.gchildren[key]
 				_update_rank_table(ug_child, g_child, ulevel_dict, level_dict, level+1, bd, (prev_score+bd)*(exp(e*f_u)), rank_table, o_id, weight_table)
 	
