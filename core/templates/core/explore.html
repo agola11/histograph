@@ -14,7 +14,9 @@ $(window).scroll(function() {
 	if($(window).scrollTop() + $(window).height() == $(document).height()) {
 		console.log("reached bottom");
 		$.getJSON( "rank/" + page_num, function( data ) {
-			jsonResp = data;
+			for (var i in data) {
+				jsonResp.push(data[i]);
+			}
 			updateJSON();
 			page_num += 1;
 			offset += 50;
@@ -35,8 +37,9 @@ function truncate(string){
 
 function updateJSON() {
 	// update results when new data is received
+
 	var items = [];
-	for (i = 0; i < 50; i++) {
+	for (i = 0 + offset; i < 50 + offset; i++) {
 		var title;
 		var color;
 		var url;
@@ -52,7 +55,7 @@ function updateJSON() {
 		}
 
 		// dynamcially change color based on how good result is
-		color = "rgb(" + (241 - (i + offset)) + "," + (27 + i + offset) + "," + (56 + i + offset) + ")";
+		color = "rgb(" + (241 - (i)) + "," + (27 + i) + "," + (56 + i) + ")";
 
 		var new_div = $("<div>")
 		.addClass("explore_div")
@@ -61,7 +64,7 @@ function updateJSON() {
 			.addClass("circle")
 			.css("float", "left")
 			.css("margin", "20px 0px")
-			.text(i + 1 + offset)
+			.text(i + 1)
 			)
 		.append($("<a>")
 			.attr("href", url)
@@ -88,8 +91,8 @@ function updateJSON() {
 			.css("width", "80%")
 		.append($("<span>")
 			.addClass("glyphicon glyphicon-thumbs-up")
-			.attr("onClick", "thumbs_up(" + (i + offset) + ")")
-			.attr("id", "up" + (i + offset))
+			.attr("onClick", "thumbs_up(" + (i) + ")")
+			.attr("id", "up" + (i))
 			.css("float", "left")
 			.css("margin", "-25px 0px 0px 10px")
 			.css("cursor", "pointer")
@@ -97,8 +100,8 @@ function updateJSON() {
 		.append($("<span>")
 			.addClass("glyphicon glyphicon-thumbs-down")
 			.css("float", "left")
-			.attr("onClick", "thumbs_down(" + (i + offset) + ")")
-			.attr("id", "down" + (i + offset))
+			.attr("onClick", "thumbs_down(" + (i) + ")")
+			.attr("id", "down" + (i))
 			.css("margin", "5px 0px 0px 10px")
 			.css("cursor", "pointer")
 			)
